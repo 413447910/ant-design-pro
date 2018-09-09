@@ -1,6 +1,54 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
+
+export async function queryMenu(params) {
+  return request(`/api/menu?${stringify(params)}`);
+}
+
+export async function addMenu(params) {
+  return request('/api/menu', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'add',
+    },
+  });
+}
+
+export async function updateMenu(params) {
+  return request('/api/menu', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'update',
+    },
+  });
+}
+
+export async function updateMenuStatus(params) {
+  console.log('params ', params)
+  return request('/api/menu', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'updateStatus',
+    },
+  });
+}
+
+export async function removeMenu(params) {
+  return request('/api/menu', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'delete',
+    },
+  });
+}
+
+
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }

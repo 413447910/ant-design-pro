@@ -93,6 +93,16 @@ export default [
         name: 'list',
         routes: [
           {
+            path: '/list/menu-list',
+            name: 'menuList',
+            component: './Base/MenuList',
+          },
+          {
+            path: '/list/component-list',
+            name: 'componentList',
+            component: './Base/componentList',
+          },
+          {
             path: '/list/table-list',
             name: 'searchtable',
             component: './List/TableList',

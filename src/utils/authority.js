@@ -2,7 +2,7 @@
 export function getAuthority() {
   // return localStorage.getItem('antd-pro-authority') || ['admin', 'user'];
   let authority = localStorage.getItem('antd-pro-authority');
-  if (authority) {
+  if (authority && false) {
     if (authority.includes('[')) {
       authority = JSON.parse(authority);
     } else {
