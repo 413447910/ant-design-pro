@@ -93,6 +93,16 @@ export default [
         name: 'list',
         routes: [
           {
+            path: '/list/effective',
+            name: 'effective',
+            component: './Base/Effective',
+          },
+          {
+            path: '/list/example-list',
+            name: 'exampleList',
+            component: './Base/ExampleList',
+          },
+          {
             path: '/list/menu-list',
             name: 'menuList',
             component: './Base/MenuList',
@@ -101,6 +111,11 @@ export default [
             path: '/list/component-list',
             name: 'componentList',
             component: './Base/componentList',
+          },
+          {
+            path: '/list/app-list',
+            name: 'appList',
+            component: './Base/appList',
           },
           {
             path: '/list/table-list',

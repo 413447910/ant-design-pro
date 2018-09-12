@@ -1,4 +1,4 @@
-import {queryComponent, updateComponent, updateMenuStatus, removeMenu , addComponent, } from '@/services/base';
+import {queryComponent, updateComponent, deleteComponent , addComponent, } from '@/services/component';
 
 export default {
   namespace: 'component',
@@ -6,7 +6,6 @@ export default {
   state: {
     data: {
       list: [],
-      menuTree: [],
       pagination: {},
     },
   },
@@ -27,8 +26,8 @@ export default {
       });
       if (callback) callback();
     },
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeMenu , payload);
+    *delete({ payload, callback }, { call, put }) {
+      const response = yield call(deleteComponent , payload);
       yield put({
         type: 'save',
         payload: response,
@@ -37,14 +36,6 @@ export default {
     },
     *update({ payload, callback }, { call, put }) {
       const response = yield call(updateComponent, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
-    *status({ payload, callback }, { call, put }) {
-      const response = yield call(updateMenuStatus, payload);
       yield put({
         type: 'save',
         payload: response,

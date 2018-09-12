@@ -1,6 +1,18 @@
 import request from '@/utils/request';
 import { stringify } from 'qs';
 
+
+export async function addEffective(params) {
+  return request('/api/effective/add', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'add',
+    },
+  });
+}
+
+
 export async function queryComponent(params) {
   return request(`/api/component?${stringify(params)}`);
 }

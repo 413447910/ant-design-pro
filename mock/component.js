@@ -97,15 +97,6 @@ function postComponent(req, res, u, b) {
         return item;
       });
       break;
-    case 'updateStatus':
-      tableListDataSource = tableListDataSource.map(item => {
-        if (item.key === key) {
-          Object.assign(item, { status , updatedAt});
-          return item;
-        }
-        return item;
-      });
-      break;
     default:
       break;
   }
@@ -122,5 +113,7 @@ function postComponent(req, res, u, b) {
 
 export default {
   'GET /api/component': getComponent,
-  'POST /api/component': postComponent,
+  'POST /api/component/add': postComponent,
+  'POST /api/component/update': postComponent,
+  'POST /api/component/delete': postComponent,
 };

@@ -184,12 +184,10 @@ export default {
   'app.setting.copyinfo': 'copy success，please replace defaultSettings in src/models/setting.js',
   'app.setting.production.hint':
     'Setting panel show in development enviorment only, please mannually modify',
-
-
-
-
   'menu.list.menuList': 'Menu List',
-  'menu.list.componentList': 'ComponentList',
   'app.form.create': 'Create',
-
-};
+  'menu.list.effective': 'Effective',
+ 'menu.list.appList': 'AppList', 
+ 'menu.list.exampleList': 'ExampleList', 
+ 'menu.list.componentList': 'ComponentList', 
+ };

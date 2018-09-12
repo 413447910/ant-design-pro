@@ -1,5 +1,3 @@
-// import zhMessages from '../../locales/zh.json';
-
 export default {
   'navbar.lang': 'English',
   'menu.home': '首页',
@@ -180,11 +178,10 @@ export default {
   'app.setting.copyinfo': '拷贝成功，请到 src/defaultSettings.js 中替换默认配置',
   'app.setting.production.hint':
     '配置栏只在开发环境用于预览，生产环境不会展现，请拷贝后手动修改配置文件',
-
-
-
-
   'menu.list.menuList': '菜单列表',
-  'menu.list.componentList': '组件列表',
+  'menu.list.effective': '北斗神器',
   'app.form.create': '新建',
-};
+ 'menu.list.appList': '应用列表', 
+ 'menu.list.exampleList': '示例列表', 
+ 'menu.list.componentList': '组件列表', 
+ };

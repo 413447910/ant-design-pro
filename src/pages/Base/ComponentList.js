@@ -9,6 +9,7 @@ import {
   Input,
   Button,
   message,
+  Modal,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -18,6 +19,7 @@ import ComponentForm from './ComponentForm';
 import styles from './ComponentList.less';
 
 const FormItem = Form.Item;
+const confirm = Modal.confirm;
 
 const getValue = obj =>
   Object.keys(obj)
@@ -121,17 +123,23 @@ class ComponentList extends PureComponent {
     const { selectedRows } = this.state;
     if (!selectedRows) return;
 
-    dispatch({
-      type: 'component/remove',
-      payload: {
-        key: selectedRows.map(row => row.key),
-      },
-      callback: () => {
-        this.setState({
-          selectedRows: [],
+    confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: function() {
+        dispatch({
+          type: 'component/delete',
+          payload: {
+            key: selectedRows.map(row => row.key),
+          },
+          callback: () => {},
         });
       },
+      onCancel: function() {}
     });
+
   }
 
 
