@@ -321,6 +321,19 @@ function getFakeCaptcha(req, res) {
   return res.json('captcha-xxx');
 }
 
+// 文件上传
+function postUpload(req, res) {
+
+  const i = Math.ceil(Math.random() * 10000);
+  const file = {
+    "fileUrl" : covers[i%(covers.length - 1)],
+    "uid" : Math.random().toString(36).substring(2).substring(0,32)
+  };
+
+  return res.json(file);
+}
+
+
 export default {
   'GET /api/project/notice': getNotice,
   'GET /api/activities': getActivities,
@@ -333,4 +346,5 @@ export default {
   'GET /api/fake_list': getFakeList,
   'POST /api/fake_list': postFakeList,
   'GET /api/captcha': getFakeCaptcha,
+  'POST /api/file/upload': postUpload,
 };

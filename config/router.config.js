@@ -161,6 +161,24 @@ export default [
         ],
       },
       {
+        path: '/cms',
+        name: 'cms',
+        icon: 'profile',
+        routes: [
+          {
+            path: '/cms/category',
+            name: 'categoryList',
+            component: './Cms/CategoryList',
+          },
+          {
+            path: '/cms/tag',
+            name: 'tagList',
+            component: './Cms/TagList',
+          },
+        ],
+      },
+
+      {
         path: '/profile',
         name: 'profile',
         icon: 'profile',

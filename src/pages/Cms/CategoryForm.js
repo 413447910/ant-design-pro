@@ -20,7 +20,7 @@ const { TextArea } = Input;
 
 
 @Form.create()
-class #COMPONENT_UPPER#Form extends PureComponent {
+class CategoryForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -183,4 +183,4 @@ class #COMPONENT_UPPER#Form extends PureComponent {
 };
 
 
-export default #COMPONENT_UPPER#Form;
+export default CategoryForm;

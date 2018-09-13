@@ -1,4 +1,4 @@
-import {query#COMPONENT_UPPER#, update#COMPONENT_UPPER#, delete#COMPONENT_UPPER# , add#COMPONENT_UPPER#, } from '@/services/#COMPONENT_LOWER#';
+import {query#COMPONENT_UPPER#, update#COMPONENT_UPPER#, delete#COMPONENT_UPPER# , add#COMPONENT_UPPER#, enable#COMPONENT_UPPER#} from '@/services/#COMPONENT_LOWER#';
 
 export default {
   namespace: '#COMPONENT_LOWER#',
@@ -7,6 +7,7 @@ export default {
     data: {
       list: [],
       pagination: {},
+      treeData: [],
     },
   },
 
@@ -36,6 +37,15 @@ export default {
     },
     *update({ payload, callback }, { call, put }) {
       const response = yield call(update#COMPONENT_UPPER#, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+
+    *enable({ payload, callback }, { call, put }) {
+      const response = yield call(enable#COMPONENT_UPPER#, payload);
       yield put({
         type: 'save',
         payload: response,

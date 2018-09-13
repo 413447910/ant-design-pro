@@ -10,6 +10,7 @@ import {
   Button,
   message,
   Modal,
+  Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -54,6 +55,13 @@ class ExampleList extends PureComponent {
     {
       title: '排序',
       dataIndex: 'rankNum',
+    },
+    {
+      title: '启用',
+      dataIndex: 'isEnable',
+      render: (val, record) => (
+        <Switch checked={val} onChange={() => this.handleChangeEnable(record)} />
+      )
     },
     {
       title: '更新时间',
@@ -141,6 +149,18 @@ class ExampleList extends PureComponent {
     });
 
   }
+
+  handleChangeEnable = (record) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'example/enable',
+      payload: {
+        id: record.id,
+        isEnable: !record.isEnable,
+        key: record.key,
+      },
+    });
+  };
 
 
   handleSelectRows = rows => {
@@ -296,7 +316,8 @@ class ExampleList extends PureComponent {
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          menuTree={data.menuTree}
+          treeData={data.treeData}
+          common={data.common}
         />
 
       </PageHeaderWrapper>

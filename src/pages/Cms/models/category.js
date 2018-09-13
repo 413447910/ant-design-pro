@@ -1,7 +1,7 @@
-import {queryExample, updateExample, deleteExample , addExample, enableExample} from '@/services/example';
+import {queryCategory, updateCategory, deleteCategory , addCategory, enableCategory} from '@/services/category';
 
 export default {
-  namespace: 'example',
+  namespace: 'category',
 
   state: {
     data: {
@@ -13,14 +13,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryExample, payload);
+      const response = yield call(queryCategory, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addExample, payload);
+      const response = yield call(addCategory, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -28,7 +28,7 @@ export default {
       if (callback) callback();
     },
     *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteExample , payload);
+      const response = yield call(deleteCategory , payload);
       yield put({
         type: 'save',
         payload: response,
@@ -36,7 +36,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateExample, payload);
+      const response = yield call(updateCategory, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -45,7 +45,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableExample, payload);
+      const response = yield call(enableCategory, payload);
       yield put({
         type: 'save',
         payload: response,

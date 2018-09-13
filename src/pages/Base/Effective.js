@@ -66,12 +66,25 @@ class Effective extends PureComponent {
 
     form.setFieldsValue({'serviceJsName': value})
     form.setFieldsValue({'mockJsName': value})
+    const pageSubPath = form.getFieldValue('pageSubPath')
 
     if(value.length > 0){
       const firstUpName = this.firstLetterUpper(value);
-      form.setFieldsValue({'menuParam': `menu.list.${value}List`})
+      form.setFieldsValue({'menuParam': `menu.${pageSubPath}.${value}List`})
       form.setFieldsValue({'menuNameEn': `${firstUpName}List`})
     }
+  }
+
+  handlePageSubPathChange = (e) => {
+    const { form } = this.props;
+    const {value} = e.target
+
+    if(value.length > 0){
+      const pageSubPath = value
+      const componentName = form.getFieldValue('componentName');
+      form.setFieldsValue({'menuParam': `menu.${pageSubPath}.${componentName}List`})
+    }
+
   }
 
 
@@ -167,7 +180,7 @@ class Effective extends PureComponent {
               {getFieldDecorator('pageSubPath', {
                 initialValue: 'base',
                 rules: [{required: true, message: 'pages子目录不能为空！'}],
-              })(<Input placeholder="pages目录的子目录" />)}
+              })(<Input placeholder="pages目录的子目录" onChange={this.handlePageSubPathChange} />)}
             </FormItem>
             <FormItem {...formItemLayout} label="Service文件名">
               {getFieldDecorator('serviceJsName', {

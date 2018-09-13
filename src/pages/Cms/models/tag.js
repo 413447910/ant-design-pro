@@ -1,7 +1,7 @@
-import {queryExample, updateExample, deleteExample , addExample, enableExample} from '@/services/example';
+import {queryTag, updateTag, deleteTag , addTag, enableTag} from '@/services/tag';
 
 export default {
-  namespace: 'example',
+  namespace: 'tag',
 
   state: {
     data: {
@@ -13,14 +13,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryExample, payload);
+      const response = yield call(queryTag, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addExample, payload);
+      const response = yield call(addTag, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -28,7 +28,7 @@ export default {
       if (callback) callback();
     },
     *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteExample , payload);
+      const response = yield call(deleteTag , payload);
       yield put({
         type: 'save',
         payload: response,
@@ -36,7 +36,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateExample, payload);
+      const response = yield call(updateTag, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -45,7 +45,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableExample, payload);
+      const response = yield call(enableTag, payload);
       yield put({
         type: 'save',
         payload: response,

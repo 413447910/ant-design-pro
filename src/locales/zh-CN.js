@@ -182,6 +182,10 @@ export default {
   'menu.list.effective': '北斗神器',
   'app.form.create': '新建',
  'menu.list.appList': '应用列表', 
- 'menu.list.exampleList': '示例列表', 
  'menu.list.componentList': '组件列表', 
+ 'menu.list.categoryList': '分类列表', 
+  'menu.cms': '内容管理',
+ 'menu.cms.tagList': '标签列表', 
+ 'menu.list.exampleList': '示例列表', 
+ 'menu.cms.categoryList': '分类列表', 
  };

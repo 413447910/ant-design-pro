@@ -34,3 +34,13 @@ export async function deleteExample(params) {
     },
   });
 }
+
+export async function enableExample(params) {
+  return request('/api/example/enable', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'enable',
+    },
+  });
+}

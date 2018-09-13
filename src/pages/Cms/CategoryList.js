@@ -15,9 +15,9 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import #COMPONENT_UPPER#Form from './#COMPONENT_UPPER#Form';
+import CategoryForm from './CategoryForm';
 
-import styles from './#COMPONENT_UPPER#List.less';
+import styles from './CategoryList.less';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
@@ -29,12 +29,12 @@ const getValue = obj =>
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ #COMPONENT_LOWER#, loading }) => ({
-  #COMPONENT_LOWER#,
-  loading: loading.models.#COMPONENT_LOWER#,
+@connect(({ category, loading }) => ({
+  category,
+  loading: loading.models.category,
 }))
 @Form.create()
-class #COMPONENT_UPPER#List extends PureComponent {
+class CategoryList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
@@ -83,7 +83,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: '#COMPONENT_LOWER#/fetch',
+      type: 'category/fetch',
     });
   };
 
@@ -109,7 +109,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
     }
 
     dispatch({
-      type: '#COMPONENT_LOWER#/fetch',
+      type: 'category/fetch',
       payload: params,
     });
   };
@@ -121,7 +121,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '#COMPONENT_LOWER#/fetch',
+      type: 'category/fetch',
       payload: {},
     });
   };
@@ -138,7 +138,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
       cancelText: '取消',
       onOk: function() {
         dispatch({
-          type: '#COMPONENT_LOWER#/delete',
+          type: 'category/delete',
           payload: {
             key: selectedRows.map(row => row.key),
           },
@@ -153,7 +153,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '#COMPONENT_LOWER#/enable',
+      type: 'category/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -186,7 +186,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
       });
 
       dispatch({
-        type: '#COMPONENT_LOWER#/fetch',
+        type: 'category/fetch',
         payload: values,
       });
     });
@@ -221,7 +221,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '#COMPONENT_LOWER#/add',
+      type: 'category/add',
       payload: fields,
     });
 
@@ -232,7 +232,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '#COMPONENT_LOWER#/update',
+      type: 'category/update',
       payload: fields,
     });
 
@@ -275,7 +275,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
 
   render() {
     const {
-      #COMPONENT_LOWER#: { data },
+      category: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues } = this.state;
@@ -287,7 +287,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="#LIST_STR#">
+      <PageHeaderWrapper title="分类列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -311,7 +311,7 @@ class #COMPONENT_UPPER#List extends PureComponent {
             />
           </div>
         </Card>
-        <#COMPONENT_UPPER#Form
+        <CategoryForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -325,4 +325,4 @@ class #COMPONENT_UPPER#List extends PureComponent {
   }
 }
 
-export default #COMPONENT_UPPER#List;
+export default CategoryList;

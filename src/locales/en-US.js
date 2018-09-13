@@ -188,6 +188,11 @@ export default {
   'app.form.create': 'Create',
   'menu.list.effective': 'Effective',
  'menu.list.appList': 'AppList', 
- 'menu.list.exampleList': 'ExampleList', 
  'menu.list.componentList': 'ComponentList', 
+ 'menu.list.categoryList': 'CategoryList', 
+  'menu.cms': 'Cms',
+ 'menu.cms.exampleList': 'ExampleList', 
+ 'menu.cms.tagList': 'TagList', 
+ 'menu.list.exampleList': 'ExampleList', 
+ 'menu.cms.categoryList': 'CategoryList', 
  };

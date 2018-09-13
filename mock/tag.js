@@ -1,31 +1,19 @@
 import { parse } from 'url';
 
-const common = {
-    'uploadUrl': 'http://www.baidu.com'
-};
-
-const fileList = [{
-  uid: '-1',
-  name: 'xxx.png',
-  status: 'done',
-  url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-}];
-
 // mock tableListDataSource
 let tableListDataSource = [];
 for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
-    name: `Example ${i + 1}`,
+    name: `Tag ${i + 1}`,
     remark: `remark`,
     isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
-    picture1 : fileList,
+
   });
 }
 
@@ -49,7 +37,7 @@ const treeData = [{
 }];
 
 
-function getExample(req, res, u) {
+function getTag(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -87,13 +75,12 @@ function getExample(req, res, u) {
       current: parseInt(params.currentPage, 10) || 1,
     },
     treeData: treeData,
-    common: common
   };
 
   return res.json(result);
 }
 
-function postExample(req, res, u, b) {
+function postTag(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -120,7 +107,6 @@ function postExample(req, res, u, b) {
         remark: body.remark,
         createdAt: currTime,
         updatedAt: currTime,
-        picture1 : fileList,
       });
       break;
     case 'update':
@@ -151,16 +137,15 @@ function postExample(req, res, u, b) {
       total: tableListDataSource.length,
     },
     treeData: treeData,
-    common: common
   };
 
   return res.json(result);
 }
 
 export default {
-  'GET /api/example': getExample,
-  'POST /api/example/add': postExample,
-  'POST /api/example/update': postExample,
-  'POST /api/example/enable': postExample,
-  'POST /api/example/delete': postExample,
+  'GET /api/tag': getTag,
+  'POST /api/tag/add': postTag,
+  'POST /api/tag/update': postTag,
+  'POST /api/tag/enable': postTag,
+  'POST /api/tag/delete': postTag,
 };
