@@ -1,4 +1,4 @@
-import {queryApp, updateApp, deleteApp , addApp, } from '@/services/app';
+import {queryApp, updateApp, deleteApp , addApp, enableApp} from '@/services/app';
 
 export default {
   namespace: 'app',
@@ -7,6 +7,7 @@ export default {
     data: {
       list: [],
       pagination: {},
+      treeData: [],
     },
   },
 
@@ -36,6 +37,15 @@ export default {
     },
     *update({ payload, callback }, { call, put }) {
       const response = yield call(updateApp, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+
+    *enable({ payload, callback }, { call, put }) {
+      const response = yield call(enableApp, payload);
       yield put({
         type: 'save',
         payload: response,

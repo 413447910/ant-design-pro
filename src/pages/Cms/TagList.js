@@ -41,9 +41,19 @@ class TagList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    picture1ModalVisible: false,
+    picture1PreviewUrl: '',
   };
 
   columns = [
+    {
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
+    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -131,21 +141,23 @@ class TagList extends PureComponent {
     const { selectedRows } = this.state;
     if (!selectedRows) return;
 
-    confirm({
+    Modal.confirm({
       title: '您是否确认要删除选中内容',
       okText: '确认',
-      okType: 'danger',
       cancelText: '取消',
-      onOk: function() {
+      onOk: () => {
         dispatch({
-          type: 'tag/delete',
+            type: 'tag/delete',
           payload: {
-            key: selectedRows.map(row => row.key),
+            id: selectedRows.map(row => row.id),
           },
-          callback: () => {},
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
         });
-      },
-      onCancel: function() {}
+      }
     });
 
   }
@@ -240,6 +252,18 @@ class TagList extends PureComponent {
     this.handleModalVisible();
   };
 
+  setPreviewUrl = (record) => {
+    this.setState({
+      previewUrl: record.thumbUrl,
+      previewModalVisible: true,
+    });
+  }
+
+  closePreviewModal = () => {
+    this.setState({
+      previewModalVisible: false,
+    });
+  }
 
   renderSimpleForm() {
     const {
@@ -278,7 +302,7 @@ class TagList extends PureComponent {
       tag: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -317,8 +341,21 @@ class TagList extends PureComponent {
           isUpdate={isUpdate}
           formValues={formValues}
           treeData={data.treeData}
+          common={data.common}
         />
-
+        {
+            previewModalVisible && (<Modal
+              title="图片预览"
+              visible={previewModalVisible}
+              onOk={this.closePreviewModal}
+              onCancel={this.closePreviewModal}
+              afterClose={() => this.closePreviewModal}
+              footer={null}
+            >
+              <img src={previewUrl} width={'100%'}/>
+            </Modal>
+            )
+        }
       </PageHeaderWrapper>
     );
   }

@@ -185,7 +185,10 @@ export default {
  'menu.list.componentList': '组件列表', 
  'menu.list.categoryList': '分类列表', 
   'menu.cms': '内容管理',
- 'menu.cms.tagList': '标签列表', 
- 'menu.list.exampleList': '示例列表', 
  'menu.cms.categoryList': '分类列表', 
+ 'menu.base.appList': '应用列表', 
+ 'menu.cms.bannerList': '轮播图列表', 
+ 'menu.base.tagList': '标签列表', 
+ 'menu.list.exampleList': '示例列表', 
+ 'menu.cms.tagList': '标签列表', 
  };

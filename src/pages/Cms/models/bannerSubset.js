@@ -1,26 +1,27 @@
-import {queryCategory, updateCategory, deleteCategory , addCategory, enableCategory} from '@/services/category';
+import {queryBannerSubset, updateBannerSubset, deleteBannerSubset , addBannerSubset, enableBannerSubset} from '@/services/banner';
 
 export default {
-  namespace: 'category',
+  namespace: 'bannerSubset',
 
   state: {
     data: {
       list: [],
       pagination: {},
       treeData: [],
+      subsetList: [],
     },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryCategory, payload);
+      const response = yield call(queryBannerSubset, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addCategory, payload);
+      const response = yield call(addBannerSubset, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -28,7 +29,7 @@ export default {
       if (callback) callback();
     },
     *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteCategory , payload);
+      const response = yield call(deleteBannerSubset , payload);
       yield put({
         type: 'save',
         payload: response,
@@ -36,7 +37,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateCategory, payload);
+      const response = yield call(updateBannerSubset, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -45,7 +46,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableCategory, payload);
+      const response = yield call(enableBannerSubset, payload);
       yield put({
         type: 'save',
         payload: response,

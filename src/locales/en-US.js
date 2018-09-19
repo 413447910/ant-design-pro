@@ -192,7 +192,10 @@ export default {
  'menu.list.categoryList': 'CategoryList', 
   'menu.cms': 'Cms',
  'menu.cms.exampleList': 'ExampleList', 
- 'menu.cms.tagList': 'TagList', 
- 'menu.list.exampleList': 'ExampleList', 
  'menu.cms.categoryList': 'CategoryList', 
+ 'menu.base.appList': 'AppList', 
+ 'menu.cms.bannerList': 'BannerList', 
+ 'menu.base.tagList': 'TagList', 
+ 'menu.list.exampleList': 'ExampleList', 
+ 'menu.cms.tagList': 'TagList', 
  };

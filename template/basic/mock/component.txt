@@ -26,6 +26,7 @@ for (let i = 0; i < 46; i += 1) {
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     picture1 : fileList,
+    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
   });
 }
 
@@ -107,7 +108,7 @@ function post#COMPONENT_UPPER#(req, res, u, b) {
   switch (method) {
     /* eslint no-case-declarations:0 */
     case 'delete':
-      tableListDataSource = tableListDataSource.filter(item => key.indexOf(item.key) === -1);
+      tableListDataSource = tableListDataSource.filter(item => id.indexOf(item.id) === -1);
       break;
     case 'add':
       const i = Math.ceil(Math.random() * 10000);
@@ -121,6 +122,7 @@ function post#COMPONENT_UPPER#(req, res, u, b) {
         createdAt: currTime,
         updatedAt: currTime,
         picture1 : fileList,
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
       });
       break;
     case 'update':

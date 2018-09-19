@@ -42,7 +42,19 @@ class #COMPONENT_UPPER#Form extends PureComponent {
     })
   }
 
-  closePreviewModal = () => {
+  handleOk = () => {
+    this.setState({
+        picture1ModalVisible: false,
+    });
+  }
+
+  handleCancel = () => {
+    this.setState({
+        picture1ModalVisible: false,
+      });
+    }
+
+  closePreviewPictureModal = () => {
     this.setState({
         picture1ModalVisible: false,
     })
@@ -158,9 +170,9 @@ class #COMPONENT_UPPER#Form extends PureComponent {
         <Modal
           title="图片预览"
           visible={picture1ModalVisible}
-          onOk={this.closePreviewModal}
-          onCancel={this.closePreviewModal}
-          afterClose={this.closePreviewModal}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          afterClose={() => this.closePreviewPictureModal}
           footer={null}
         >
           <img src={picture1PreviewUrl} width={'100%'}/>

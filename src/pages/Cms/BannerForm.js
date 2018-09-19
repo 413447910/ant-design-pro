@@ -14,13 +14,14 @@ import {
   TreeSelect,
 } from 'antd';
 
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
 
 @Form.create()
-class #COMPONENT_UPPER#Form extends PureComponent {
+class BannerForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -42,13 +43,26 @@ class #COMPONENT_UPPER#Form extends PureComponent {
     })
   }
 
-  closePreviewModal = () => {
+  handleOk = () => {
+    this.setState({
+        picture1ModalVisible: false,
+    });
+  }
+
+  handleCancel = () => {
+    this.setState({
+        picture1ModalVisible: false,
+      });
+    }
+
+  closePreviewPictureModal = () => {
     this.setState({
         picture1ModalVisible: false,
     })
   }
 
   render(){
+
     const { modalVisible, form, handleAdd, handleModalVisible, formValues,
       isUpdate, handleUpdate, treeData, common} = this.props;
 
@@ -158,9 +172,9 @@ class #COMPONENT_UPPER#Form extends PureComponent {
         <Modal
           title="图片预览"
           visible={picture1ModalVisible}
-          onOk={this.closePreviewModal}
-          onCancel={this.closePreviewModal}
-          afterClose={this.closePreviewModal}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          afterClose={() => this.closePreviewPictureModal}
           footer={null}
         >
           <img src={picture1PreviewUrl} width={'100%'}/>
@@ -171,4 +185,4 @@ class #COMPONENT_UPPER#Form extends PureComponent {
 };
 
 
-export default #COMPONENT_UPPER#Form;
+export default BannerForm;

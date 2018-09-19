@@ -1,7 +1,7 @@
-import {queryCategory, updateCategory, deleteCategory , addCategory, enableCategory} from '@/services/category';
+import {query#COMPONENT_UPPER#, update#COMPONENT_UPPER#, delete#COMPONENT_UPPER# , add#COMPONENT_UPPER#, enable#COMPONENT_UPPER#} from '@/services/#COMPONENT_LOWER#';
 
 export default {
-  namespace: 'category',
+  namespace: '#COMPONENT_LOWER#',
 
   state: {
     data: {
@@ -13,14 +13,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryCategory, payload);
+      const response = yield call(query#COMPONENT_UPPER#, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addCategory, payload);
+      const response = yield call(add#COMPONENT_UPPER#, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -28,7 +28,7 @@ export default {
       if (callback) callback();
     },
     *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteCategory , payload);
+      const response = yield call(delete#COMPONENT_UPPER# , payload);
       yield put({
         type: 'save',
         payload: response,
@@ -36,7 +36,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateCategory, payload);
+      const response = yield call(update#COMPONENT_UPPER#, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -45,7 +45,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableCategory, payload);
+      const response = yield call(enable#COMPONENT_UPPER#, payload);
       yield put({
         type: 'save',
         payload: response,

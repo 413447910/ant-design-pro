@@ -34,3 +34,13 @@ export async function deleteApp(params) {
     },
   });
 }
+
+export async function enableApp(params) {
+  return request('/api/app/enable', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'enable',
+    },
+  });
+}

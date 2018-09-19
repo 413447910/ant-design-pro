@@ -15,9 +15,9 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ExampleForm from './ExampleForm';
+import #COMPONENT_UPPER#Form from './#COMPONENT_UPPER#Form';
 
-import styles from './ExampleList.less';
+import styles from './#COMPONENT_UPPER#List.less';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
@@ -29,31 +29,21 @@ const getValue = obj =>
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ example, loading }) => ({
-  example,
-  loading: loading.models.example,
+@connect(({ #COMPONENT_LOWER#, loading }) => ({
+  #COMPONENT_LOWER#,
+  loading: loading.models.#COMPONENT_LOWER#,
 }))
 @Form.create()
-class ExampleList extends PureComponent {
+class #COMPONENT_UPPER#List extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
-    picture1ModalVisible: false,
-    picture1PreviewUrl: '',
   };
 
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -93,7 +83,7 @@ class ExampleList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/fetch',
+      type: '#COMPONENT_LOWER#/fetch',
     });
   };
 
@@ -119,7 +109,7 @@ class ExampleList extends PureComponent {
     }
 
     dispatch({
-      type: 'example/fetch',
+      type: '#COMPONENT_LOWER#/fetch',
       payload: params,
     });
   };
@@ -131,7 +121,7 @@ class ExampleList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'example/fetch',
+      type: '#COMPONENT_LOWER#/fetch',
       payload: {},
     });
   };
@@ -141,23 +131,21 @@ class ExampleList extends PureComponent {
     const { selectedRows } = this.state;
     if (!selectedRows) return;
 
-    Modal.confirm({
+    confirm({
       title: '您是否确认要删除选中内容',
       okText: '确认',
+      okType: 'danger',
       cancelText: '取消',
-      onOk: () => {
+      onOk: function() {
         dispatch({
-            type: 'example/delete',
+          type: '#COMPONENT_LOWER#/delete',
           payload: {
-            id: selectedRows.map(row => row.id),
+            key: selectedRows.map(row => row.key),
           },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
+          callback: () => {},
         });
-      }
+      },
+      onCancel: function() {}
     });
 
   }
@@ -165,7 +153,7 @@ class ExampleList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/enable',
+      type: '#COMPONENT_LOWER#/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -198,7 +186,7 @@ class ExampleList extends PureComponent {
       });
 
       dispatch({
-        type: 'example/fetch',
+        type: '#COMPONENT_LOWER#/fetch',
         payload: values,
       });
     });
@@ -233,7 +221,7 @@ class ExampleList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/add',
+      type: '#COMPONENT_LOWER#/add',
       payload: fields,
     });
 
@@ -244,7 +232,7 @@ class ExampleList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/update',
+      type: '#COMPONENT_LOWER#/update',
       payload: fields,
     });
 
@@ -252,18 +240,6 @@ class ExampleList extends PureComponent {
     this.handleModalVisible();
   };
 
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl,
-      previewModalVisible: true,
-    });
-  }
-
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
-    });
-  }
 
   renderSimpleForm() {
     const {
@@ -299,10 +275,10 @@ class ExampleList extends PureComponent {
 
   render() {
     const {
-      example: { data },
+      #COMPONENT_LOWER#: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues } = this.state;
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -311,7 +287,7 @@ class ExampleList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="示例列表">
+      <PageHeaderWrapper title="#LIST_STR#">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -335,7 +311,7 @@ class ExampleList extends PureComponent {
             />
           </div>
         </Card>
-        <ExampleForm
+        <#COMPONENT_UPPER#Form
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -343,22 +319,10 @@ class ExampleList extends PureComponent {
           treeData={data.treeData}
           common={data.common}
         />
-        {
-            previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-            )
-        }
+
       </PageHeaderWrapper>
     );
   }
 }
 
-export default ExampleList;
+export default #COMPONENT_UPPER#List;

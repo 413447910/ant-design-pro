@@ -11,13 +11,15 @@ import {
   message,
   Modal,
   Switch,
+  Divider,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ExampleForm from './ExampleForm';
+import BannerForm from './BannerForm';
+import BannerSubSet from './BannerSubset';
 
-import styles from './ExampleList.less';
+import styles from './BannerList.less';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
@@ -29,20 +31,21 @@ const getValue = obj =>
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ example, loading }) => ({
-  example,
-  loading: loading.models.example,
+@connect(({ banner, loading }) => ({
+  banner,
+  loading: loading.models.banner,
 }))
 @Form.create()
-class ExampleList extends PureComponent {
+class BannerList extends PureComponent {
   state = {
     modalVisible: false,
+    subsetModalVisible: false,
     isUpdate: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
-    picture1ModalVisible: false,
-    picture1PreviewUrl: '',
+    previewUrl: '',
+    previewModalVisible: false,
   };
 
   columns = [
@@ -84,6 +87,8 @@ class ExampleList extends PureComponent {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.handleModalVisible(true, 'update', record)}>更新</a>
+          <Divider type="vertical" />
+          <a onClick={() => this.handleModalVisible(true, 'subset', record)}>管理</a>
         </Fragment>
       ),
     },
@@ -93,7 +98,7 @@ class ExampleList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/fetch',
+      type: 'banner/fetch',
     });
   };
 
@@ -119,7 +124,7 @@ class ExampleList extends PureComponent {
     }
 
     dispatch({
-      type: 'example/fetch',
+      type: 'banner/fetch',
       payload: params,
     });
   };
@@ -131,7 +136,7 @@ class ExampleList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'example/fetch',
+      type: 'banner/fetch',
       payload: {},
     });
   };
@@ -147,9 +152,9 @@ class ExampleList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-            type: 'example/delete',
+          type: 'banner/delete',
           payload: {
-            id: selectedRows.map(row => row.id),
+            key: selectedRows.map(row => row.key),
           },
           callback: () => {
             this.setState({
@@ -159,13 +164,13 @@ class ExampleList extends PureComponent {
         });
       }
     });
-
   }
+
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/enable',
+      type: 'banner/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -198,7 +203,7 @@ class ExampleList extends PureComponent {
       });
 
       dispatch({
-        type: 'example/fetch',
+        type: 'banner/fetch',
         payload: values,
       });
     });
@@ -221,6 +226,13 @@ class ExampleList extends PureComponent {
           formValues: record || {},
         });
         break;
+      case 'subset' :
+        console.log('subset record', record)
+        this.setState({
+          subsetModalVisible: !!flag,
+          formValues: record || {},
+        });
+        break;
       default:
         this.setState({
           modalVisible: !!flag,
@@ -233,7 +245,7 @@ class ExampleList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/add',
+      type: 'banner/add',
       payload: fields,
     });
 
@@ -244,7 +256,7 @@ class ExampleList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/update',
+      type: 'banner/update',
       payload: fields,
     });
 
@@ -299,10 +311,13 @@ class ExampleList extends PureComponent {
 
   render() {
     const {
-      example: { data },
+      banner: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate,
+      formValues, subsetModalVisible,
+      previewUrl, previewModalVisible
+    } = this.state;
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -310,8 +325,9 @@ class ExampleList extends PureComponent {
       handleUpdate: this.handleUpdate,
     };
 
+
     return (
-      <PageHeaderWrapper title="示例列表">
+      <PageHeaderWrapper title="轮播图列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -335,30 +351,44 @@ class ExampleList extends PureComponent {
             />
           </div>
         </Card>
-        <ExampleForm
-          {...parentMethods}
-          modalVisible={modalVisible}
-          isUpdate={isUpdate}
-          formValues={formValues}
-          treeData={data.treeData}
-          common={data.common}
-        />
+
         {
-            previewModalVisible && (<Modal
+          modalVisible ?
+            <BannerForm
+              {...parentMethods}
+              modalVisible={modalVisible}
+              isUpdate={isUpdate}
+              formValues={formValues}
+              treeData={data.treeData}
+              common={data.common}
+            /> : null
+        }
+        {
+          subsetModalVisible ?
+            <BannerSubSet
+              {...parentMethods}
+              modalVisible={subsetModalVisible}
+              formValues={formValues}
+              common={data.common}
+            /> : null
+        }
+        {
+          previewModalVisible && (<Modal
               title="图片预览"
               visible={previewModalVisible}
               onOk={this.closePreviewModal}
               onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
+              afterClose={this.closePreviewModal}
               footer={null}
             >
               <img src={previewUrl} width={'100%'}/>
             </Modal>
-            )
+          )
         }
+
       </PageHeaderWrapper>
     );
   }
 }
 
-export default ExampleList;
+export default BannerList;

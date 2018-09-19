@@ -1,20 +1,52 @@
 import { parse } from 'url';
 
+const common = {
+    'uploadUrl': 'http://www.baidu.com'
+};
+
+const fileList = [{
+  uid: '-1',
+  name: 'xxx.png',
+  status: 'done',
+  url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+}];
+
 // mock tableListDataSource
 let tableListDataSource = [];
 for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
-    id: i,
+    id: i + 1,
     name: `App ${i + 1}`,
     remark: `remark`,
+    isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
-
+    picture1 : fileList,
   });
 }
+
+const treeData = [{
+  title: 'Node1',
+  value: '0-0',
+  key: '0-0',
+  children: [{
+    title: 'Child Node1',
+    value: '0-0-1',
+    key: '0-0-1',
+  }, {
+    title: 'Child Node2',
+    value: '0-0-2',
+    key: '0-0-2',
+  }],
+}, {
+  title: 'Node2',
+  value: '0-1',
+  key: '0-1',
+}];
 
 
 function getApp(req, res, u) {
@@ -54,6 +86,8 @@ function getApp(req, res, u) {
       pageSize,
       current: parseInt(params.currentPage, 10) || 1,
     },
+    treeData: treeData,
+    common: common
   };
 
   return res.json(result);
@@ -66,7 +100,7 @@ function postApp(req, res, u, b) {
   }
 
   const body = (b && b.body) || req.body;
-  const { method, key, status,id } = body;
+  const { method, key, isEnable, id } = body;
   const updatedAt = new Date();
   const currTime = new Date();
 
@@ -86,6 +120,7 @@ function postApp(req, res, u, b) {
         remark: body.remark,
         createdAt: currTime,
         updatedAt: currTime,
+        picture1 : fileList,
       });
       break;
     case 'update':
@@ -93,6 +128,15 @@ function postApp(req, res, u, b) {
         if (item.id === id) {
           Object.assign(item, body, {updatedAt});
           return item;
+        }
+        return item;
+      });
+      break;
+    case 'enable':
+      tableListDataSource = tableListDataSource.map(item => {
+        if (item.id === id) {
+            Object.assign(item, {isEnable, updatedAt});
+            return item;
         }
         return item;
       });
@@ -106,6 +150,8 @@ function postApp(req, res, u, b) {
     pagination: {
       total: tableListDataSource.length,
     },
+    treeData: treeData,
+    common: common
   };
 
   return res.json(result);
@@ -115,5 +161,6 @@ export default {
   'GET /api/app': getApp,
   'POST /api/app/add': postApp,
   'POST /api/app/update': postApp,
+  'POST /api/app/enable': postApp,
   'POST /api/app/delete': postApp,
 };

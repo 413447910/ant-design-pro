@@ -171,6 +171,11 @@ export default [
             component: './Cms/CategoryList',
           },
           {
+            path: '/cms/banner',
+            name: 'bannerList',
+            component: './Cms/bannerList',
+          },
+          {
             path: '/cms/tag',
             name: 'tagList',
             component: './Cms/TagList',
