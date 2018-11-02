@@ -56,6 +56,10 @@ const cachedSave = (response, hashcode) => {
   return response;
 };
 
+const parseJson = (response) => {
+  return response.json();
+}
+
 /**
  * Requests a URL, returning a promise.
  *
@@ -122,14 +126,19 @@ export default function request(
   console.log('request url', url, ' data is', newOptions)
   return fetch(url, newOptions)
     .then(checkStatus)
-    .then(response => cachedSave(response, hashcode))
-    .then(response => {
-      // DELETE and 204 do not return data by default
-      // using .json will report an error.
-      if (newOptions.method === 'DELETE' || response.status === 204) {
-        return response.text();
-      }
-      return response.json();
+//    .then(response => cachedSave(response, hashcode))
+    .then(parseJson)
+    .then(respData => {
+
+        return respData
+        const code = respData.code
+
+        if(code === 0){
+          return respData.data;
+        }
+
+        throw new Error('unsupported parameters');
+
     })
     .catch(e => {
       const status = e.name;
@@ -153,5 +162,11 @@ export default function request(
       if (status >= 404 && status < 422) {
         router.push('/exception/404');
       }
+
+      notification.error({
+        message: `请求错误`,
+        description: e.message,
+      });
+
     });
 }

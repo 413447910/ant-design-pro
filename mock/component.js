@@ -1,20 +1,58 @@
 import { parse } from 'url';
 
+const common = {
+  'selectOption' : [
+    {'key' : 1, 'text' : 'ant'},
+    {'key' : 2, 'text' : 'design'},
+    {'key' : 3, 'text' : 'pro'}
+   ],
+};
+
+const fileList = [{
+  uid: '-1',
+  name: 'xxx.png',
+  status: 'done',
+  url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  fileUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+}];
+
 // mock tableListDataSource
 let tableListDataSource = [];
 for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
-    id: i,
+    id: i + 1,
     name: `Component ${i + 1}`,
     remark: `remark`,
+    isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
+    groupId: Math.floor(Math.random() * 10) % 10 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
-
+    picture1 : fileList,
+    thumbUrl: fileList[0],
   });
 }
+
+const treeData = [{
+  title: 'Node1',
+  value: '0-0',
+  key: '0-0',
+  children: [{
+    title: 'Child Node1',
+    value: '0-0-1',
+    key: '0-0-1',
+  }, {
+    title: 'Child Node2',
+    value: '0-0-2',
+    key: '0-0-2',
+  }],
+}, {
+  title: 'Node2',
+  value: '0-1',
+  key: '0-1',
+}];
 
 
 function getComponent(req, res, u) {
@@ -54,6 +92,8 @@ function getComponent(req, res, u) {
       pageSize,
       current: parseInt(params.currentPage, 10) || 1,
     },
+    treeData: treeData,
+    common: common
   };
 
   return res.json(result);
@@ -66,14 +106,14 @@ function postComponent(req, res, u, b) {
   }
 
   const body = (b && b.body) || req.body;
-  const { method, key, status,id } = body;
+  const { method, key, isEnable, id } = body;
   const updatedAt = new Date();
   const currTime = new Date();
 
   switch (method) {
     /* eslint no-case-declarations:0 */
     case 'delete':
-      tableListDataSource = tableListDataSource.filter(item => key.indexOf(item.key) === -1);
+      tableListDataSource = tableListDataSource.filter(item => id.indexOf(item.id) === -1);
       break;
     case 'add':
       const i = Math.ceil(Math.random() * 10000);
@@ -83,9 +123,12 @@ function postComponent(req, res, u, b) {
         name: body.name,
         disabled: i % 6 === 0,
         rankNum: body.rankNum,
+        groupId:  i % 10,
         remark: body.remark,
         createdAt: currTime,
         updatedAt: currTime,
+        picture1 : fileList,
+        thumbUrl: fileList[0],
       });
       break;
     case 'update':
@@ -93,6 +136,15 @@ function postComponent(req, res, u, b) {
         if (item.id === id) {
           Object.assign(item, body, {updatedAt});
           return item;
+        }
+        return item;
+      });
+      break;
+    case 'enable':
+      tableListDataSource = tableListDataSource.map(item => {
+        if (item.id === id) {
+            Object.assign(item, {isEnable, updatedAt});
+            return item;
         }
         return item;
       });
@@ -106,14 +158,17 @@ function postComponent(req, res, u, b) {
     pagination: {
       total: tableListDataSource.length,
     },
+    treeData: treeData,
+    common: common
   };
 
   return res.json(result);
 }
 
 export default {
-  'GET /api/component': getComponent,
-  'POST /api/component/add': postComponent,
+  'GET /api/component/index': getComponent,
+  'POST /api/component/store': postComponent,
   'POST /api/component/update': postComponent,
-  'POST /api/component/delete': postComponent,
+  'POST /api/component/enable': postComponent,
+  'POST /api/component/destroy': postComponent,
 };

@@ -8,30 +8,38 @@ import {
   Form,
   Input,
   Button,
+  message,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
-import {componentHiddenFields, getValue} from '@/utils/BdHelper';
+import ComponentForm from './ComponentForm';
+import {componentHiddenFields} from '@/utils/BdHelper';
 
-import styles from './##COMPONENT_CAMEL##List.less';
+import styles from './ComponentList.less';
 
 const FormItem = Form.Item;
 
 
+const getValue = obj =>
+  Object.keys(obj)
+    .map(key => obj[key])
+    .join(',');
+
+
 /* eslint react/no-multi-comp:0 */
-@connect(({ ##COMPONENT_LOWER##, loading }) => ({
-  ##COMPONENT_LOWER##,
-  loading: loading.models.##COMPONENT_LOWER##,
+@connect(({ component, loading }) => ({
+  component,
+  loading: loading.models.component,
 }))
 @Form.create()
-class ##COMPONENT_CAMEL##List extends PureComponent {
+class ComponentList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
+    expandForm: false,
     selectedRows: [],
     hiddenFields: [],
     formValues: {},
@@ -85,7 +93,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'component/fetch',
     });
   };
 
@@ -111,7 +119,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
 
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'component/fetch',
       payload: params,
     });
   };
@@ -123,17 +131,41 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'component/fetch',
       payload: {},
     });
   };
 
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
 
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'component/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+
+  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/enable',
+      type: 'component/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -166,7 +198,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       });
 
       dispatch({
-        type: '##COMPONENT_LOWER##/fetch',
+        type: 'component/fetch',
         payload: values,
       });
     });
@@ -198,58 +230,25 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
   };
 
-  reserveForm = fields => {
-    this.setState({
-      formValues: fields,
-    });
-  }
-
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/store',
+      type: 'component/store',
       payload: fields,
-      callback: this.handleModalVisible
     });
 
-    this.reserveForm(fields);
+    this.handleModalVisible();
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/update',
+      type: 'component/update',
       payload: fields,
-      callback: this.handleModalVisible
     });
 
-    this.reserveForm(fields);
+    this.handleModalVisible();
   };
-
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
-
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-          type: '##COMPONENT_LOWER##/destroy',
-          payload: {
-            id: selectedRows.map(row => row.id),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-  }
 
   setPreviewUrl = (record) => {
     this.setState({
@@ -292,12 +291,13 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 
   renderForm() {
-    return this.renderSimpleForm();
+    const { expandForm } = this.state;
+    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
 
   render() {
     const {
-      ##COMPONENT_LOWER##: { data },
+      component: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
@@ -312,7 +312,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="##LIST_STR##">
+      <PageHeaderWrapper title="组件管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -336,7 +336,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
             />
           </div>
         </Card>
-        <##COMPONENT_CAMEL##Form
+        <ComponentForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -362,4 +362,4 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 }
 
-export default ##COMPONENT_CAMEL##List;
+export default ComponentList;

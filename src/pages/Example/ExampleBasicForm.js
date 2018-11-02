@@ -21,7 +21,7 @@ const { TextArea } = Input;
 
 
 @Form.create()
-class ##COMPONENT_CAMEL##Form extends PureComponent {
+class ExampleBasicForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -208,4 +208,4 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
 };
 
 
-export default ##COMPONENT_CAMEL##Form;
+export default ExampleBasicForm;

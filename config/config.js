@@ -88,6 +88,14 @@ export default {
       },
     ],
   },
+  proxy: {
+    "/api": {
+      "target": "http://127.0.0.1:8001/",
+      "changeOrigin": true,
+      "pathRewrite": { "^/api" : "/api" },
+      "secure": false,
+    }
+  },
 
   chainWebpack: webpackplugin,
   cssnano: {

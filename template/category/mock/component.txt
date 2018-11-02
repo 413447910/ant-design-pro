@@ -1,11 +1,7 @@
 import { parse } from 'url';
 
 const common = {
-  'selectOption' : [
-    {'key' : 1, 'text' : 'ant'},
-    {'key' : 2, 'text' : 'design'},
-    {'key' : 3, 'text' : 'pro'}
-   ],
+    'uploadUrl': 'http://www.baidu.com'
 };
 
 const fileList = [{
@@ -13,7 +9,7 @@ const fileList = [{
   name: 'xxx.png',
   status: 'done',
   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  fileUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 }];
 
 // mock tableListDataSource
@@ -27,11 +23,10 @@ for (let i = 0; i < 46; i += 1) {
     isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
-    groupId: Math.floor(Math.random() * 10) % 10 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     picture1 : fileList,
-    thumbUrl: fileList[0],
+    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
   });
 }
 
@@ -123,12 +118,11 @@ function post##COMPONENT_CAMEL##(req, res, u, b) {
         name: body.name,
         disabled: i % 6 === 0,
         rankNum: body.rankNum,
-        groupId:  i % 10,
         remark: body.remark,
         createdAt: currTime,
         updatedAt: currTime,
         picture1 : fileList,
-        thumbUrl: fileList[0],
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
       });
       break;
     case 'update':
@@ -166,9 +160,9 @@ function post##COMPONENT_CAMEL##(req, res, u, b) {
 }
 
 export default {
-  'GET /api/##COMPONENT_ROUTE_PREFIX##/index': get##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/store': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/update': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/enable': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/destroy': post##COMPONENT_CAMEL##,
+  'GET /api/##COMPONENT_LOWER##': get##COMPONENT_CAMEL##,
+  'POST /api/##COMPONENT_LOWER##/add': post##COMPONENT_CAMEL##,
+  'POST /api/##COMPONENT_LOWER##/update': post##COMPONENT_CAMEL##,
+  'POST /api/##COMPONENT_LOWER##/enable': post##COMPONENT_CAMEL##,
+  'POST /api/##COMPONENT_LOWER##/delete': post##COMPONENT_CAMEL##,
 };

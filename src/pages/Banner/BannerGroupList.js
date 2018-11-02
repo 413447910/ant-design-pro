@@ -8,32 +8,38 @@ import {
   Form,
   Input,
   Button,
+  message,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
-import {componentHiddenFields, getValue} from '@/utils/BdHelper';
+import BannerGroupForm from './BannerGroupForm';
 
-import styles from './##COMPONENT_CAMEL##List.less';
+import styles from './BannerGroupList.less';
 
 const FormItem = Form.Item;
 
 
+const getValue = obj =>
+  Object.keys(obj)
+    .map(key => obj[key])
+    .join(',');
+
+
 /* eslint react/no-multi-comp:0 */
-@connect(({ ##COMPONENT_LOWER##, loading }) => ({
-  ##COMPONENT_LOWER##,
-  loading: loading.models.##COMPONENT_LOWER##,
+@connect(({ bannergroup, loading }) => ({
+  bannergroup,
+  loading: loading.models.bannergroup,
 }))
 @Form.create()
-class ##COMPONENT_CAMEL##List extends PureComponent {
+class BannerGroupList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
+    expandForm: false,
     selectedRows: [],
-    hiddenFields: [],
     formValues: {},
   };
 
@@ -43,7 +49,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       dataIndex: 'thumbUrl',
       width: 100,
       render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
       )
     },
     {
@@ -85,7 +91,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'bannergroup/fetch',
     });
   };
 
@@ -111,7 +117,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
 
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'bannergroup/fetch',
       payload: params,
     });
   };
@@ -123,17 +129,41 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'bannergroup/fetch',
       payload: {},
     });
   };
 
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
 
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+            type: 'bannergroup/delete',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+
+  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/enable',
+      type: 'bannergroup/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -166,7 +196,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       });
 
       dispatch({
-        type: '##COMPONENT_LOWER##/fetch',
+        type: 'bannergroup/fetch',
         payload: values,
       });
     });
@@ -174,7 +204,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'store' :
+      case 'add' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -192,68 +222,37 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
-          isUpdate: false,
           formValues: {},
         });
+        break;
     }
   };
-
-  reserveForm = fields => {
-    this.setState({
-      formValues: fields,
-    });
-  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/store',
+      type: 'bannergroup/add',
       payload: fields,
-      callback: this.handleModalVisible
     });
 
-    this.reserveForm(fields);
+    message.success('添加成功');
+    this.handleModalVisible();
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/update',
+      type: 'bannergroup/update',
       payload: fields,
-      callback: this.handleModalVisible
     });
 
-    this.reserveForm(fields);
+    message.success('更新成功');
+    this.handleModalVisible();
   };
-
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
-
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-          type: '##COMPONENT_LOWER##/destroy',
-          payload: {
-            id: selectedRows.map(row => row.id),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-  }
 
   setPreviewUrl = (record) => {
     this.setState({
-      previewUrl: record.thumbUrl.thumbUrl,
+      previewUrl: record.thumbUrl,
       previewModalVisible: true,
     });
   }
@@ -292,18 +291,16 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 
   renderForm() {
-    return this.renderSimpleForm();
+    const { expandForm } = this.state;
+    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
 
   render() {
     const {
-      ##COMPONENT_LOWER##: { data },
+      bannergroup: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-        previewUrl, previewModalVisible } = this.state;
-
-    const showColumn = componentHiddenFields(this.columns, hiddenFields)
+    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -312,12 +309,12 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="##LIST_STR##">
+      <PageHeaderWrapper title="Banner组">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -330,19 +327,19 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={showColumn}
+              columns={this.columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
-        <##COMPONENT_CAMEL##Form
+        <BannerGroupForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          hiddenFields={hiddenFields}
-          data={data}
+          treeData={data.treeData}
+          common={data.common}
         />
         {
             previewModalVisible && (<Modal
@@ -362,4 +359,4 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 }
 
-export default ##COMPONENT_CAMEL##List;
+export default BannerGroupList;

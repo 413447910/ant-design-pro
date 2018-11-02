@@ -22,7 +22,7 @@ for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
-    name: `##COMPONENT_CAMEL## ${i + 1}`,
+    name: `ExampleBasic ${i + 1}`,
     remark: `remark`,
     isEnable: true,
     disabled: i % 6 === 0,
@@ -55,7 +55,7 @@ const treeData = [{
 }];
 
 
-function get##COMPONENT_CAMEL##(req, res, u) {
+function getExampleBasic(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -99,7 +99,7 @@ function get##COMPONENT_CAMEL##(req, res, u) {
   return res.json(result);
 }
 
-function post##COMPONENT_CAMEL##(req, res, u, b) {
+function postExampleBasic(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -166,9 +166,9 @@ function post##COMPONENT_CAMEL##(req, res, u, b) {
 }
 
 export default {
-  'GET /api/##COMPONENT_ROUTE_PREFIX##/index': get##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/store': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/update': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/enable': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/destroy': post##COMPONENT_CAMEL##,
+  'GET /api/example/basic/index': getExampleBasic,
+  'POST /api/example/basic/store': postExampleBasic,
+  'POST /api/example/basic/update': postExampleBasic,
+  'POST /api/example/basic/enable': postExampleBasic,
+  'POST /api/example/basic/destroy': postExampleBasic,
 };

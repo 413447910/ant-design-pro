@@ -2,11 +2,11 @@ import request from '@/utils/request';
 import { stringify } from 'qs';
 
 export async function queryComponent(params) {
-  return request(`/api/component?${stringify(params)}`);
+  return request(`/api/component/index?${stringify(params)}`);
 }
 
-export async function addComponent(params) {
-  return request('/api/component/add', {
+export async function storeComponent(params) {
+  return request('/api/component/store', {
     method: 'POST',
     body: {
       ...params,
@@ -25,12 +25,22 @@ export async function updateComponent(params) {
   });
 }
 
-export async function deleteComponent(params) {
-  return request('/api/component/delete', {
+export async function destroyComponent(params) {
+  return request('/api/component/destroy', {
     method: 'POST',
     body: {
       ...params,
       method: 'delete',
+    },
+  });
+}
+
+export async function enableComponent(params) {
+  return request('/api/component/enable', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'enable',
     },
   });
 }

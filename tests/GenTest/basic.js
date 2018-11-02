@@ -52,6 +52,7 @@ function generateFiles(body) {
   const tplFileSrcMock = `${templatePath}/mock/component.txt`
 
 
+
   const tplFileTargetMenuCn = `${projectPath}/src/locales/zh-CN.js`
   const tplFileTargetMenuEn = `${projectPath}/src/locales/en-US.js`
   const tplFileTargetPageList = projectPath + '/src/pages/' + pageSubPathFirstUpper + '/' + componentFirstUpperName + 'List.js'

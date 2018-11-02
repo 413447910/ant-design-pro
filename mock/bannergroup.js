@@ -1,11 +1,7 @@
 import { parse } from 'url';
 
 const common = {
-  'selectOption' : [
-    {'key' : 1, 'text' : 'ant'},
-    {'key' : 2, 'text' : 'design'},
-    {'key' : 3, 'text' : 'pro'}
-   ],
+    'uploadUrl': 'http://www.baidu.com'
 };
 
 const fileList = [{
@@ -13,25 +9,25 @@ const fileList = [{
   name: 'xxx.png',
   status: 'done',
   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  fileUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 }];
 
 // mock tableListDataSource
 let tableListDataSource = [];
-for (let i = 0; i < 46; i += 1) {
+for (let i = 0; i < 33; i += 1) {
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
-    name: `##COMPONENT_CAMEL## ${i + 1}`,
+    name: `BannerGroup ${i + 1}`,
     remark: `remark`,
     isEnable: true,
+    groupId: Math.floor(Math.random() * 10) % 10,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
-    groupId: Math.floor(Math.random() * 10) % 10 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     picture1 : fileList,
-    thumbUrl: fileList[0],
+    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
   });
 }
 
@@ -55,7 +51,7 @@ const treeData = [{
 }];
 
 
-function get##COMPONENT_CAMEL##(req, res, u) {
+function getBannerGroup(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -99,7 +95,7 @@ function get##COMPONENT_CAMEL##(req, res, u) {
   return res.json(result);
 }
 
-function post##COMPONENT_CAMEL##(req, res, u, b) {
+function postBannerGroup(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -123,12 +119,12 @@ function post##COMPONENT_CAMEL##(req, res, u, b) {
         name: body.name,
         disabled: i % 6 === 0,
         rankNum: body.rankNum,
-        groupId:  i % 10,
         remark: body.remark,
         createdAt: currTime,
         updatedAt: currTime,
         picture1 : fileList,
-        thumbUrl: fileList[0],
+        groupId : i % 10,
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
       });
       break;
     case 'update':
@@ -166,9 +162,9 @@ function post##COMPONENT_CAMEL##(req, res, u, b) {
 }
 
 export default {
-  'GET /api/##COMPONENT_ROUTE_PREFIX##/index': get##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/store': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/update': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/enable': post##COMPONENT_CAMEL##,
-  'POST /api/##COMPONENT_ROUTE_PREFIX##/destroy': post##COMPONENT_CAMEL##,
+  'GET /api/bannergroup': getBannerGroup,
+  'POST /api/bannergroup/add': postBannerGroup,
+  'POST /api/bannergroup/update': postBannerGroup,
+  'POST /api/bannergroup/enable': postBannerGroup,
+  'POST /api/bannergroup/delete': postBannerGroup,
 };

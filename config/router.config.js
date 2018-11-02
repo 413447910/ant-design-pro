@@ -86,22 +86,45 @@ export default [
           },
         ],
       },
+      {
+        path: 'beidou',
+        icon: 'table',
+        name: 'beidou',
+        routes: [
+          {
+            path: '/beidou/effective',
+            name: 'effective',
+            component: './Base/Effective',
+          },
+          {
+            path: '/beidou/example-list',
+            name: 'exampleList',
+            component: './Base/ExampleList',
+          },
+          {
+            path: '/beidou/banner-group',
+            name: 'BannerGroup',
+            component: './Banner/BannerGroupList',
+          },
+          {
+            path: '/beidou/component',
+            name: 'Component',
+            component: './Component/ComponentList',
+          },
+          {
+            path: '/beidou/example-basic',
+            name: 'ExampleBasic',
+            component: './Example/ExampleBasicList',
+          },
+        ],
+      },
       // list
       {
         path: '/list',
         icon: 'table',
         name: 'list',
         routes: [
-          {
-            path: '/list/effective',
-            name: 'effective',
-            component: './Base/Effective',
-          },
-          {
-            path: '/list/example-list',
-            name: 'exampleList',
-            component: './Base/ExampleList',
-          },
+
           {
             path: '/list/menu-list',
             name: 'menuList',
