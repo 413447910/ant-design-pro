@@ -107,14 +107,19 @@ export default [
             component: './Banner/BannerGroupList',
           },
           {
-            path: '/beidou/component',
-            name: 'Component',
-            component: './Component/ComponentList',
+            path: '/beidou/generator',
+            name: 'Generator',
+            component: './Generator/GeneratorList',
           },
           {
             path: '/beidou/example-basic',
             name: 'ExampleBasic',
             component: './Example/ExampleBasicList',
+          },
+          {
+            path: '/beidou/example-simple',
+            name: 'ExampleSimple',
+            component: './Example/ExampleSimpleList',
           },
         ],
       },
@@ -129,11 +134,6 @@ export default [
             path: '/list/menu-list',
             name: 'menuList',
             component: './Base/MenuList',
-          },
-          {
-            path: '/list/component-list',
-            name: 'componentList',
-            component: './Base/componentList',
           },
           {
             path: '/list/app-list',

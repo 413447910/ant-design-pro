@@ -14,21 +14,21 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
+import ExampleSimpleForm from './ExampleSimpleForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './##COMPONENT_CAMEL##List.less';
+import styles from './ExampleSimpleList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ ##COMPONENT_LOWER##, loading }) => ({
-  ##COMPONENT_LOWER##,
-  loading: loading.models.##COMPONENT_LOWER##,
+@connect(({ examplesimple, loading }) => ({
+  examplesimple,
+  loading: loading.models.examplesimple,
 }))
 @Form.create()
-class ##COMPONENT_CAMEL##List extends PureComponent {
+class ExampleSimpleList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
@@ -77,7 +77,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'examplesimple/fetch',
     });
   };
 
@@ -103,7 +103,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
 
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'examplesimple/fetch',
       payload: params,
     });
   };
@@ -115,7 +115,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'examplesimple/fetch',
       payload: {},
     });
   };
@@ -125,7 +125,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/enable',
+      type: 'examplesimple/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -158,7 +158,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       });
 
       dispatch({
-        type: '##COMPONENT_LOWER##/fetch',
+        type: 'examplesimple/fetch',
         payload: values,
       });
     });
@@ -199,7 +199,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/store',
+      type: 'examplesimple/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -210,7 +210,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/update',
+      type: 'examplesimple/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -229,7 +229,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: '##COMPONENT_LOWER##/destroy',
+          type: 'examplesimple/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -276,7 +276,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
 
   render() {
     const {
-      ##COMPONENT_LOWER##: { data },
+      examplesimple: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
@@ -290,7 +290,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="##LIST_STR##">
+      <PageHeaderWrapper title="简单模版">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -314,7 +314,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
             />
           </div>
         </Card>
-        <##COMPONENT_CAMEL##Form
+        <ExampleSimpleForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -327,4 +327,4 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 }
 
-export default ##COMPONENT_CAMEL##List;
+export default ExampleSimpleList;

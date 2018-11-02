@@ -202,4 +202,6 @@ export default {
 	'menu.beidou.Tag': 'Tag',
 	'menu.beidou.Component': 'Component',
 	'menu.beidou.ExampleBasic': 'ExampleBasic',
+	'menu.beidou.Generator': 'Generator',
+	'menu.beidou.ExampleSimple': 'ExampleSimple',
 };

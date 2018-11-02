@@ -8,41 +8,44 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
+  Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ComponentForm from './ComponentForm';
+import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './ComponentList.less';
+import styles from './##COMPONENT_CAMEL##List.less';
 
 const FormItem = Form.Item;
-const confirm = Modal.confirm;
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ component, loading }) => ({
-  component,
-  loading: loading.models.component,
+@connect(({ ##COMPONENT_LOWER##, loading }) => ({
+  ##COMPONENT_LOWER##,
+  loading: loading.models.##COMPONENT_LOWER##,
 }))
 @Form.create()
-class ComponentList extends PureComponent {
+class ##COMPONENT_CAMEL##List extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: [],
     formValues: {},
   };
 
   columns = [
+    {
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
+    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -54,6 +57,13 @@ class ComponentList extends PureComponent {
     {
       title: '排序',
       dataIndex: 'rankNum',
+    },
+    {
+      title: '启用',
+      dataIndex: 'isEnable',
+      render: (val, record) => (
+        <Switch checked={val} onChange={() => this.handleChangeEnable(record)} />
+      )
     },
     {
       title: '更新时间',
@@ -75,7 +85,7 @@ class ComponentList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
     });
   };
 
@@ -101,7 +111,7 @@ class ComponentList extends PureComponent {
     }
 
     dispatch({
-      type: 'component/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: params,
     });
   };
@@ -113,34 +123,24 @@ class ComponentList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'component/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: {},
     });
   };
 
-  handleRemove = () => {
+
+
+  handleChangeEnable = (record) => {
     const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
-
-    confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: function() {
-        dispatch({
-          type: 'component/delete',
-          payload: {
-            key: selectedRows.map(row => row.key),
-          },
-          callback: () => {},
-        });
+    dispatch({
+      type: '##COMPONENT_LOWER##/enable',
+      payload: {
+        id: record.id,
+        isEnable: !record.isEnable,
+        key: record.key,
       },
-      onCancel: function() {}
     });
-
-  }
+  };
 
 
   handleSelectRows = rows => {
@@ -166,7 +166,7 @@ class ComponentList extends PureComponent {
       });
 
       dispatch({
-        type: 'component/fetch',
+        type: '##COMPONENT_LOWER##/fetch',
         payload: values,
       });
     });
@@ -174,7 +174,7 @@ class ComponentList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -192,34 +192,77 @@ class ComponentList extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/add',
+      type: '##COMPONENT_LOWER##/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/update',
+      type: '##COMPONENT_LOWER##/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: '##COMPONENT_LOWER##/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+  }
+
+  setPreviewUrl = (record) => {
+    this.setState({
+      previewUrl: record.thumbUrl.thumbUrl,
+      previewModalVisible: true,
+    });
+  }
+
+  closePreviewModal = () => {
+    this.setState({
+      previewModalVisible: false,
+    });
+  }
 
   renderSimpleForm() {
     const {
@@ -249,16 +292,18 @@ class ComponentList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      component: { data },
+      ##COMPONENT_LOWER##: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
+        previewUrl, previewModalVisible } = this.state;
+
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -267,12 +312,12 @@ class ComponentList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="组件列表">
+      <PageHeaderWrapper title="##LIST_STR##">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -285,23 +330,36 @@ class ComponentList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
-        <ComponentForm
+        <##COMPONENT_CAMEL##Form
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          menuTree={data.menuTree}
+          hiddenFields={hiddenFields}
+          data={data}
         />
-
+        {
+            previewModalVisible && (<Modal
+              title="图片预览"
+              visible={previewModalVisible}
+              onOk={this.closePreviewModal}
+              onCancel={this.closePreviewModal}
+              afterClose={() => this.closePreviewModal}
+              footer={null}
+            >
+              <img src={previewUrl} width={'100%'}/>
+            </Modal>
+            )
+        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default ComponentList;
+export default ##COMPONENT_CAMEL##List;

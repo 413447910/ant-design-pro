@@ -22,7 +22,7 @@ for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
-    name: `Component ${i + 1}`,
+    name: `ExampleSimple ${i + 1}`,
     remark: `remark`,
     isEnable: true,
     disabled: i % 6 === 0,
@@ -55,7 +55,7 @@ const treeData = [{
 }];
 
 
-function getComponent(req, res, u) {
+function getExampleSimple(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -99,7 +99,7 @@ function getComponent(req, res, u) {
   return res.json(result);
 }
 
-function postComponent(req, res, u, b) {
+function postExampleSimple(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -166,9 +166,9 @@ function postComponent(req, res, u, b) {
 }
 
 export default {
-  'GET /api/component/index': getComponent,
-  'POST /api/component/store': postComponent,
-  'POST /api/component/update': postComponent,
-  'POST /api/component/enable': postComponent,
-  'POST /api/component/destroy': postComponent,
+  'GET /api/example/simple/index': getExampleSimple,
+  'POST /api/example/simple/store': postExampleSimple,
+  'POST /api/example/simple/update': postExampleSimple,
+  'POST /api/example/simple/enable': postExampleSimple,
+  'POST /api/example/simple/destroy': postExampleSimple,
 };

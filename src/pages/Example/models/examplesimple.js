@@ -1,8 +1,8 @@
-import {queryComponent, updateComponent, destroyComponent , storeComponent, enableComponent} from '@/services/component';
+import {queryExampleSimple, updateExampleSimple, destroyExampleSimple , storeExampleSimple, enableExampleSimple} from '@/services/examplesimple';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'icomponent',
+  namespace: 'examplesimple',
 
   state: {
     data: {
@@ -15,14 +15,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryComponent, payload);
+      const response = yield call(queryExampleSimple, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(storeComponent, payload);
+      const response = yield call(storeExampleSimple, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -33,7 +33,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroyComponent , payload);
+      const response = yield call(destroyExampleSimple , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -46,7 +46,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateComponent, payload);
+      const response = yield call(updateExampleSimple, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -60,7 +60,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableComponent, payload);
+      const response = yield call(enableExampleSimple, payload);
 
       if(!checkRespData(response, 'enable')){
         return;
@@ -78,7 +78,7 @@ export default {
     save(state, action) {
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.data,
       };
     },
   },

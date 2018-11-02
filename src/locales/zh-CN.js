@@ -194,6 +194,7 @@ export default {
 	'menu.cms.tagList': '标签列表',
 	'menu.beidou.BannerGroup': 'Banner组',
 	'menu.beidou.Tag': '标签',
-	'menu.beidou.Component': '组件管理',
 	'menu.beidou.ExampleBasic': '基本模版',
+	'menu.beidou.Generator': '组件列表',
+	'menu.beidou.ExampleSimple': '简单模版',
 };

@@ -8,52 +8,36 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ComponentForm from './ComponentForm';
-import {componentHiddenFields} from '@/utils/BdHelper';
+import GeneratorForm from './GeneratorForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './ComponentList.less';
+import styles from './GeneratorList.less';
 
 const FormItem = Form.Item;
 
 
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
-
-
 /* eslint react/no-multi-comp:0 */
-@connect(({ component, loading }) => ({
-  component,
-  loading: loading.models.component,
+@connect(({ generator, loading }) => ({
+  generator,
+  loading: loading.models.generator,
 }))
 @Form.create()
-class ComponentList extends PureComponent {
+class GeneratorList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
     hiddenFields: [],
     formValues: {},
   };
 
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -93,7 +77,7 @@ class ComponentList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/fetch',
+      type: 'generator/fetch',
     });
   };
 
@@ -119,7 +103,7 @@ class ComponentList extends PureComponent {
     }
 
     dispatch({
-      type: 'component/fetch',
+      type: 'generator/fetch',
       payload: params,
     });
   };
@@ -131,41 +115,17 @@ class ComponentList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'component/fetch',
+      type: 'generator/fetch',
       payload: {},
     });
   };
 
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
 
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-          type: 'component/destroy',
-          payload: {
-            id: selectedRows.map(row => row.id),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-
-  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/enable',
+      type: 'generator/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -198,7 +158,7 @@ class ComponentList extends PureComponent {
       });
 
       dispatch({
-        type: 'component/fetch',
+        type: 'generator/fetch',
         payload: values,
       });
     });
@@ -230,25 +190,58 @@ class ComponentList extends PureComponent {
     }
   };
 
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
+
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/store',
+      type: 'generator/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'component/update',
+      type: 'generator/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
+
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'generator/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+  }
 
   setPreviewUrl = (record) => {
     this.setState({
@@ -291,13 +284,12 @@ class ComponentList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      component: { data },
+      generator: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
@@ -312,7 +304,7 @@ class ComponentList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="组件管理">
+      <PageHeaderWrapper title="生成模版">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -336,7 +328,7 @@ class ComponentList extends PureComponent {
             />
           </div>
         </Card>
-        <ComponentForm
+        <GeneratorForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -362,4 +354,4 @@ class ComponentList extends PureComponent {
   }
 }
 
-export default ComponentList;
+export default GeneratorList;

@@ -7,7 +7,6 @@ import {
   Input,
   Modal,
   Switch,
-  Upload,
   Button,
   Icon,
   Select,
@@ -17,17 +16,13 @@ import {
   Col,
 } from 'antd';
 
-import moment from 'moment';
-
-import { buildFormSelectOption, getFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
+import { getUploadFileId } from '@/utils/BdHelper';
 
 const FormItem = Form.Item;
-const { TextArea } = Input;
-
 
 
 @Form.create()
-class ComponentForm extends PureComponent {
+class GeneratorForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -40,7 +35,13 @@ class ComponentForm extends PureComponent {
   }
 
   toLower = str => {
-   return str.toLowerCase()
+    return str.toLowerCase()
+  }
+
+  handleTemplateTypeChange = (value) => {
+    const { form } = this.props;
+    console.log(value)
+    form.setFieldsValue({'backendTemplateType': value})
   }
 
   // 组件名称更新
@@ -72,6 +73,17 @@ class ComponentForm extends PureComponent {
     form.setFieldsValue({'backendSubFolderName': firstUpName})
   }
 
+  // 路由前缀更新
+  handleRoutePrefixChange = (e) => {
+    const { form } = this.props;
+    const {value} = e.target
+
+    let lower = this.toLower(value);
+    lower = lower.replace(new RegExp('/', "g"), '_')
+
+    form.setFieldsValue({'backendTableName': `comp_${lower}`})
+  }
+
 
   render(){
     const { modalVisible, form, handleAdd, handleModalVisible, formValues,
@@ -81,13 +93,12 @@ class ComponentForm extends PureComponent {
       form: { getFieldDecorator},
     } = this.props;
 
+
     const okHandle = () => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
-        form.resetFields();
 
         console.log(fieldsValue)
-        return
 
         if(isUpdate){
           fieldsValue.id = formValues.id
@@ -108,40 +119,6 @@ class ComponentForm extends PureComponent {
       },
     };
 
-    const submitFormLayout = {
-      wrapperCol: {
-        xs: { span: 24, offset: 0 },
-        sm: { span: 10, offset: 7 },
-      },
-    };
-
-    const fileColumns = [
-      {
-        title: '编号',
-        dataIndex: 'id',
-        width: '5%',
-      },
-      {
-        title: '名称',
-        dataIndex: 'name',
-        width: '10%',
-      },
-      {
-        title: '模版源文件',
-        dataIndex: 'srcFile',
-      },
-      {
-        title: '目标文件',
-        dataIndex: 'targetFile',
-        width: '40%',
-      },
-      {
-        title: '更新时间',
-        dataIndex: 'updatedAt',
-        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-      },
-    ];
-
     return (
       <Modal
         destroyOnClose
@@ -157,7 +134,7 @@ class ComponentForm extends PureComponent {
               <Card title="前端基本信息">
                 <FormItem {...formItemLayout} label="前台模版类型">
                   {form.getFieldDecorator('pageTemplateType', {
-                    initialValue: 'basic',
+                    initialValue: formValues.pageTemplateType || 'simple',
                     rules: [],
                   })(
                     <Select
@@ -165,49 +142,53 @@ class ComponentForm extends PureComponent {
                       placeholder='请选择'
                       style={{width: '100%'}}
                       filterOption={false}
+                      onChange={this.handleTemplateTypeChange}
                     >
                       <Select.Option value="basic">basic</Select.Option>
-                      <Select.Option value="subset">subset</Select.Option>
+                      <Select.Option value="simple">simple</Select.Option>
+                      <Select.Option value="group">group</Select.Option>
+                      <Select.Option value="category">category</Select.Option>
+                      <Select.Option value="post">post</Select.Option>
                     </Select>
                   )}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="项目路径">
-                  {getFieldDecorator('projectPath', {
+                  {getFieldDecorator('pageProjectPath', {
                     initialValue: '/Users/fangfei/work/www/beidou',
                   })(<Input placeholder="" disabled={true} />)}
                 </FormItem>
                 <FormItem {...formItemLayout} label="组件名称">
                   {getFieldDecorator('componentName', {
-                    initialValue: 'ExampleBasic',
+                    initialValue: formValues.componentName || 'ExampleBasic',
                     rules: [{required: true, message: '组件名称不能为空！'}],
                   })(<Input placeholder="组件名称, 如ExampleBasic" onChange={this.handleComponentNameChange} />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="子目录">
                   {getFieldDecorator('pageSubFolderName', {
-                    initialValue: 'Example',
+                    initialValue: formValues.pageSubFolderName || 'Example',
                     rules: [{required: true, message: '页面子目录不能为空！'}],
                   })(<Input placeholder="页面子目录, 如Example" onChange={this.handleSubPathChange} />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="路由前缀">
                   {getFieldDecorator('routePrefix', {
-                    initialValue: 'example/basic',
+                    initialValue: formValues.routePrefix || 'example/basic',
                     rules: [{required: true, message: '路由前缀不能为空！'}],
-                  })(<Input placeholder="路由前缀, 如example/basic" />)}
+                  })(<Input placeholder="路由前缀, 如example/basic" onChange={this.handleRoutePrefixChange} />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="菜单变量">
                   {getFieldDecorator('menuParam', {
-                    initialValue: 'menu.beidou.ExampleBasic',
+                    initialValue: formValues.menuParam || 'menu.beidou.ExampleBasic',
                     rules: [{required: true, message: '表单组件名不能为空！'}],
                   })(<Input placeholder="菜单变量, 如menu.beidou.ExampleBasic" />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="菜单中文名">
                   {getFieldDecorator('menuParamTextCn', {
-                    initialValue: '基本模版',
+                    initialValue: formValues.menuParamTextCn || '基本模版',
                     rules: [{required: true, message: '菜单中文名不能为空！'}],
                   })(<Input placeholder="菜单中文名, 如component" />)}
                 </FormItem>
@@ -218,7 +199,7 @@ class ComponentForm extends PureComponent {
               <Card title="后端基本信息">
                 <FormItem {...formItemLayout} label="后台模版类型">
                   {form.getFieldDecorator('backendTemplateType', {
-                    initialValue: 'basic',
+                    initialValue: formValues.backendTemplateType || 'simple',
                     rules: [],
                   })(
                     <Select
@@ -228,32 +209,35 @@ class ComponentForm extends PureComponent {
                       filterOption={false}
                     >
                       <Select.Option value="basic">basic</Select.Option>
+                      <Select.Option value="simple">simple</Select.Option>
+                      <Select.Option value="group">group</Select.Option>
                       <Select.Option value="category">category</Select.Option>
+                      <Select.Option value="post">post</Select.Option>
                     </Select>
                   )}
                 </FormItem>
                 <FormItem {...formItemLayout} label="模块名称">
                   {getFieldDecorator('backendModuleName', {
-                    initialValue: 'Component',
+                    initialValue: formValues.backendModuleName || 'Component',
                     rules: [{required: true, message: '模块名称不能为空！'}],
                   })(<Input placeholder="模块名称, 如Component" />)}
                 </FormItem>
                 <FormItem {...formItemLayout} label="组件名称">
                   {getFieldDecorator('backendComponentName', {
-                    initialValue: 'ExampleBasic',
+                    initialValue: formValues.backendComponentName ||'ExampleBasic',
                     rules: [{required: true, message: '组件名称不能为空！'}],
                   })(<Input placeholder="组件名称, 如ExampleBasic" onChange={this.handleComponentNameChange} />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="子目录">
                   {getFieldDecorator('backendSubFolderName', {
-                    initialValue: 'Example',
+                    initialValue: formValues.backendSubFolderName || 'Example',
                     rules: [{required: true, message: '子目录名称不能为空！'}],
                   })(<Input placeholder="子目录, 如Example" onChange={this.handleSubPathChange} />)}
                 </FormItem>
                 <FormItem {...formItemLayout} label="数据表名称">
                   {getFieldDecorator('backendTableName', {
-                    initialValue: 'comp_component',
+                    initialValue: formValues.backendTableName || 'comp_example_basic',
                     rules: [{required: true, message: '数据表名称不能为空！'}],
                   })(<Input placeholder="数据表名称, 如comp_component" />)}
                 </FormItem>
@@ -266,30 +250,38 @@ class ComponentForm extends PureComponent {
         <Card title="表单信息" bordered={false}>
           <Row gutter={16}>
             <Col md={6}>
-              <FormItem {...formItemLayout} label="有文件">
-                {getFieldDecorator('hasFile', {
-                  initialValue: false,
-                  valuePropName: 'checked',
-                  rules: [],
-                })(<Switch checkedChildren="有" unCheckedChildren="无" />)}
+              <FormItem {...formItemLayout} label="组件名称">
+                {getFieldDecorator('name', {
+                  initialValue: formValues.name || '组件名称',
+                  rules: [{required: true, message: '组件名称！'}],
+                })(<Input placeholder="请输入组件名称，如菜单列表" />)}
+              </FormItem>
+            </Col>
+
+            <Col md={6}>
+              <FormItem {...formItemLayout} label="排序">
+                {getFieldDecorator('rankNum', {
+                  initialValue: formValues.rankNum || '1',
+                  rules: [{required: true, message: '排序不能为空！'}],
+                })(<Input placeholder="从低到高排序值，如1" />)}
               </FormItem>
             </Col>
             <Col md={6}>
-              <FormItem {...formItemLayout} label="有分类">
-                {getFieldDecorator('hasCategory', {
-                  initialValue: false,
+              <FormItem {...formItemLayout} label="生成前端">
+                {getFieldDecorator('generatePage', {
+                  initialValue: formValues.generatePage && true,
                   valuePropName: 'checked',
                   rules: [],
-                })(<Switch checkedChildren="有" unCheckedChildren="无" />)}
+                })(<Switch checkedChildren="是" unCheckedChildren="否" />)}
               </FormItem>
             </Col>
             <Col md={6}>
-              <FormItem {...formItemLayout} label="有分组">
-                {getFieldDecorator('hasGroup', {
-                  initialValue: false,
+              <FormItem {...formItemLayout} label="生成后端">
+                {getFieldDecorator('generateBackend', {
+                  initialValue: formValues.generateBackend && true,
                   valuePropName: 'checked',
                   rules: [],
-                })(<Switch checkedChildren="有" unCheckedChildren="无" />)}
+                })(<Switch checkedChildren="是" unCheckedChildren="否" />)}
               </FormItem>
             </Col>
           </Row>
@@ -301,4 +293,4 @@ class ComponentForm extends PureComponent {
 };
 
 
-export default ComponentForm;
+export default GeneratorForm;
