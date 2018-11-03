@@ -21,7 +21,7 @@ const { TextArea } = Input;
 
 
 @Form.create()
-class ##COMPONENT_CAMEL##Form extends PureComponent {
+class ExampleFileForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -91,26 +91,6 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
       >
 
         {
-          !hiddenFields.includes('parentId') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="父级">
-              {form.getFieldDecorator('parentId', {
-                initialValue: formValues.parentId || '1',
-                rules: [{required: true, message: '父级不能为空！'}],
-              })(
-                <TreeSelect
-                  showSearch
-                  style={{width: '100%'}}
-                  dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-                  treeData={treeData}
-                  allowClear
-                  placeholder="请选择"
-                  treeDefaultExpandAll
-                  onChange={(value) => console.log(value)}
-                />
-              )}
-            </FormItem>
-        }
-        {
           !hiddenFields.includes('name') &&
             <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="名称">
               {form.getFieldDecorator('name', {
@@ -119,12 +99,11 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
               })(<Input placeholder="" />)}
             </FormItem>
         }
+
         {
           !hiddenFields.includes('picture1') &&
             <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="图片">
               {form.getFieldDecorator('picture1', {
-                initialValue: formValues.picture1 || '',
-                rules: [{required: true, message: '图片不能为空！'}],
               })(
                 <Upload
                   {...propUpload}
@@ -191,4 +170,4 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
 };
 
 
-export default ##COMPONENT_CAMEL##Form;
+export default ExampleFileForm;

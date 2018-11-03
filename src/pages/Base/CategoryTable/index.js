@@ -12,7 +12,7 @@ function initTotalList(columns) {
   return totalList;
 }
 
-class StandardTable extends PureComponent {
+class CategoryTable extends PureComponent {
   constructor(props) {
     super(props);
     const { columns } = props;
@@ -20,6 +20,7 @@ class StandardTable extends PureComponent {
 
     this.state = {
       selectedRowKeys: [],
+      toggleRowKeys: [],
       needTotalList,
     };
   }
@@ -61,13 +62,18 @@ class StandardTable extends PureComponent {
     this.handleRowSelectChange([], []);
   };
 
+  handleRowClick = (row) => {
+    console.log(row)
+  }
+
   render() {
-    const { selectedRowKeys, needTotalList } = this.state;
+    const { selectedRowKeys, needTotalList} = this.state;
     const {
       data: { list, pagination },
       loading,
       columns,
       rowKey,
+      expandedRowKeys,
     } = this.props;
 
     const paginationProps = {
@@ -84,6 +90,9 @@ class StandardTable extends PureComponent {
       }),
     };
 
+    const currExpandedRowKeys = expandedRowKeys;
+
+
     return (
       <div className={styles.standardTable}>
         <div className={styles.tableAlert}>
@@ -91,7 +100,6 @@ class StandardTable extends PureComponent {
             message={
               <Fragment>
                 已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项 ,&nbsp;&nbsp;
-                共 <a style={{ fontWeight: 600 }}>{pagination.total}</a> 项&nbsp;&nbsp;
                 {needTotalList.map(item => (
                   <span style={{ marginLeft: 8 }} key={item.dataIndex}>
                     {item.title}
@@ -111,6 +119,7 @@ class StandardTable extends PureComponent {
           />
         </div>
         <Table
+          onRowClick={this.handleRowClick}
           loading={loading}
           rowKey={rowKey || 'key'}
           rowSelection={rowSelection}
@@ -118,10 +127,12 @@ class StandardTable extends PureComponent {
           columns={columns}
           pagination={paginationProps}
           onChange={this.handleTableChange}
+          indentSize={30}
+          expandedRowKeys={currExpandedRowKeys}
         />
       </div>
     );
   }
 }
 
-export default StandardTable;
+export default CategoryTable;

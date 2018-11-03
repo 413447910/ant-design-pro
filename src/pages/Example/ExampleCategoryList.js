@@ -8,52 +8,36 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
   Switch,
 } from 'antd';
-import StandardTable from '@/components/StandardTable';
+import CategoryTable from '../Base/CategoryTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ExampleForm from './ExampleForm';
+import ExampleCategoryForm from './ExampleCategoryForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './ExampleList.less';
+import styles from './ExampleCategoryList.less';
 
 const FormItem = Form.Item;
-const confirm = Modal.confirm;
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ example, loading }) => ({
-  example,
-  loading: loading.models.example,
+@connect(({ examplecategory, loading }) => ({
+  examplecategory,
+  loading: loading.models.examplecategory,
 }))
 @Form.create()
-class ExampleList extends PureComponent {
+class ExampleCategoryList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
-    picture1ModalVisible: false,
-    picture1PreviewUrl: '',
   };
 
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -61,6 +45,14 @@ class ExampleList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
+    },
+    {
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
     },
     {
       title: '排序',
@@ -93,7 +85,7 @@ class ExampleList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/fetch',
+      type: 'examplecategory/fetch',
     });
   };
 
@@ -119,7 +111,7 @@ class ExampleList extends PureComponent {
     }
 
     dispatch({
-      type: 'example/fetch',
+      type: 'examplecategory/fetch',
       payload: params,
     });
   };
@@ -131,41 +123,17 @@ class ExampleList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'example/fetch',
+      type: 'examplecategory/fetch',
       payload: {},
     });
   };
 
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
 
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-            type: 'example/delete',
-          payload: {
-            id: selectedRows.map(row => row.id),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-
-  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/enable',
+      type: 'examplecategory/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -198,7 +166,7 @@ class ExampleList extends PureComponent {
       });
 
       dispatch({
-        type: 'example/fetch',
+        type: 'examplecategory/fetch',
         payload: values,
       });
     });
@@ -206,7 +174,7 @@ class ExampleList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -224,37 +192,68 @@ class ExampleList extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/add',
+      type: 'examplecategory/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'example/update',
+      type: 'examplecategory/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
+
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'examplecategory/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+  }
 
   setPreviewUrl = (record) => {
     this.setState({
-      previewUrl: record.thumbUrl,
+      previewUrl: record.thumbUrl.thumbUrl,
       previewModalVisible: true,
     });
   }
@@ -293,16 +292,20 @@ class ExampleList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      example: { data },
+      examplecategory: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
+        previewUrl, previewModalVisible } = this.state;
+
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
+
+    const expandedRowKeys = data.list.map(item => item.id);
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -311,12 +314,12 @@ class ExampleList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="示例列表">
+      <PageHeaderWrapper title="分类模版">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -325,23 +328,24 @@ class ExampleList extends PureComponent {
                 </span>
               )}
             </div>
-            <StandardTable
+            <CategoryTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              expandedRowKeys={expandedRowKeys}
             />
           </div>
         </Card>
-        <ExampleForm
+        <ExampleCategoryForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          treeData={data.treeData}
-          common={data.common}
+          hiddenFields={hiddenFields}
+          data={data}
         />
         {
             previewModalVisible && (<Modal
@@ -361,4 +365,4 @@ class ExampleList extends PureComponent {
   }
 }
 
-export default ExampleList;
+export default ExampleCategoryList;

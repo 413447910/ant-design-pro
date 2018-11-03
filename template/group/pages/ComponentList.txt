@@ -11,7 +11,7 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import CategoryTable from '../Base/CategoryTable';
+import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
 import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
@@ -33,19 +33,11 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl'],
+    hiddenFields: [],
     formValues: {},
   };
 
   columns = [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '描述',
-      dataIndex: 'remark',
-    },
     {
       title: '缩略图',
       dataIndex: 'thumbUrl',
@@ -53,6 +45,14 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       render: (val, record) => (
         <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
       )
+    },
+    {
+      title: '名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '描述',
+      dataIndex: 'remark',
     },
     {
       title: '排序',
@@ -305,8 +305,6 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
-    const expandedRowKeys = data.list.map(item => item.id);
-
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
@@ -328,14 +326,13 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
                 </span>
               )}
             </div>
-            <CategoryTable
+            <StandardTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
-              expandedRowKeys={expandedRowKeys}
             />
           </div>
         </Card>

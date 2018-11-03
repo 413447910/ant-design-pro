@@ -197,4 +197,7 @@ export default {
 	'menu.beidou.ExampleBasic': '基本模版',
 	'menu.beidou.Generator': '组件列表',
 	'menu.beidou.ExampleSimple': '简单模版',
+	'menu.beidou.ExampleFile': '文件模版',
+	'menu.beidou.ExampleGroup': 'Group模版',
+	'menu.beidou.ExampleCategory': '分类模版',
 };

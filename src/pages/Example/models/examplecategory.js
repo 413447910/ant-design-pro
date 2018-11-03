@@ -1,8 +1,8 @@
-import {query##COMPONENT_CAMEL##, update##COMPONENT_CAMEL##, destroy##COMPONENT_CAMEL## , store##COMPONENT_CAMEL##, enable##COMPONENT_CAMEL##} from '@/services/##COMPONENT_LOWER##';
+import {queryExampleCategory, updateExampleCategory, destroyExampleCategory , storeExampleCategory, enableExampleCategory} from '@/services/examplecategory';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: '##COMPONENT_LOWER##',
+  namespace: 'examplecategory',
 
   state: {
     data: {
@@ -15,14 +15,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(query##COMPONENT_CAMEL##, payload);
+      const response = yield call(queryExampleCategory, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(store##COMPONENT_CAMEL##, payload);
+      const response = yield call(storeExampleCategory, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -33,7 +33,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroy##COMPONENT_CAMEL## , payload);
+      const response = yield call(destroyExampleCategory , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -46,7 +46,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(update##COMPONENT_CAMEL##, payload);
+      const response = yield call(updateExampleCategory, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -60,7 +60,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enable##COMPONENT_CAMEL##, payload);
+      const response = yield call(enableExampleCategory, payload);
 
       if(!checkRespData(response, 'enable')){
         return;

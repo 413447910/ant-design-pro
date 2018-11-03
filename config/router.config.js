@@ -92,16 +92,6 @@ export default [
         name: 'beidou',
         routes: [
           {
-            path: '/beidou/effective',
-            name: 'effective',
-            component: './Base/Effective',
-          },
-          {
-            path: '/beidou/example-list',
-            name: 'exampleList',
-            component: './Base/ExampleList',
-          },
-          {
             path: '/beidou/banner-group',
             name: 'BannerGroup',
             component: './Banner/BannerGroupList',
@@ -120,6 +110,21 @@ export default [
             path: '/beidou/example-simple',
             name: 'ExampleSimple',
             component: './Example/ExampleSimpleList',
+          },
+          {
+            path: '/beidou/example-file',
+            name: 'ExampleFile',
+            component: './Example/ExampleFileList',
+          },
+          {
+            path: '/beidou/example-group',
+            name: 'ExampleGroup',
+            component: './Example/ExampleGroupList',
+          },
+          {
+            path: '/beidou/example-category',
+            name: 'ExampleCategory',
+            component: './Example/ExampleCategoryList',
           },
         ],
       },

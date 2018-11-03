@@ -1,7 +1,11 @@
 import { parse } from 'url';
 
 const common = {
-    'uploadUrl': 'http://www.baidu.com'
+  'selectOption' : [
+    {'key' : 1, 'text' : 'ant'},
+    {'key' : 2, 'text' : 'design'},
+    {'key' : 3, 'text' : 'pro'}
+   ],
 };
 
 const fileList = [{
@@ -9,7 +13,7 @@ const fileList = [{
   name: 'xxx.png',
   status: 'done',
   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  fileUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 }];
 
 // mock tableListDataSource
@@ -18,15 +22,16 @@ for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
-    name: `Example ${i + 1}`,
+    name: `ExampleFile ${i + 1}`,
     remark: `remark`,
     isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
+    groupId: Math.floor(Math.random() * 10) % 10 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     picture1 : fileList,
-    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    thumbUrl: fileList[0],
   });
 }
 
@@ -50,7 +55,7 @@ const treeData = [{
 }];
 
 
-function getExample(req, res, u) {
+function getExampleFile(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -94,7 +99,7 @@ function getExample(req, res, u) {
   return res.json(result);
 }
 
-function postExample(req, res, u, b) {
+function postExampleFile(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -118,11 +123,12 @@ function postExample(req, res, u, b) {
         name: body.name,
         disabled: i % 6 === 0,
         rankNum: body.rankNum,
+        groupId:  i % 10,
         remark: body.remark,
         createdAt: currTime,
         updatedAt: currTime,
         picture1 : fileList,
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        thumbUrl: fileList[0],
       });
       break;
     case 'update':
@@ -160,9 +166,9 @@ function postExample(req, res, u, b) {
 }
 
 export default {
-  'GET /api/example': getExample,
-  'POST /api/example/add': postExample,
-  'POST /api/example/update': postExample,
-  'POST /api/example/enable': postExample,
-  'POST /api/example/delete': postExample,
+  'GET /api/example/file/index': getExampleFile,
+  'POST /api/example/file/store': postExampleFile,
+  'POST /api/example/file/update': postExampleFile,
+  'POST /api/example/file/enable': postExampleFile,
+  'POST /api/example/file/destroy': postExampleFile,
 };

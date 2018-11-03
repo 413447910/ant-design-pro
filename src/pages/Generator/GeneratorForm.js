@@ -134,7 +134,7 @@ class GeneratorForm extends PureComponent {
               <Card title="前端基本信息">
                 <FormItem {...formItemLayout} label="前台模版类型">
                   {form.getFieldDecorator('pageTemplateType', {
-                    initialValue: formValues.pageTemplateType || 'simple',
+                    initialValue: formValues.pageTemplateType || 'category',
                     rules: [],
                   })(
                     <Select
@@ -146,6 +146,7 @@ class GeneratorForm extends PureComponent {
                     >
                       <Select.Option value="basic">basic</Select.Option>
                       <Select.Option value="simple">simple</Select.Option>
+                      <Select.Option value="file">file</Select.Option>
                       <Select.Option value="group">group</Select.Option>
                       <Select.Option value="category">category</Select.Option>
                       <Select.Option value="post">post</Select.Option>
@@ -199,7 +200,7 @@ class GeneratorForm extends PureComponent {
               <Card title="后端基本信息">
                 <FormItem {...formItemLayout} label="后台模版类型">
                   {form.getFieldDecorator('backendTemplateType', {
-                    initialValue: formValues.backendTemplateType || 'simple',
+                    initialValue: formValues.backendTemplateType || 'category',
                     rules: [],
                   })(
                     <Select
@@ -210,6 +211,7 @@ class GeneratorForm extends PureComponent {
                     >
                       <Select.Option value="basic">basic</Select.Option>
                       <Select.Option value="simple">simple</Select.Option>
+                      <Select.Option value="file">file</Select.Option>
                       <Select.Option value="group">group</Select.Option>
                       <Select.Option value="category">category</Select.Option>
                       <Select.Option value="post">post</Select.Option>

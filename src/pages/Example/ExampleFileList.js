@@ -11,41 +11,33 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import CategoryTable from '../Base/CategoryTable';
+import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
+import ExampleFileForm from './ExampleFileForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './##COMPONENT_CAMEL##List.less';
+import styles from './ExampleFileList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ ##COMPONENT_LOWER##, loading }) => ({
-  ##COMPONENT_LOWER##,
-  loading: loading.models.##COMPONENT_LOWER##,
+@connect(({ examplefile, loading }) => ({
+  examplefile,
+  loading: loading.models.examplefile,
 }))
 @Form.create()
-class ##COMPONENT_CAMEL##List extends PureComponent {
+class ExampleFileList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl'],
+    hiddenFields: [],
     formValues: {},
   };
 
   columns = [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '描述',
-      dataIndex: 'remark',
-    },
     {
       title: '缩略图',
       dataIndex: 'thumbUrl',
@@ -53,6 +45,14 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       render: (val, record) => (
         <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
       )
+    },
+    {
+      title: '名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '描述',
+      dataIndex: 'remark',
     },
     {
       title: '排序',
@@ -85,7 +85,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'examplefile/fetch',
     });
   };
 
@@ -111,7 +111,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
 
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'examplefile/fetch',
       payload: params,
     });
   };
@@ -123,7 +123,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'examplefile/fetch',
       payload: {},
     });
   };
@@ -133,7 +133,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/enable',
+      type: 'examplefile/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -166,7 +166,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       });
 
       dispatch({
-        type: '##COMPONENT_LOWER##/fetch',
+        type: 'examplefile/fetch',
         payload: values,
       });
     });
@@ -207,7 +207,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/store',
+      type: 'examplefile/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -218,7 +218,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/update',
+      type: 'examplefile/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -237,7 +237,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: '##COMPONENT_LOWER##/destroy',
+          type: 'examplefile/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -297,15 +297,13 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
 
   render() {
     const {
-      ##COMPONENT_LOWER##: { data },
+      examplefile: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
         previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
-
-    const expandedRowKeys = data.list.map(item => item.id);
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -314,7 +312,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="##LIST_STR##">
+      <PageHeaderWrapper title="文件模版">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -328,18 +326,17 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
                 </span>
               )}
             </div>
-            <CategoryTable
+            <StandardTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
-              expandedRowKeys={expandedRowKeys}
             />
           </div>
         </Card>
-        <##COMPONENT_CAMEL##Form
+        <ExampleFileForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -365,4 +362,4 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 }
 
-export default ##COMPONENT_CAMEL##List;
+export default ExampleFileList;
