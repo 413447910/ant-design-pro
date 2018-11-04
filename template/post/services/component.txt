@@ -1,0 +1,46 @@
+import request from '@/utils/request';
+import { stringify } from 'qs';
+
+export async function query##COMPONENT_CAMEL##(params) {
+  return request(`/api/##COMPONENT_ROUTE_PREFIX##/index?${stringify(params)}`);
+}
+
+export async function store##COMPONENT_CAMEL##(params) {
+  return request('/api/##COMPONENT_ROUTE_PREFIX##/store', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'add',
+    },
+  });
+}
+
+export async function update##COMPONENT_CAMEL##(params) {
+  return request('/api/##COMPONENT_ROUTE_PREFIX##/update', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'update',
+    },
+  });
+}
+
+export async function destroy##COMPONENT_CAMEL##(params) {
+  return request('/api/##COMPONENT_ROUTE_PREFIX##/destroy', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'delete',
+    },
+  });
+}
+
+export async function enable##COMPONENT_CAMEL##(params) {
+  return request('/api/##COMPONENT_ROUTE_PREFIX##/enable', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'enable',
+    },
+  });
+}

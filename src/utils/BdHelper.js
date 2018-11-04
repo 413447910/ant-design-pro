@@ -1,6 +1,8 @@
 
 import { Select, message, Modal, Button } from 'antd';
 
+export const DATEIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
+
 export function componentHiddenFields(columns, hiddenFields) {
     const showColumn = columns.filter( (item) => {
       if(!hiddenFields.includes(item.dataIndex)) {
@@ -23,7 +25,16 @@ export function buildFormSelectOption(common) {
   }
  // arr = [{'key' : 1, 'text': 'a'}]
  // console.log(arr)
-  const options = arr.map(d => <Select.Option key={d.key}>{d.text}</Select.Option>);
+  const options = arr.map(d => <Select.Option key={d.key} value={d.key}>{d.text}</Select.Option>);
+  return options
+}
+
+export function buildTagSelectOption(common) {
+  let arr = [{'key' : 1, 'text': 'a'}]
+  if(issetParam(common) && issetParam(common.tagSelectOption)){
+    arr = common.tagSelectOption
+  }
+  const options = arr.map(d => <Select.Option key={d.key} value={d.key}>{d.text}</Select.Option>);
   return options
 }
 
@@ -91,6 +102,10 @@ export function checkRespData(respData, type) {
   message.success(successMsg)
 
   return true
+}
+
+export function formatMomentTimeToStr(m) {
+  return m.format('YYYY-MM-DD HH:mm:ss')
 }
 
 export const getValue = obj =>

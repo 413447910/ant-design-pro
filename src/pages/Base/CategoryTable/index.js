@@ -62,9 +62,6 @@ class CategoryTable extends PureComponent {
     this.handleRowSelectChange([], []);
   };
 
-  handleRowClick = (row) => {
-    console.log(row)
-  }
 
   render() {
     const { selectedRowKeys, needTotalList} = this.state;
@@ -119,7 +116,6 @@ class CategoryTable extends PureComponent {
           />
         </div>
         <Table
-          onRowClick={this.handleRowClick}
           loading={loading}
           rowKey={rowKey || 'key'}
           rowSelection={rowSelection}

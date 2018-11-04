@@ -1,0 +1,85 @@
+import {query##COMPONENT_CAMEL##, update##COMPONENT_CAMEL##, destroy##COMPONENT_CAMEL## , store##COMPONENT_CAMEL##, enable##COMPONENT_CAMEL##} from '@/services/##COMPONENT_LOWER##';
+import {checkRespData} from '@/utils/BdHelper';
+
+export default {
+  namespace: '##COMPONENT_LOWER##',
+
+  state: {
+    data: {
+      list: [],
+      pagination: {},
+      treeData: [],
+      common: [],
+    },
+  },
+
+  effects: {
+    *fetch({ payload }, { call, put }) {
+      const response = yield call(query##COMPONENT_CAMEL##, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+    },
+    *store({ payload, callback }, { call, put }) {
+      const response = yield call(store##COMPONENT_CAMEL##, payload);
+      if(!checkRespData(response, 'store')){
+        return;
+      }
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+    *destroy({ payload, callback }, { call, put }) {
+      const response = yield call(destroy##COMPONENT_CAMEL## , payload);
+
+      if(!checkRespData(response, 'destroy')){
+        return;
+      }
+
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+    *update({ payload, callback }, { call, put }) {
+      const response = yield call(update##COMPONENT_CAMEL##, payload);
+
+      if(!checkRespData(response, 'update')){
+        return;
+      }
+
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+
+    *enable({ payload, callback }, { call, put }) {
+      const response = yield call(enable##COMPONENT_CAMEL##, payload);
+
+      if(!checkRespData(response, 'enable')){
+        return;
+      }
+
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+  },
+
+  reducers: {
+    save(state, action) {
+      return {
+        ...state,
+        data: action.payload.data,
+      };
+    },
+  },
+};

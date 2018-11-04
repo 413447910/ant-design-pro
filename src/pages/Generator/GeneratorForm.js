@@ -134,7 +134,7 @@ class GeneratorForm extends PureComponent {
               <Card title="前端基本信息">
                 <FormItem {...formItemLayout} label="前台模版类型">
                   {form.getFieldDecorator('pageTemplateType', {
-                    initialValue: formValues.pageTemplateType || 'category',
+                    initialValue: formValues.pageTemplateType || 'post',
                     rules: [],
                   })(
                     <Select
@@ -200,7 +200,7 @@ class GeneratorForm extends PureComponent {
               <Card title="后端基本信息">
                 <FormItem {...formItemLayout} label="后台模版类型">
                   {form.getFieldDecorator('backendTemplateType', {
-                    initialValue: formValues.backendTemplateType || 'category',
+                    initialValue: formValues.backendTemplateType || 'post',
                     rules: [],
                   })(
                     <Select

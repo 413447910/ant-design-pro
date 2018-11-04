@@ -92,11 +92,6 @@ export default [
         name: 'beidou',
         routes: [
           {
-            path: '/beidou/banner-group',
-            name: 'BannerGroup',
-            component: './Banner/BannerGroupList',
-          },
-          {
             path: '/beidou/generator',
             name: 'Generator',
             component: './Generator/GeneratorList',
@@ -125,6 +120,11 @@ export default [
             path: '/beidou/example-category',
             name: 'ExampleCategory',
             component: './Example/ExampleCategoryList',
+          },
+          {
+            path: '/beidou/example-post',
+            name: 'ExamplePost',
+            component: './Example/ExamplePostList',
           },
         ],
       },

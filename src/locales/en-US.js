@@ -203,8 +203,9 @@ export default {
 	'menu.beidou.Component': 'Component',
 	'menu.beidou.ExampleBasic': 'ExampleBasic',
 	'menu.beidou.Generator': 'Generator',
-	'menu.beidou.ExampleSimple': 'ExampleSimple',
 	'menu.beidou.ExampleFile': 'ExampleFile',
 	'menu.beidou.ExampleGroup': 'ExampleGroup',
 	'menu.beidou.ExampleCategory': 'ExampleCategory',
+	'menu.beidou.ExamplePost': 'ExamplePost',
+	'menu.beidou.ExampleSimple': 'ExampleSimple',
 };
