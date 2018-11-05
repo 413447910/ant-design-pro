@@ -47,7 +47,7 @@ class ExamplePostList extends PureComponent {
       )
     },
     {
-      title: '标题',
+      title: '名称',
       dataIndex: 'name',
     },
     {

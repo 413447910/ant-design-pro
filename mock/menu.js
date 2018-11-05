@@ -1,29 +1,41 @@
 import { parse } from 'url';
 
+const common = {
+  'selectOption' : [
+    {'key' : 1, 'text' : 'ant'},
+    {'key' : 2, 'text' : 'design'},
+    {'key' : 3, 'text' : 'pro'}
+   ],
+};
+
+const fileList = [{
+  uid: '-1',
+  name: 'xxx.png',
+  status: 'done',
+  url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  fileUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+}];
+
 // mock tableListDataSource
 let tableListDataSource = [];
 for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
+    id: i + 1,
     name: `Menu ${i + 1}`,
-    path: `/profile/basic`,
-    parentId: `0`,
-    id: i,
-    icon: `table`,
-    isMenu: `table`,
     remark: `remark`,
-    menuCondition: `menu condition`,
-    componentPath: `./Forms/BasicForm`,
+    isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
-    status: false,
-    createdAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
-    updatedAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
-
+    groupId: Math.floor(Math.random() * 10) % 10 ,
+    createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
+    updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
+    picture1 : fileList,
+    thumbUrl: fileList[0],
   });
 }
 
-const menuTreeData = [{
+const treeData = [{
   title: 'Node1',
   value: '0-0',
   key: '0-0',
@@ -41,6 +53,7 @@ const menuTreeData = [{
   value: '0-1',
   key: '0-1',
 }];
+
 
 function getMenu(req, res, u) {
   let url = u;
@@ -62,9 +75,6 @@ function getMenu(req, res, u) {
     });
   }
 
-  if (params.path) {
-    dataSource = dataSource.filter(data => data.path.indexOf(params.path) > -1);
-  }
 
   if (params.name) {
     dataSource = dataSource.filter(data => data.name.indexOf(params.name) > -1);
@@ -77,13 +87,13 @@ function getMenu(req, res, u) {
 
   const result = {
     list: dataSource,
-
-    menuTree: menuTreeData,
     pagination: {
       total: dataSource.length,
       pageSize,
       current: parseInt(params.currentPage, 10) || 1,
     },
+    treeData: treeData,
+    common: common
   };
 
   return res.json(result);
@@ -96,49 +106,45 @@ function postMenu(req, res, u, b) {
   }
 
   const body = (b && b.body) || req.body;
-  const { method, key, status,id } = body;
+  const { method, key, isEnable, id } = body;
   const updatedAt = new Date();
   const currTime = new Date();
 
   switch (method) {
     /* eslint no-case-declarations:0 */
     case 'delete':
-      tableListDataSource = tableListDataSource.filter(item => key.indexOf(item.key) === -1);
+      tableListDataSource = tableListDataSource.filter(item => id.indexOf(item.id) === -1);
       break;
     case 'add':
       const i = Math.ceil(Math.random() * 10000);
       tableListDataSource.unshift({
         key: i,
-        name: body.name,
-        path: body.path,
-        parentId: body.parendId,
         id: i,
-        icon: body.icon,
+        name: body.name,
         disabled: i % 6 === 0,
         rankNum: body.rankNum,
-        status: body.status ? 1 : 0,
+        groupId:  i % 10,
         remark: body.remark,
-        menuCondition: body.menuCondition,
-        componentPath: body.componentPath,
         createdAt: currTime,
         updatedAt: currTime,
-
+        picture1 : fileList,
+        thumbUrl: fileList[0],
       });
       break;
     case 'update':
       tableListDataSource = tableListDataSource.map(item => {
         if (item.id === id) {
-          Object.assign(item, body);
+          Object.assign(item, body, {updatedAt});
           return item;
         }
         return item;
       });
       break;
-    case 'updateStatus':
+    case 'enable':
       tableListDataSource = tableListDataSource.map(item => {
-        if (item.key === key) {
-          Object.assign(item, { status , updatedAt});
-          return item;
+        if (item.id === id) {
+            Object.assign(item, {isEnable, updatedAt});
+            return item;
         }
         return item;
       });
@@ -149,16 +155,20 @@ function postMenu(req, res, u, b) {
 
   const result = {
     list: tableListDataSource,
-    menuTree: menuTreeData,
     pagination: {
       total: tableListDataSource.length,
     },
+    treeData: treeData,
+    common: common
   };
 
   return res.json(result);
 }
 
 export default {
-  'GET /api/menu': getMenu,
-  'POST /api/menu': postMenu,
+  'GET /api/menu/index': getMenu,
+  'POST /api/menu/store': postMenu,
+  'POST /api/menu/update': postMenu,
+  'POST /api/menu/enable': postMenu,
+  'POST /api/menu/destroy': postMenu,
 };

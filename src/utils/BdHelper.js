@@ -104,6 +104,7 @@ export function checkRespData(respData, type) {
   return true
 }
 
+
 export function formatMomentTimeToStr(m) {
   return m.format('YYYY-MM-DD HH:mm:ss')
 }

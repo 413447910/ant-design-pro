@@ -7,72 +7,66 @@ import {
   Card,
   Form,
   Input,
-  Icon,
   Button,
-  Dropdown,
-  Menu,
-  message,
+  Modal,
   Switch,
-  Divider,
 } from 'antd';
-import StandardTable from '@/components/StandardTable';
+import CategoryTable from '../Base/CategoryTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import MenuForm from './MenuForm';
+import ExampleCategoryForm from './ExampleCategoryForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './MenuList.less';
+import styles from './ExampleCategoryList.less';
 
 const FormItem = Form.Item;
 
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
-
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ menu, loading }) => ({
-  menu,
-  loading: loading.models.menu,
+@connect(({ examplecategory, loading }) => ({
+  examplecategory,
+  loading: loading.models.examplecategory,
 }))
 @Form.create()
-class MenuList extends PureComponent {
+class ExampleCategoryList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
+    expand: true,
+    expandAllIds: [],
+    expandedRowKeys: [],
   };
 
   columns = [
     {
-      title: '标题',
+      title: '名称',
       dataIndex: 'name',
     },
     {
-      title: '图标',
-      dataIndex: 'icon',
+      title: '描述',
+      dataIndex: 'remark',
     },
     {
-      title: '规则',
-      dataIndex: 'path',
-    },
-    {
-      title: '组件',
-      dataIndex: 'componentPath',
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
     },
     {
       title: '排序',
       dataIndex: 'rankNum',
     },
     {
-      title: '状态',
-      dataIndex: 'status',
+      title: '启用',
+      dataIndex: 'isEnable',
       render: (val, record) => (
-        <Switch checked={val} onChange={() => this.handleChangeMenuStatus(record)} />
+        <Switch checked={val} onChange={() => this.handleChangeEnable(record)} />
       )
-
     },
     {
       title: '更新时间',
@@ -85,8 +79,6 @@ class MenuList extends PureComponent {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.handleModalVisible(true, 'update', record)}>更新</a>
-          <Divider type="vertical" />
-          <a href="">订阅警报</a>
         </Fragment>
       ),
     },
@@ -96,9 +88,12 @@ class MenuList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/fetch',
+      type: 'examplecategory/fetch',
+      payload: {},
+      callback: this.callbackIndex
     });
   };
+
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -122,7 +117,7 @@ class MenuList extends PureComponent {
     }
 
     dispatch({
-      type: 'menu/fetch',
+      type: 'examplecategory/fetch',
       payload: params,
     });
   };
@@ -134,35 +129,23 @@ class MenuList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'menu/fetch',
+      type: 'examplecategory/fetch',
       payload: {},
     });
   };
 
-  toggleForm = () => {
-    const { expandForm } = this.state;
-    this.setState({
-      expandForm: !expandForm,
+
+  handleChangeEnable = (record) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'examplecategory/enable',
+      payload: {
+        id: record.id,
+        isEnable: !record.isEnable,
+        key: record.key,
+      },
     });
   };
-
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
-
-    dispatch({
-      type: 'menu/remove',
-      payload: {
-        key: selectedRows.map(row => row.key),
-      },
-      callback: () => {
-        this.setState({
-          selectedRows: [],
-        });
-      },
-    });
-  }
 
 
   handleSelectRows = rows => {
@@ -188,7 +171,7 @@ class MenuList extends PureComponent {
       });
 
       dispatch({
-        type: 'menu/fetch',
+        type: 'examplecategory/fetch',
         payload: values,
       });
     });
@@ -196,7 +179,7 @@ class MenuList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -214,45 +197,78 @@ class MenuList extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/add',
+      type: 'examplecategory/store',
       payload: fields,
+      callback: this.callbackAdd
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/update',
+      type: 'examplecategory/update',
       payload: fields,
+      callback: this.callbackUpdate
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
-  handleChangeMenuStatus = (record) => {
+  handleRemove = () => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'menu/status',
-      payload: {
-        id: record.id,
-        status: !record.status,
-        key: record.key,
-      },
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'examplecategory/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
     });
-  };
+  }
+
+  setPreviewUrl = (record) => {
+    this.setState({
+      previewUrl: record.thumbUrl.thumbUrl,
+      previewModalVisible: true,
+    });
+  }
+
+  closePreviewModal = () => {
+    this.setState({
+      previewModalVisible: false,
+    });
+  }
 
   renderSimpleForm() {
     const {
@@ -262,13 +278,8 @@ class MenuList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="标题">
+            <FormItem label="名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="规则">
-              {getFieldDecorator('path')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -286,24 +297,64 @@ class MenuList extends PureComponent {
     );
   }
 
-  renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+  callbackIndex = () => {
+    this.setAllExpandIds()
+  }
+
+  callbackAdd = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  callbackUpdate = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  setAllExpandIds = () => {
+    const { examplecategory: { data }} = this.props;
+
+    let expandedId = [];
+    data.list.forEach(item => {
+      expandedId.push(item.id)
+      item.childrenIds.forEach(id => {
+        expandedId.push(id)
+      })
+    })
+
+    this.setState({
+      expandedRowKeys: expandedId,
+      expandAllIds: expandedId
+    });
+
+  }
+
+
+  // 菜单展示和收起
+  handleExpansion  = () => {
+    const { expand, expandAllIds } = this.state
+    this.setState({
+      expand: !expand,
+      expandedRowKeys: expand ? [] : expandAllIds
+    });
+  }
+
+
+  handleChangeExpandedRowKeys = () => {
+    console.log('handleChangeExpandedRowKeys')
   }
 
   render() {
     const {
-      menu: { data },
+      examplecategory: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
+      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
 
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
+
+    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -312,47 +363,60 @@ class MenuList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="查询菜单">
+      <PageHeaderWrapper title="分类模版">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
+              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
+                显示全部
+              </Button>
+
               {selectedRows.length > 0 && (
                 <span>
-                  <Button>批量操作</Button>
-                  <Button key="rrr" onClick={this.handleRemove}>删除</Button>
-                  <Dropdown overlay={menu}>
-                    <Button>
-                      更多操作 <Icon type="down" />
-                    </Button>
-                  </Dropdown>
+                  <Button onClick={this.handleRemove}>删除</Button>
                 </span>
               )}
             </div>
-            <StandardTable
+            <CategoryTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              expandedRowKeys={expandedRowKeys}
+              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
-        <MenuForm
+        <ExampleCategoryForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          menuTree={data.menuTree}
+          hiddenFields={hiddenFields}
+          data={data}
         />
-
+        {
+          previewModalVisible && (<Modal
+              title="图片预览"
+              visible={previewModalVisible}
+              onOk={this.closePreviewModal}
+              onCancel={this.closePreviewModal}
+              afterClose={() => this.closePreviewModal}
+              footer={null}
+            >
+              <img src={previewUrl} width={'100%'}/>
+            </Modal>
+          )
+        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default MenuList;
+export default ExampleCategoryList;

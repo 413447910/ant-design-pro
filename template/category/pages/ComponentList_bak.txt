@@ -35,9 +35,6 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     selectedRows: [],
     hiddenFields: ['thumbUrl'],
     formValues: {},
-    expand: true,
-    expandAllIds: [],
-    expandedRowKeys: [],
   };
 
   columns = [
@@ -89,11 +86,8 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: '##COMPONENT_LOWER##/fetch',
-      payload: {},
-      callback: this.callbackIndex
     });
   };
-
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -133,6 +127,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       payload: {},
     });
   };
+
 
 
   handleChangeEnable = (record) => {
@@ -203,7 +198,6 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
   };
 
-
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -215,7 +209,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     dispatch({
       type: '##COMPONENT_LOWER##/store',
       payload: fields,
-      callback: this.callbackAdd
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -226,7 +220,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     dispatch({
       type: '##COMPONENT_LOWER##/update',
       payload: fields,
-      callback: this.callbackUpdate
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -297,51 +291,8 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     );
   }
 
-  callbackIndex = () => {
-    this.setAllExpandIds()
-  }
-
-  callbackAdd = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  callbackUpdate = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  setAllExpandIds = () => {
-    const { ##COMPONENT_LOWER##: { data }} = this.props;
-
-    let expandedId = [];
-    data.list.forEach(item => {
-      expandedId.push(item.id)
-      item.childrenIds.forEach(id => {
-        expandedId.push(id)
-      })
-    })
-
-    this.setState({
-      expandedRowKeys: expandedId,
-      expandAllIds: expandedId
-    });
-
-  }
-
-
-  // 菜单展示和收起
-  handleExpansion  = () => {
-    const { expand, expandAllIds } = this.state
-    this.setState({
-      expand: !expand,
-      expandedRowKeys: expand ? [] : expandAllIds
-    });
-  }
-
-
-  handleChangeExpandedRowKeys = () => {
-    console.log('handleChangeExpandedRowKeys')
+  renderForm() {
+    return this.renderSimpleForm();
   }
 
   render() {
@@ -350,11 +301,11 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
+        previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
-    const expandIcon = expand ? 'minus' : 'plus'
+    const expandedRowKeys = data.list.map(item => item.id);
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -363,18 +314,14 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="分类模版">
+      <PageHeaderWrapper title="##LIST_STR##">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
+            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
-              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
-                显示全部
-              </Button>
-
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
@@ -389,7 +336,6 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
               expandedRowKeys={expandedRowKeys}
-              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>

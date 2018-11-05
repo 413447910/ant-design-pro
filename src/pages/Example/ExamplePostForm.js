@@ -102,9 +102,10 @@ class ExamplePostForm extends PureComponent {
     };
 
 
-    const tProps = {
+    const treeProps = {
       treeData,
       onChange: this.handleCategoryChange,
+      treeDefaultExpandAll: true,
       searchPlaceholder: '请选择分类',
       style: {
         width: '100%',
@@ -152,7 +153,7 @@ class ExamplePostForm extends PureComponent {
             {form.getFieldDecorator('categoryId', {
               initialValue: formValues.categoryId|| '',
               rules: [{required: true, message: '分类不能为空！'}],
-            })(<TreeSelect multiple {...tProps} />)}
+            })(<TreeSelect multiple {...treeProps} />)}
           </FormItem>
 
         {
@@ -190,7 +191,8 @@ class ExamplePostForm extends PureComponent {
                 onPreview={this.previewPicture1}
               >
                 {
-                  formValues.picture1.length === 0 && formValues.fileThumbnail === '' ? (
+                  formValues.picture1.length === 0 ? (
+                  //formValues.picture1.length === 0 && formValues.fileThumbnail === '' ? (
                     <Button>
                       <Icon type="upload" /> 点击上传
                     </Button>
@@ -321,8 +323,6 @@ class ExamplePostForm extends PureComponent {
           </Card>
         }
 
-
-
         <Modal
           title="图片预览"
           visible={picture1ModalVisible}
@@ -337,6 +337,5 @@ class ExamplePostForm extends PureComponent {
     );
   }
 };
-
 
 export default ExamplePostForm;

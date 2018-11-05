@@ -14,21 +14,21 @@ import {
 import CategoryTable from '../Base/CategoryTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
+import MenuForm from './MenuForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './##COMPONENT_CAMEL##List.less';
+import styles from './MenuList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ ##COMPONENT_LOWER##, loading }) => ({
-  ##COMPONENT_LOWER##,
-  loading: loading.models.##COMPONENT_LOWER##,
+@connect(({ menu, loading }) => ({
+  menu,
+  loading: loading.models.menu,
 }))
 @Form.create()
-class ##COMPONENT_CAMEL##List extends PureComponent {
+class MenuList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
@@ -88,7 +88,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'menu/fetch',
       payload: {},
       callback: this.callbackIndex
     });
@@ -117,7 +117,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
 
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'menu/fetch',
       payload: params,
     });
   };
@@ -129,7 +129,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'menu/fetch',
       payload: {},
     });
   };
@@ -138,7 +138,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/enable',
+      type: 'menu/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -171,7 +171,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       });
 
       dispatch({
-        type: '##COMPONENT_LOWER##/fetch',
+        type: 'menu/fetch',
         payload: values,
       });
     });
@@ -213,7 +213,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/store',
+      type: 'menu/store',
       payload: fields,
       callback: this.callbackAdd
     });
@@ -224,7 +224,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/update',
+      type: 'menu/update',
       payload: fields,
       callback: this.callbackUpdate
     });
@@ -243,7 +243,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: '##COMPONENT_LOWER##/destroy',
+          type: 'menu/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -312,7 +312,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 
   setAllExpandIds = () => {
-    const { ##COMPONENT_LOWER##: { data }} = this.props;
+    const { menu: { data }} = this.props;
 
     let expandedId = [];
     data.list.forEach(item => {
@@ -346,7 +346,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
 
   render() {
     const {
-      ##COMPONENT_LOWER##: { data },
+      menu: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
@@ -393,7 +393,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
             />
           </div>
         </Card>
-        <##COMPONENT_CAMEL##Form
+        <MenuForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -419,4 +419,4 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   }
 }
 
-export default ##COMPONENT_CAMEL##List;
+export default MenuList;

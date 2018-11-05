@@ -205,7 +205,8 @@ export default {
 	'menu.beidou.Generator': 'Generator',
 	'menu.beidou.ExampleFile': 'ExampleFile',
 	'menu.beidou.ExampleGroup': 'ExampleGroup',
-	'menu.beidou.ExampleCategory': 'ExampleCategory',
-	'menu.beidou.ExamplePost': 'ExamplePost',
 	'menu.beidou.ExampleSimple': 'ExampleSimple',
+	'menu.beidou.ExamplePost': 'ExamplePost',
+	'menu.beidou.ExampleCategory': 'ExampleCategory',
+	'menu.beidou.Menu': 'Menu',
 };

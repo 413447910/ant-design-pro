@@ -126,6 +126,11 @@ export default [
             name: 'ExamplePost',
             component: './Example/ExamplePostList',
           },
+          {
+            path: '/beidou/menu',
+            name: 'Menu',
+            component: './Wenqu/MenuList',
+          },
         ],
       },
       // list
@@ -134,12 +139,6 @@ export default [
         icon: 'table',
         name: 'list',
         routes: [
-
-          {
-            path: '/list/menu-list',
-            name: 'menuList',
-            component: './Base/MenuList',
-          },
           {
             path: '/list/app-list',
             name: 'appList',

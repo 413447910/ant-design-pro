@@ -1,4 +1,5 @@
-import {queryMenu, updateMenu, updateMenuStatus, removeMenu , addMenu, } from '@/services/api';
+import {queryMenu, updateMenu, destroyMenu , storeMenu, enableMenu} from '@/services/menu';
+import {checkRespData} from '@/utils/BdHelper';
 
 export default {
   namespace: 'menu',
@@ -6,30 +7,39 @@ export default {
   state: {
     data: {
       list: [],
-      menuTree: [],
       pagination: {},
+      treeData: [],
+      common: [],
     },
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetch({ payload, callback }, { call, put }) {
       const response = yield call(queryMenu, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
-    *add({ payload, callback }, { call, put }) {
-      console.log('add data ', payload)
-      const response = yield call(addMenu, payload);
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
     },
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeMenu , payload);
+    *store({ payload, callback }, { call, put }) {
+      const response = yield call(storeMenu, payload);
+      if(!checkRespData(response, 'store')){
+        return;
+      }
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+    *destroy({ payload, callback }, { call, put }) {
+      const response = yield call(destroyMenu , payload);
+
+      if(!checkRespData(response, 'destroy')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -38,14 +48,25 @@ export default {
     },
     *update({ payload, callback }, { call, put }) {
       const response = yield call(updateMenu, payload);
+
+      if(!checkRespData(response, 'update')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
     },
-    *status({ payload, callback }, { call, put }) {
-      const response = yield call(updateMenuStatus, payload);
+
+    *enable({ payload, callback }, { call, put }) {
+      const response = yield call(enableMenu, payload);
+
+      if(!checkRespData(response, 'enable')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -58,7 +79,7 @@ export default {
     save(state, action) {
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.data,
       };
     },
   },

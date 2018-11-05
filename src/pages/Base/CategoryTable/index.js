@@ -20,7 +20,6 @@ class CategoryTable extends PureComponent {
 
     this.state = {
       selectedRowKeys: [],
-      toggleRowKeys: [],
       needTotalList,
     };
   }
@@ -87,8 +86,6 @@ class CategoryTable extends PureComponent {
       }),
     };
 
-    const currExpandedRowKeys = expandedRowKeys;
-
 
     return (
       <div className={styles.standardTable}>
@@ -124,7 +121,7 @@ class CategoryTable extends PureComponent {
           pagination={paginationProps}
           onChange={this.handleTableChange}
           indentSize={30}
-          expandedRowKeys={currExpandedRowKeys}
+          expandedRowKeys={expandedRowKeys}
         />
       </div>
     );

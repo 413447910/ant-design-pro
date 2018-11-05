@@ -35,6 +35,9 @@ class ExampleCategoryList extends PureComponent {
     selectedRows: [],
     hiddenFields: ['thumbUrl'],
     formValues: {},
+    expand: true,
+    expandAllIds: [],
+    expandedRowKeys: [],
   };
 
   columns = [
@@ -86,8 +89,11 @@ class ExampleCategoryList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'examplecategory/fetch',
+      payload: {},
+      callback: this.callbackIndex
     });
   };
+
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -127,7 +133,6 @@ class ExampleCategoryList extends PureComponent {
       payload: {},
     });
   };
-
 
 
   handleChangeEnable = (record) => {
@@ -198,6 +203,7 @@ class ExampleCategoryList extends PureComponent {
     }
   };
 
+
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -209,7 +215,7 @@ class ExampleCategoryList extends PureComponent {
     dispatch({
       type: 'examplecategory/store',
       payload: fields,
-      callback: this.handleModalVisible
+      callback: this.callbackAdd
     });
 
     this.reserveForm(fields);
@@ -220,7 +226,7 @@ class ExampleCategoryList extends PureComponent {
     dispatch({
       type: 'examplecategory/update',
       payload: fields,
-      callback: this.handleModalVisible
+      callback: this.callbackUpdate
     });
 
     this.reserveForm(fields);
@@ -291,8 +297,51 @@ class ExampleCategoryList extends PureComponent {
     );
   }
 
-  renderForm() {
-    return this.renderSimpleForm();
+  callbackIndex = () => {
+    this.setAllExpandIds()
+  }
+
+  callbackAdd = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  callbackUpdate = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  setAllExpandIds = () => {
+    const { examplecategory: { data }} = this.props;
+
+    let expandedId = [];
+    data.list.forEach(item => {
+      expandedId.push(item.id)
+      item.childrenIds.forEach(id => {
+        expandedId.push(id)
+      })
+    })
+
+    this.setState({
+      expandedRowKeys: expandedId,
+      expandAllIds: expandedId
+    });
+
+  }
+
+
+  // 菜单展示和收起
+  handleExpansion  = () => {
+    const { expand, expandAllIds } = this.state
+    this.setState({
+      expand: !expand,
+      expandedRowKeys: expand ? [] : expandAllIds
+    });
+  }
+
+
+  handleChangeExpandedRowKeys = () => {
+    console.log('handleChangeExpandedRowKeys')
   }
 
   render() {
@@ -301,11 +350,11 @@ class ExampleCategoryList extends PureComponent {
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-        previewUrl, previewModalVisible } = this.state;
+      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
-    const expandedRowKeys = data.list.map(item => item.id);
+    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -317,11 +366,15 @@ class ExampleCategoryList extends PureComponent {
       <PageHeaderWrapper title="分类模版">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
+              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
+                显示全部
+              </Button>
+
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
@@ -336,6 +389,7 @@ class ExampleCategoryList extends PureComponent {
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
               expandedRowKeys={expandedRowKeys}
+              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
