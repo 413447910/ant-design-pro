@@ -123,21 +123,14 @@ export default function request(
       sessionStorage.removeItem(`${hashcode}:timestamp`);
     }
   }
-  console.log('request url', url, ' data is', newOptions)
+//  console.log('request url', url, ' data is', newOptions)
   return fetch(url, newOptions)
     .then(checkStatus)
-//    .then(response => cachedSave(response, hashcode))
+    .then(response => cachedSave(response, hashcode))
     .then(parseJson)
     .then(respData => {
 
         return respData
-        const code = respData.code
-
-        if(code === 0){
-          return respData.data;
-        }
-
-        throw new Error('unsupported parameters');
 
     })
     .catch(e => {

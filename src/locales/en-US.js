@@ -209,4 +209,8 @@ export default {
 	'menu.beidou.ExamplePost': 'ExamplePost',
 	'menu.beidou.ExampleCategory': 'ExampleCategory',
 	'menu.beidou.Menu': 'Menu',
+	'menu.beidou.PermissionGroup': 'PermissionGroup',
+	'menu.beidou.Permission': 'Permission',
+	'menu.beidou.Role': 'Role',
+	'menu.beidou.RoleUser': 'RoleUser',
 };

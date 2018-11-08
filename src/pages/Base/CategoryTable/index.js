@@ -120,7 +120,7 @@ class CategoryTable extends PureComponent {
           columns={columns}
           pagination={paginationProps}
           onChange={this.handleTableChange}
-          indentSize={30}
+          indentSize={15}
           expandedRowKeys={expandedRowKeys}
         />
       </div>

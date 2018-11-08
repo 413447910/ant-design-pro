@@ -1,5 +1,6 @@
 
 import { Select, message, Modal, Button } from 'antd';
+import path from 'path'
 
 export const DATEIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 
@@ -103,7 +104,6 @@ export function checkRespData(respData, type) {
 
   return true
 }
-
 
 export function formatMomentTimeToStr(m) {
   return m.format('YYYY-MM-DD HH:mm:ss')

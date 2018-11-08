@@ -11,68 +11,44 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import CategoryTable from '../Base/CategoryTable';
+import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import MenuForm from './MenuForm';
+import PermissionGroupForm from './PermissionGroupForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './MenuList.less';
+import styles from './PermissionGroupList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ menu, loading }) => ({
-  menu,
-  loading: loading.models.menu,
+@connect(({ permissiongroup, loading }) => ({
+  permissiongroup,
+  loading: loading.models.permissiongroup,
 }))
 @Form.create()
-class MenuList extends PureComponent {
+class PermissionGroupList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['picture1', 'thumbUrl', 'remark'],
+    hiddenFields: ['remark'],
     formValues: {},
-    expand: true,
-    expandAllIds: [],
-    expandedRowKeys: [],
   };
 
   columns = [
     {
       title: '名称',
       dataIndex: 'name',
-      width: 200,
     },
     {
-      title: '路径',
-      dataIndex: 'path',
-    },
-    {
-      title: '组件',
-      dataIndex: 'component',
-    },
-    {
-      title: '类型',
-      dataIndex: 'typeDesc',
-    },
-    {
-      title: '图标',
-      dataIndex: 'icon',
+      title: '标识',
+      dataIndex: 'permName',
     },
     {
       title: '描述',
       dataIndex: 'remark',
-    },
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
     },
     {
       title: '排序',
@@ -105,12 +81,9 @@ class MenuList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/fetch',
-      payload: {},
-      callback: this.callbackIndex
+      type: 'permissiongroup/fetch',
     });
   };
-
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -134,7 +107,7 @@ class MenuList extends PureComponent {
     }
 
     dispatch({
-      type: 'menu/fetch',
+      type: 'permissiongroup/fetch',
       payload: params,
     });
   };
@@ -146,16 +119,17 @@ class MenuList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'menu/fetch',
+      type: 'permissiongroup/fetch',
       payload: {},
     });
   };
 
 
+
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/enable',
+      type: 'permissiongroup/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -188,7 +162,7 @@ class MenuList extends PureComponent {
       });
 
       dispatch({
-        type: 'menu/fetch',
+        type: 'permissiongroup/fetch',
         payload: values,
       });
     });
@@ -220,7 +194,6 @@ class MenuList extends PureComponent {
     }
   };
 
-
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -230,9 +203,9 @@ class MenuList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/store',
+      type: 'permissiongroup/store',
       payload: fields,
-      callback: this.callbackAdd
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -241,9 +214,9 @@ class MenuList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'menu/update',
+      type: 'permissiongroup/update',
       payload: fields,
-      callback: this.callbackUpdate
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -260,7 +233,7 @@ class MenuList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'menu/destroy',
+          type: 'permissiongroup/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -271,19 +244,6 @@ class MenuList extends PureComponent {
           },
         });
       }
-    });
-  }
-
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl.thumbUrl,
-      previewModalVisible: true,
-    });
-  }
-
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
     });
   }
 
@@ -314,64 +274,18 @@ class MenuList extends PureComponent {
     );
   }
 
-  callbackIndex = () => {
-    this.setAllExpandIds()
-  }
-
-  callbackAdd = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  callbackUpdate = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  setAllExpandIds = () => {
-    const { menu: { data }} = this.props;
-
-    let expandedId = [];
-    data.list.forEach(item => {
-      expandedId.push(item.id)
-      item.childrenIds.forEach(id => {
-        expandedId.push(id)
-      })
-    })
-
-    this.setState({
-      expandedRowKeys: expandedId,
-      expandAllIds: expandedId
-    });
-
-  }
-
-
-  // 菜单展示和收起
-  handleExpansion  = () => {
-    const { expand, expandAllIds } = this.state
-    this.setState({
-      expand: !expand,
-      expandedRowKeys: expand ? [] : expandAllIds
-    });
-  }
-
-
-  handleChangeExpandedRowKeys = () => {
-    console.log('handleChangeExpandedRowKeys')
+  renderForm() {
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      menu: { data },
+      permissiongroup: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
-
-    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -380,37 +294,31 @@ class MenuList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="菜单规则">
+      <PageHeaderWrapper title="权限组管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
+            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
-              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
-                显示全部
-              </Button>
-
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
                 </span>
               )}
             </div>
-            <CategoryTable
+            <StandardTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
-              expandedRowKeys={expandedRowKeys}
-              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
-        <MenuForm
+        <PermissionGroupForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -418,22 +326,9 @@ class MenuList extends PureComponent {
           hiddenFields={hiddenFields}
           data={data}
         />
-        {
-            previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-            )
-        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default MenuList;
+export default PermissionGroupList;

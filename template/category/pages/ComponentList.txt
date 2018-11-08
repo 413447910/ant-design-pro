@@ -363,7 +363,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="分类模版">
+      <PageHeaderWrapper title="##LIST_STR##">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>

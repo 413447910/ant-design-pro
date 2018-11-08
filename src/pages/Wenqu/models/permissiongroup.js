@@ -1,8 +1,8 @@
-import {queryMenu, updateMenu, destroyMenu , storeMenu, enableMenu, configMenu} from '@/services/menu';
+import {queryPermissionGroup, updatePermissionGroup, destroyPermissionGroup , storePermissionGroup, enablePermissionGroup} from '@/services/permissiongroup';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'menu',
+  namespace: 'permissiongroup',
 
   state: {
     data: {
@@ -14,24 +14,15 @@ export default {
   },
 
   effects: {
-    *fetch({ payload, callback }, { call, put }) {
-      const response = yield call(queryMenu, payload);
+    *fetch({ payload }, { call, put }) {
+      const response = yield call(queryPermissionGroup, payload);
       yield put({
         type: 'save',
         payload: response,
       });
-      if (callback) callback();
-    },
-    *config({ payload, callback }, { call, put }) {
-      const response = yield call(configMenu, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(storeMenu, payload);
+      const response = yield call(storePermissionGroup, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -42,7 +33,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroyMenu , payload);
+      const response = yield call(destroyPermissionGroup , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -55,7 +46,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateMenu, payload);
+      const response = yield call(updatePermissionGroup, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -69,7 +60,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableMenu, payload);
+      const response = yield call(enablePermissionGroup, payload);
 
       if(!checkRespData(response, 'enable')){
         return;

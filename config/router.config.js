@@ -1,6 +1,7 @@
 export default [
   // user
   {
+    key:49,
     path: '/user',
     component: '../layouts/UserLayout',
     routes: [
@@ -87,7 +88,7 @@ export default [
         ],
       },
       {
-        path: 'beidou',
+        path: '/beidou',
         icon: 'table',
         name: 'beidou',
         routes: [
@@ -130,6 +131,21 @@ export default [
             path: '/beidou/menu',
             name: 'Menu',
             component: './Wenqu/MenuList',
+          },
+          {
+            path: '/beidou/permissions/group',
+            name: 'PermissionGroup',
+            component: './Wenqu/PermissionGroupList',
+          },
+          {
+            path: '/beidou/permissions/index',
+            name: 'Permission',
+            component: './Wenqu/PermissionList',
+          },
+          {
+            path: '/beidou/roles',
+            name: 'Role',
+            component: './Wenqu/RoleList',
           },
         ],
       },

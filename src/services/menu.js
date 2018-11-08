@@ -5,6 +5,10 @@ export async function queryMenu(params) {
   return request(`/api/menu/index?${stringify(params)}`);
 }
 
+export async function configMenu(params) {
+  return request(`/api/menu/config?${stringify(params)}`);
+}
+
 export async function storeMenu(params) {
   return request('/api/menu/store', {
     method: 'POST',

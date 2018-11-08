@@ -91,7 +91,6 @@ class BasicLayout extends React.PureComponent {
     dispatch({
       type: 'setting/getSetting',
     });
-
     this.renderRef = requestAnimationFrame(() => {
       this.setState({
         rendering: false,
@@ -106,7 +105,6 @@ class BasicLayout extends React.PureComponent {
       }
     });
   }
-
 
   componentDidUpdate(preProps) {
     // After changing to phone mode,
@@ -136,7 +134,6 @@ class BasicLayout extends React.PureComponent {
     const {
       route: { routes },
     } = this.props;
-
     return formatter(routes);
   }
 
@@ -210,7 +207,6 @@ class BasicLayout extends React.PureComponent {
       layout: PropsLayout,
       children,
       location: { pathname },
-      menu: { data },
     } = this.props;
     const { rendering, isMobile } = this.state;
     const isTop = PropsLayout === 'topmenu';
@@ -224,7 +220,6 @@ class BasicLayout extends React.PureComponent {
             theme={navTheme}
             onCollapse={this.handleMenuCollapse}
             menuData={menuData}
-          //  menuData={data.list}
             isMobile={isMobile}
             {...this.props}
           />
@@ -266,9 +261,8 @@ class BasicLayout extends React.PureComponent {
   }
 }
 
-export default connect(({ global, setting, menu}) => ({
+export default connect(({ global, setting }) => ({
   collapsed: global.collapsed,
   layout: setting.layout,
-  menu: menu,
   ...setting,
 }))(BasicLayout);

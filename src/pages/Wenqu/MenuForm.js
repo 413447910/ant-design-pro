@@ -12,6 +12,7 @@ import {
   Icon,
   Select,
   TreeSelect,
+  Radio
 } from 'antd';
 
 import { buildFormSelectOption, getFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
@@ -90,6 +91,19 @@ class MenuForm extends PureComponent {
         onCancel={() => handleModalVisible()}
       >
 
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}}  label="菜单类型">
+          {form.getFieldDecorator('type', {
+            initialValue: formValues.type || 'component',
+            rules: [],
+          })(
+            <Radio.Group  buttonStyle="solid">
+              <Radio.Button value="component">组件</Radio.Button>
+              <Radio.Button value="layout">布局</Radio.Button>
+              <Radio.Button value="redirect">重定向</Radio.Button>
+            </Radio.Group>
+          )}
+        </FormItem>
+
         {
           !hiddenFields.includes('parentId') &&
             <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="父级">
@@ -119,6 +133,56 @@ class MenuForm extends PureComponent {
               })(<Input placeholder="" />)}
             </FormItem>
         }
+
+        {
+          !hiddenFields.includes('path') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="路径">
+            {form.getFieldDecorator('path', {
+              initialValue: formValues.path || '',
+              rules: [{required: true, message: '路径不能为空！'}],
+            })(<Input placeholder="" />)}
+          </FormItem>
+        }
+        {
+          !hiddenFields.includes('pathMenu') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="路径菜单">
+            {form.getFieldDecorator('pathMenu', {
+              initialValue: formValues.pathMenu || '',
+              rules: [],
+            })(<Input placeholder="" />)}
+          </FormItem>
+        }
+        {
+          !hiddenFields.includes('component') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="组件">
+            {form.getFieldDecorator('component', {
+              initialValue: formValues.component || '',
+              rules: [],
+            })(<Input placeholder="" />)}
+          </FormItem>
+        }
+
+        {
+          !hiddenFields.includes('redirect') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="重定向">
+            {form.getFieldDecorator('redirect', {
+              initialValue: formValues.redirect || '',
+              rules: [],
+            })(<Input placeholder="" />)}
+          </FormItem>
+        }
+
+        {
+          !hiddenFields.includes('icon') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="图标">
+            {form.getFieldDecorator('icon', {
+              initialValue: formValues.icon || '',
+              rules: [],
+            })(<Input placeholder="菜单图标, 如dashboard" />)}
+          </FormItem>
+        }
+
+
         {
           !hiddenFields.includes('picture1') &&
             <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="图片">
@@ -130,7 +194,7 @@ class MenuForm extends PureComponent {
                   {...propUpload}
                   action="/api/file/upload"
                   defaultFileList={formValues.picture1}
-                  beforeUpload={(file) => {console.log('before upload file type', file.type)}}
+                  beforeUpload={() => {}}
                   onRemove={() => {formValues.picture1 = []}}
                   onChange={this.uploadChangeOnPicture1}
                   onPreview={this.previewPicture1}

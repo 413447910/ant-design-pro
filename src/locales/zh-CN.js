@@ -202,4 +202,8 @@ export default {
 	'menu.beidou.ExamplePost': '文章模版',
 	'menu.beidou.ExampleCategory': '分类模版',
 	'menu.beidou.Menu': '菜单规则',
+	'menu.beidou.PermissionGroup': '权限组管理',
+	'menu.beidou.Permission': '权限列表',
+	'menu.beidou.Role': '角色列表',
+	'menu.beidou.RoleUser': '用户角色',
 };
