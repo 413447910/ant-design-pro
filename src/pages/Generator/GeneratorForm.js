@@ -44,6 +44,14 @@ class GeneratorForm extends PureComponent {
     form.setFieldsValue({'backendTemplateType': value})
   }
 
+
+  handlePageSubFolderNameChange = (value) => {
+    const { form } = this.props;
+    console.log(value)
+    form.setFieldsValue({'backendSubFolderName': value})
+  }
+
+
   // 组件名称更新
   handleComponentNameChange = (e) => {
     const { form } = this.props;
@@ -167,11 +175,26 @@ class GeneratorForm extends PureComponent {
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="子目录">
-                  {getFieldDecorator('pageSubFolderName', {
+                  {form.getFieldDecorator('pageSubFolderName', {
                     initialValue: formValues.pageSubFolderName || 'Example',
                     rules: [{required: true, message: '页面子目录不能为空！'}],
-                  })(<Input placeholder="页面子目录, 如Example" onChange={this.handleSubPathChange} />)}
+                  })(
+                    <Select
+                      showSearch
+                      placeholder='请选择'
+                      style={{width: '100%'}}
+                      filterOption={false}
+                      onChange={this.handlePageSubFolderNameChange}
+                    >
+                      <Select.Option value="Exapmle">Example</Select.Option>
+                      <Select.Option value="Wenqu">Wenqu</Select.Option>
+                      <Select.Option value="Kaiyang">Kaiyang</Select.Option>
+                      <Select.Option value="System">System</Select.Option>
+                    </Select>
+                  )}
                 </FormItem>
+
+
 
                 <FormItem {...formItemLayout} label="路由前缀">
                   {getFieldDecorator('routePrefix', {
@@ -232,11 +255,24 @@ class GeneratorForm extends PureComponent {
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="子目录">
-                  {getFieldDecorator('backendSubFolderName', {
+                  {form.getFieldDecorator('backendSubFolderName', {
                     initialValue: formValues.backendSubFolderName || 'Example',
-                    rules: [{required: true, message: '子目录名称不能为空！'}],
-                  })(<Input placeholder="子目录, 如Example" onChange={this.handleSubPathChange} />)}
+                    rules: [{required: true, message: '页面子目录不能为空！'}],
+                  })(
+                    <Select
+                      showSearch
+                      placeholder='请选择'
+                      style={{width: '100%'}}
+                      filterOption={false}
+                    >
+                      <Select.Option value="Exapmle">Example</Select.Option>
+                      <Select.Option value="Wenqu">Wenqu</Select.Option>
+                      <Select.Option value="Kaiyang">Kaiyang</Select.Option>
+                      <Select.Option value="System">System</Select.Option>
+                    </Select>
+                  )}
                 </FormItem>
+
                 <FormItem {...formItemLayout} label="数据表名称">
                   {getFieldDecorator('backendTableName', {
                     initialValue: formValues.backendTableName || 'comp_example_basic',

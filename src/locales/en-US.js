@@ -217,4 +217,5 @@ export default {
 	'menu.beidou.BannerGroup': 'BannerGroup',
 	'menu.beidou.Banner': 'Banner',
 	'menu.beidou.NavGroup': 'NavGroup',
+	'menu.beidou.Nav': 'Nav',
 };

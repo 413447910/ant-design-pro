@@ -211,4 +211,5 @@ export default {
 	'menu.beidou.BannerGroup': '幻灯片组',
 	'menu.beidou.Banner': '幻灯片',
 	'menu.beidou.NavGroup': '导航组',
+	'menu.beidou.Nav': '导航',
 };

@@ -167,6 +167,11 @@ export default [
             name: 'NavGroup',
             component: './Kaiyang/NavGroupList',
           },
+          {
+            path: '/beidou/nav/index',
+            name: 'Nav',
+            component: './Kaiyang/NavList',
+          },
         ],
       },
       // list
