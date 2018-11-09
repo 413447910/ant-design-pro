@@ -1,35 +1,44 @@
-import {queryBannerSubset, updateBannerSubset, deleteBannerSubset , addBannerSubset, enableBannerSubset} from '@/services/banner';
+import {queryBanner, updateBanner, destroyBanner , storeBanner, enableBanner} from '@/services/banner';
+import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'bannerSubset',
+  namespace: 'banner',
 
   state: {
     data: {
       list: [],
       pagination: {},
       treeData: [],
-      subsetList: [],
+      common: [],
     },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryBannerSubset, payload);
+      const response = yield call(queryBanner, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addBannerSubset, payload);
+    *store({ payload, callback }, { call, put }) {
+      const response = yield call(storeBanner, payload);
+      if(!checkRespData(response, 'store')){
+        return;
+      }
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
     },
-    *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteBannerSubset , payload);
+    *destroy({ payload, callback }, { call, put }) {
+      const response = yield call(destroyBanner , payload);
+
+      if(!checkRespData(response, 'destroy')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -37,7 +46,12 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateBannerSubset, payload);
+      const response = yield call(updateBanner, payload);
+
+      if(!checkRespData(response, 'update')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -46,7 +60,12 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableBannerSubset, payload);
+      const response = yield call(enableBanner, payload);
+
+      if(!checkRespData(response, 'enable')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -59,7 +78,7 @@ export default {
     save(state, action) {
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.data,
       };
     },
   },

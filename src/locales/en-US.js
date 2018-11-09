@@ -198,7 +198,6 @@ export default {
 	'menu.base.tagList': 'TagList',
 	'menu.cms.tagList': 'TagList',
 	'menu.list.exampleList': 'ExampleList',
-	'menu.beidou.BannerGroup': 'BannerGroup',
 	'menu.beidou.Tag': 'Tag',
 	'menu.beidou.Component': 'Component',
 	'menu.beidou.ExampleBasic': 'ExampleBasic',
@@ -213,4 +212,9 @@ export default {
 	'menu.beidou.Permission': 'Permission',
 	'menu.beidou.Role': 'Role',
 	'menu.beidou.RoleUser': 'RoleUser',
+	'menu.beidou.User': 'User',
+	'menu.beidou.BdUser': 'BdUser',
+	'menu.beidou.BannerGroup': 'BannerGroup',
+	'menu.beidou.Banner': 'Banner',
+	'menu.beidou.NavGroup': 'NavGroup',
 };

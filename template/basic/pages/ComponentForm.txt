@@ -121,7 +121,7 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
                 showSearch
                 placeholder='请选择'
                 style={{width: '100%'}}
-                filterOption={false}
+                filterOption={true}
               >
                 {buildFormSelectOption(common)}
               </Select>

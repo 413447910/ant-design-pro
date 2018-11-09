@@ -12,6 +12,7 @@ import {
   Icon,
   Select,
   TreeSelect,
+  Radio,
 } from 'antd';
 
 import { buildFormSelectOption, getFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
@@ -21,7 +22,7 @@ const { TextArea } = Input;
 
 
 @Form.create()
-class ##COMPONENT_CAMEL##Form extends PureComponent {
+class BannerForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -91,10 +92,31 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
       >
 
         {
+          !hiddenFields.includes('parentId') &&
+            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="父级">
+              {form.getFieldDecorator('parentId', {
+                initialValue: formValues.parentId || '0-0',
+                rules: [{required: true, message: '父级不能为空！'}],
+              })(
+                <TreeSelect
+                  showSearch
+                  style={{width: '100%'}}
+                  dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                  treeData={treeData}
+                  allowClear
+                  placeholder="请选择"
+                  treeDefaultExpandAll
+                  onChange={(value) => console.log(value)}
+                />
+              )}
+            </FormItem>
+        }
+        {
           !hiddenFields.includes('groupId') &&
           <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属组">
             {form.getFieldDecorator('groupId', {
-              initialValue: getFormSelectOption(common, formValues.groupId) || 'ant',
+//              initialValue: getFormSelectOption(common, formValues.groupId) || '',
+              initialValue: formValues.groupId || '',
               rules: [{required: true, message: '所属组不能为空！'}],
             })(
               <Select
@@ -123,6 +145,8 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
           !hiddenFields.includes('picture1') &&
             <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="图片">
               {form.getFieldDecorator('picture1', {
+                initialValue: formValues.picture1 || '',
+                rules: [{required: true, message: '图片不能为空！'}],
               })(
                 <Upload
                   {...propUpload}
@@ -143,6 +167,28 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
                 </Upload>
               )}
             </FormItem>
+        }
+
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}}  label="跳转方式">
+          {form.getFieldDecorator('jumpType', {
+            initialValue: formValues.jumpType || 'url',
+            rules: [],
+          })(
+            <Radio.Group  buttonStyle="solid">
+              <Radio.Button value="url">链接</Radio.Button>
+              <Radio.Button value="app">APP内部</Radio.Button>
+            </Radio.Group>
+          )}
+        </FormItem>
+
+        {
+          !hiddenFields.includes('jumpUrl') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="跳转链接">
+            {form.getFieldDecorator('jumpUrl', {
+              initialValue: formValues.jumpUrl || '',
+              rules: [{required: true, message: '跳转链接不能为空！'}],
+            })(<Input placeholder="" />)}
+          </FormItem>
         }
 
         {
@@ -189,4 +235,4 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
 };
 
 
-export default ##COMPONENT_CAMEL##Form;
+export default BannerForm;

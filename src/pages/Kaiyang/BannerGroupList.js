@@ -8,7 +8,6 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
   Switch,
 } from 'antd';
@@ -16,16 +15,11 @@ import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
 import BannerGroupForm from './BannerGroupForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
 import styles from './BannerGroupList.less';
 
 const FormItem = Form.Item;
-
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 
 /* eslint react/no-multi-comp:0 */
@@ -38,20 +32,12 @@ class BannerGroupList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: [],
     formValues: {},
   };
 
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -134,31 +120,7 @@ class BannerGroupList extends PureComponent {
     });
   };
 
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
 
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-            type: 'bannergroup/delete',
-          payload: {
-            id: selectedRows.map(row => row.id),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-
-  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
@@ -204,7 +166,7 @@ class BannerGroupList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -222,21 +184,27 @@ class BannerGroupList extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'bannergroup/add',
+      type: 'bannergroup/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
@@ -244,22 +212,34 @@ class BannerGroupList extends PureComponent {
     dispatch({
       type: 'bannergroup/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl,
-      previewModalVisible: true,
-    });
-  }
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
 
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'bannergroup/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
     });
   }
 
@@ -291,8 +271,7 @@ class BannerGroupList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
@@ -300,7 +279,9 @@ class BannerGroupList extends PureComponent {
       bannergroup: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
+
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -309,12 +290,12 @@ class BannerGroupList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="Banner组">
+      <PageHeaderWrapper title="幻灯片组">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -327,7 +308,7 @@ class BannerGroupList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
@@ -338,22 +319,9 @@ class BannerGroupList extends PureComponent {
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          treeData={data.treeData}
-          common={data.common}
+          hiddenFields={hiddenFields}
+          data={data}
         />
-        {
-            previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-            )
-        }
       </PageHeaderWrapper>
     );
   }

@@ -147,6 +147,26 @@ export default [
             name: 'Role',
             component: './Wenqu/RoleList',
           },
+          {
+            path: '/beidou/bdusers/index',
+            name: 'BdUser',
+            component: './Wenqu/BdUserList',
+          },
+          {
+            path: '/beidou/banner/group',
+            name: 'BannerGroup',
+            component: './Kaiyang/BannerGroupList',
+          },
+          {
+            path: '/beidou/banner',
+            name: 'Banner',
+            component: './Kaiyang/BannerList',
+          },
+          {
+            path: '/beidou/nav/group',
+            name: 'NavGroup',
+            component: './Kaiyang/NavGroupList',
+          },
         ],
       },
       // list
@@ -208,6 +228,7 @@ export default [
         name: 'cms',
         icon: 'profile',
         routes: [
+          /*
           {
             path: '/cms/category',
             name: 'categoryList',
@@ -223,6 +244,7 @@ export default [
             name: 'tagList',
             component: './Cms/TagList',
           },
+          */
         ],
       },
 

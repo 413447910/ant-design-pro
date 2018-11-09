@@ -1,34 +1,44 @@
-import {queryCategory, updateCategory, deleteCategory , addCategory, enableCategory} from '@/services/category';
+import {queryBdUser, updateBdUser, destroyBdUser , storeBdUser, enableBdUser} from '@/services/bduser';
+import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'category',
+  namespace: 'bduser',
 
   state: {
     data: {
       list: [],
       pagination: {},
       treeData: [],
+      common: [],
     },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryCategory, payload);
+      const response = yield call(queryBdUser, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addCategory, payload);
+    *store({ payload, callback }, { call, put }) {
+      const response = yield call(storeBdUser, payload);
+      if(!checkRespData(response, 'store')){
+        return;
+      }
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
     },
-    *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteCategory , payload);
+    *destroy({ payload, callback }, { call, put }) {
+      const response = yield call(destroyBdUser , payload);
+
+      if(!checkRespData(response, 'destroy')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -36,7 +46,12 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateCategory, payload);
+      const response = yield call(updateBdUser, payload);
+
+      if(!checkRespData(response, 'update')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -45,7 +60,12 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableCategory, payload);
+      const response = yield call(enableBdUser, payload);
+
+      if(!checkRespData(response, 'enable')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -58,7 +78,7 @@ export default {
     save(state, action) {
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.data,
       };
     },
   },

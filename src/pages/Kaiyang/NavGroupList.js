@@ -8,55 +8,36 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
   Switch,
-  Divider,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import BannerForm from './BannerForm';
-import BannerSubSet from './BannerSubset';
+import NavGroupForm from './NavGroupForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './BannerList.less';
+import styles from './NavGroupList.less';
 
 const FormItem = Form.Item;
-const confirm = Modal.confirm;
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ banner, loading }) => ({
-  banner,
-  loading: loading.models.banner,
+@connect(({ navgroup, loading }) => ({
+  navgroup,
+  loading: loading.models.navgroup,
 }))
 @Form.create()
-class BannerList extends PureComponent {
+class NavGroupList extends PureComponent {
   state = {
     modalVisible: false,
-    subsetModalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: [],
     formValues: {},
-    previewUrl: '',
-    previewModalVisible: false,
   };
 
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -87,8 +68,6 @@ class BannerList extends PureComponent {
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.handleModalVisible(true, 'update', record)}>更新</a>
-          <Divider type="vertical" />
-          <a onClick={() => this.handleModalVisible(true, 'subset', record)}>管理</a>
         </Fragment>
       ),
     },
@@ -98,7 +77,7 @@ class BannerList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/fetch',
+      type: 'navgroup/fetch',
     });
   };
 
@@ -124,7 +103,7 @@ class BannerList extends PureComponent {
     }
 
     dispatch({
-      type: 'banner/fetch',
+      type: 'navgroup/fetch',
       payload: params,
     });
   };
@@ -136,41 +115,17 @@ class BannerList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'banner/fetch',
+      type: 'navgroup/fetch',
       payload: {},
     });
   };
 
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
-
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-          type: 'banner/delete',
-          payload: {
-            key: selectedRows.map(row => row.key),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-  }
 
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/enable',
+      type: 'navgroup/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -203,7 +158,7 @@ class BannerList extends PureComponent {
       });
 
       dispatch({
-        type: 'banner/fetch',
+        type: 'navgroup/fetch',
         payload: values,
       });
     });
@@ -211,7 +166,7 @@ class BannerList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -226,54 +181,65 @@ class BannerList extends PureComponent {
           formValues: record || {},
         });
         break;
-      case 'subset' :
-        console.log('subset record', record)
-        this.setState({
-          subsetModalVisible: !!flag,
-          formValues: record || {},
-        });
-        break;
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/add',
+      type: 'navgroup/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/update',
+      type: 'navgroup/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl,
-      previewModalVisible: true,
-    });
-  }
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
 
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'navgroup/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
     });
   }
 
@@ -305,19 +271,17 @@ class BannerList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      banner: { data },
+      navgroup: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate,
-      formValues, subsetModalVisible,
-      previewUrl, previewModalVisible
-    } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
+
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -325,14 +289,13 @@ class BannerList extends PureComponent {
       handleUpdate: this.handleUpdate,
     };
 
-
     return (
-      <PageHeaderWrapper title="轮播图列表">
+      <PageHeaderWrapper title="导航组">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -345,50 +308,23 @@ class BannerList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
-
-        {
-          modalVisible ?
-            <BannerForm
-              {...parentMethods}
-              modalVisible={modalVisible}
-              isUpdate={isUpdate}
-              formValues={formValues}
-              treeData={data.treeData}
-              common={data.common}
-            /> : null
-        }
-        {
-          subsetModalVisible ?
-            <BannerSubSet
-              {...parentMethods}
-              modalVisible={subsetModalVisible}
-              formValues={formValues}
-              common={data.common}
-            /> : null
-        }
-        {
-          previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-          )
-        }
-
+        <NavGroupForm
+          {...parentMethods}
+          modalVisible={modalVisible}
+          isUpdate={isUpdate}
+          formValues={formValues}
+          hiddenFields={hiddenFields}
+          data={data}
+        />
       </PageHeaderWrapper>
     );
   }
 }
 
-export default BannerList;
+export default NavGroupList;

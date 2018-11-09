@@ -2,11 +2,11 @@ import request from '@/utils/request';
 import { stringify } from 'qs';
 
 export async function queryBannerGroup(params) {
-  return request(`/api/bannergroup?${stringify(params)}`);
+  return request(`/api/banner/group/index?${stringify(params)}`);
 }
 
-export async function addBannerGroup(params) {
-  return request('/api/bannergroup/add', {
+export async function storeBannerGroup(params) {
+  return request('/api/banner/group/store', {
     method: 'POST',
     body: {
       ...params,
@@ -16,7 +16,7 @@ export async function addBannerGroup(params) {
 }
 
 export async function updateBannerGroup(params) {
-  return request('/api/bannergroup/update', {
+  return request('/api/banner/group/update', {
     method: 'POST',
     body: {
       ...params,
@@ -25,8 +25,8 @@ export async function updateBannerGroup(params) {
   });
 }
 
-export async function deleteBannerGroup(params) {
-  return request('/api/bannergroup/delete', {
+export async function destroyBannerGroup(params) {
+  return request('/api/banner/group/destroy', {
     method: 'POST',
     body: {
       ...params,
@@ -36,7 +36,7 @@ export async function deleteBannerGroup(params) {
 }
 
 export async function enableBannerGroup(params) {
-  return request('/api/bannergroup/enable', {
+  return request('/api/banner/group/enable', {
     method: 'POST',
     body: {
       ...params,

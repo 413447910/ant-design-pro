@@ -8,38 +8,32 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import CategoryForm from './CategoryForm';
+import BdUserForm from './BdUserForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './CategoryList.less';
+import styles from './BdUserList.less';
 
 const FormItem = Form.Item;
-const confirm = Modal.confirm;
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ category, loading }) => ({
-  category,
-  loading: loading.models.category,
+@connect(({ bduser, loading }) => ({
+  bduser,
+  loading: loading.models.bduser,
 }))
 @Form.create()
-class CategoryList extends PureComponent {
+class BdUserList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: ['remark'],
     formValues: {},
   };
 
@@ -83,7 +77,7 @@ class CategoryList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/fetch',
+      type: 'bduser/fetch',
     });
   };
 
@@ -109,7 +103,7 @@ class CategoryList extends PureComponent {
     }
 
     dispatch({
-      type: 'category/fetch',
+      type: 'bduser/fetch',
       payload: params,
     });
   };
@@ -121,39 +115,17 @@ class CategoryList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'category/fetch',
+      type: 'bduser/fetch',
       payload: {},
     });
   };
 
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
 
-    confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: function() {
-        dispatch({
-          type: 'category/delete',
-          payload: {
-            key: selectedRows.map(row => row.key),
-          },
-          callback: () => {},
-        });
-      },
-      onCancel: function() {}
-    });
-
-  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/enable',
+      type: 'bduser/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -186,7 +158,7 @@ class CategoryList extends PureComponent {
       });
 
       dispatch({
-        type: 'category/fetch',
+        type: 'bduser/fetch',
         payload: values,
       });
     });
@@ -194,7 +166,7 @@ class CategoryList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -212,34 +184,64 @@ class CategoryList extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/add',
+      type: 'bduser/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/update',
+      type: 'bduser/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'bduser/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+  }
 
   renderSimpleForm() {
     const {
@@ -269,16 +271,17 @@ class CategoryList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      category: { data },
+      bduser: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
+
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -287,12 +290,12 @@ class CategoryList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="分类列表">
+      <PageHeaderWrapper title="用户列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -305,24 +308,23 @@ class CategoryList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
-        <CategoryForm
+        <BdUserForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          treeData={data.treeData}
-          common={data.common}
+          hiddenFields={hiddenFields}
+          data={data}
         />
-
       </PageHeaderWrapper>
     );
   }
 }
 
-export default CategoryList;
+export default BdUserList;

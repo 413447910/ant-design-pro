@@ -1,6 +1,5 @@
 
-import { Select, message, Modal, Button } from 'antd';
-import path from 'path'
+import { Select, message, Checkbox,Modal, Button, Row, Col } from 'antd';
 
 export const DATEIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 
@@ -27,6 +26,17 @@ export function buildFormSelectOption(common) {
  // arr = [{'key' : 1, 'text': 'a'}]
  // console.log(arr)
   const options = arr.map(d => <Select.Option key={d.key} value={d.key}>{d.text}</Select.Option>);
+  return options
+}
+
+export function buildFormCheckbox(common, spanWidth) {
+  let arr = [{'label' : 'a', 'value': 1}]
+
+  if(issetParam(common) && issetParam(common.checkboxOption)){
+    arr = common.checkboxOption
+  }
+  const options = arr.map(d => <Col span={`${spanWidth}`} key={d.value}><Checkbox value={d.value}>{d.label}</Checkbox></Col>)
+
   return options
 }
 

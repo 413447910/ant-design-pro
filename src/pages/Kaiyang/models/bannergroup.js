@@ -1,4 +1,5 @@
-import {queryBannerGroup, updateBannerGroup, deleteBannerGroup , addBannerGroup, enableBannerGroup} from '@/services/bannergroup';
+import {queryBannerGroup, updateBannerGroup, destroyBannerGroup , storeBannerGroup, enableBannerGroup} from '@/services/bannergroup';
+import {checkRespData} from '@/utils/BdHelper';
 
 export default {
   namespace: 'bannergroup',
@@ -8,6 +9,7 @@ export default {
       list: [],
       pagination: {},
       treeData: [],
+      common: [],
     },
   },
 
@@ -19,16 +21,24 @@ export default {
         payload: response,
       });
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addBannerGroup, payload);
+    *store({ payload, callback }, { call, put }) {
+      const response = yield call(storeBannerGroup, payload);
+      if(!checkRespData(response, 'store')){
+        return;
+      }
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
     },
-    *delete({ payload, callback }, { call, put }) {
-      const response = yield call(deleteBannerGroup , payload);
+    *destroy({ payload, callback }, { call, put }) {
+      const response = yield call(destroyBannerGroup , payload);
+
+      if(!checkRespData(response, 'destroy')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -37,6 +47,11 @@ export default {
     },
     *update({ payload, callback }, { call, put }) {
       const response = yield call(updateBannerGroup, payload);
+
+      if(!checkRespData(response, 'update')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -46,6 +61,11 @@ export default {
 
     *enable({ payload, callback }, { call, put }) {
       const response = yield call(enableBannerGroup, payload);
+
+      if(!checkRespData(response, 'enable')){
+        return;
+      }
+
       yield put({
         type: 'save',
         payload: response,
@@ -58,7 +78,7 @@ export default {
     save(state, action) {
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.data,
       };
     },
   },

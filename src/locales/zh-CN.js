@@ -206,4 +206,9 @@ export default {
 	'menu.beidou.Permission': '权限列表',
 	'menu.beidou.Role': '角色列表',
 	'menu.beidou.RoleUser': '用户角色',
+	'menu.beidou.User': '用户管理',
+	'menu.beidou.BdUser': '用户列表',
+	'menu.beidou.BannerGroup': '幻灯片组',
+	'menu.beidou.Banner': '幻灯片',
+	'menu.beidou.NavGroup': '导航组',
 };

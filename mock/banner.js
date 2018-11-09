@@ -1,13 +1,11 @@
 import { parse } from 'url';
 
 const common = {
-    'bannerType': [{
-        'id' : 1,
-        'desc' : '首页',
-    },{
-        'id' : 2,
-        'desc' : '详情页',
-    }],
+  'selectOption' : [
+    {'key' : 1, 'text' : 'ant'},
+    {'key' : 2, 'text' : 'design'},
+    {'key' : 3, 'text' : 'pro'}
+   ],
 };
 
 const fileList = [{
@@ -15,33 +13,12 @@ const fileList = [{
   name: 'xxx.png',
   status: 'done',
   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  fileUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
 }];
-
-const t = new Date();
 
 // mock tableListDataSource
 let tableListDataSource = [];
-let subsetDataSource = [];
 for (let i = 0; i < 46; i += 1) {
-
-  subsetDataSource = [];
-  for(let j = 1; j < 9; j += 1){
-    subsetDataSource.push({
-      key: j,
-      id: j,
-      name: `Subset Banner ${j}`,
-      remark: `remark`,
-      isEnable: true,
-      disabled: i % 6 === 0,
-      rankNum: Math.floor(Math.random() * 10) % 100 ,
-      createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
-      updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
-      picture1 : fileList,
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    });
-  }
-
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
@@ -50,16 +27,13 @@ for (let i = 0; i < 46; i += 1) {
     isEnable: true,
     disabled: i % 6 === 0,
     rankNum: Math.floor(Math.random() * 10) % 100 ,
+    groupId: Math.floor(Math.random() * 10) % 10 ,
     createdAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     updatedAt: new Date(`2018-07-${Math.floor(i / 2) + 1}`),
     picture1 : fileList,
-    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    subset: subsetDataSource,
+    thumbUrl: fileList[0],
   });
 }
-
-const subsetList = tableListDataSource;
-
 
 const treeData = [{
   title: 'Node1',
@@ -119,7 +93,6 @@ function getBanner(req, res, u) {
       current: parseInt(params.currentPage, 10) || 1,
     },
     treeData: treeData,
-    subsetList: subsetList,
     common: common
   };
 
@@ -140,7 +113,7 @@ function postBanner(req, res, u, b) {
   switch (method) {
     /* eslint no-case-declarations:0 */
     case 'delete':
-      tableListDataSource = tableListDataSource.filter(item => key.indexOf(item.key) === -1);
+      tableListDataSource = tableListDataSource.filter(item => id.indexOf(item.id) === -1);
       break;
     case 'add':
       const i = Math.ceil(Math.random() * 10000);
@@ -150,11 +123,12 @@ function postBanner(req, res, u, b) {
         name: body.name,
         disabled: i % 6 === 0,
         rankNum: body.rankNum,
+        groupId:  i % 10,
         remark: body.remark,
-        isEnable: body.isEnable,
         createdAt: currTime,
         updatedAt: currTime,
         picture1 : fileList,
+        thumbUrl: fileList[0],
       });
       break;
     case 'update':
@@ -185,152 +159,16 @@ function postBanner(req, res, u, b) {
       total: tableListDataSource.length,
     },
     treeData: treeData,
-//    subsetList: subsetList,
     common: common
   };
 
   return res.json(result);
 }
-
-
-
-function getBannerSubset(req, res, u) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
-
-  const params = parse(url, true).query;
-  const { subsetParentId } = params;
-
-  let dataSource = tableListDataSource;
-
-  if (params.subsetParentId) {
-    dataSource = dataSource.filter(data => data.id === subsetParentId);
-  }
-
-
-  subsetDataSource = [];
-  for(let j = 1; j < 9; j += 1){
-    subsetDataSource.push({
-      key: j,
-      id: j,
-      name: `Subset Banner ${j}`,
-      remark: `remark`,
-      isEnable: true,
-      disabled: j % 6 === 0,
-      rankNum: Math.floor(Math.random() * 10) % 100 ,
-      createdAt: new Date(`2018-09-${Math.floor(j / 2) + 1}`),
-      updatedAt: new Date(`2018-09-${Math.floor(j / 2) + 1}`),
-      picture1 : fileList,
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    });
-  }
-
-  let pageSize = 20;
-  if (params.pageSize) {
-    pageSize = params.pageSize * 1;
-  }
-
-  const result = {
-    list: subsetDataSource,
-    pagination: {
-      total: subsetDataSource.length,
-      pageSize,
-      current: parseInt(params.currentPage, 10) || 1,
-    },
-    treeData: treeData,
-//    subsetList: subsetList,
-    common: common
-  };
-
-  return res.json(result);
-}
-
-
-
-function postBannerSubset(req, res, u, b) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
-
-  const body = (b && b.body) || req.body;
-  const { method, key, isEnable, id } = body;
-  const updatedAt = new Date();
-  const currTime = new Date();
-
-
-  switch (method) {
-    /* eslint no-case-declarations:0 */
-    case 'delete':
-      subsetDataSource = subsetDataSource.filter(item => id.indexOf(item.id) === -1);
-      break;
-    case 'add':
-      const i = Math.ceil(Math.random() * 10000);
-      subsetDataSource.unshift({
-        key: i,
-        id: i,
-        name: body.name,
-        disabled: i % 6 === 0,
-        rankNum: body.rankNum,
-        remark: body.remark,
-        isEnable: body.isEnable,
-        createdAt: currTime,
-        updatedAt: currTime,
-        picture1 : fileList,
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      });
-      break;
-    case 'update':
-      subsetDataSource = subsetDataSource.map(item => {
-        if (item.id === id) {
-          Object.assign(item, body, {updatedAt});
-          return item;
-        }
-        return item;
-      });
-      break;
-    case 'enable':
-      subsetDataSource = subsetDataSource.map(item => {
-        if (item.id === id) {
-          Object.assign(item, {isEnable, updatedAt});
-          return item;
-        }
-        return item;
-      });
-      break;
-    default:
-      break;
-  }
-
-  const result = {
-    list: subsetDataSource,
-    pagination: {
-      total: subsetDataSource.length,
-    },
-    treeData: treeData,
-//    subsetList: subsetList,
-    common: common
-  };
-
-  return res.json(result);
-}
-
-
-
 
 export default {
-  'GET /api/banner': getBanner,
-  'POST /api/banner/add': postBanner,
+  'GET /api/banner/index': getBanner,
+  'POST /api/banner/store': postBanner,
   'POST /api/banner/update': postBanner,
-  'POST /api/banner/delete': postBanner,
   'POST /api/banner/enable': postBanner,
-
-
-  'GET /api/bannerSubset': getBannerSubset,
-  'POST /api/bannerSubset/add': postBannerSubset,
-  'POST /api/bannerSubset/update': postBannerSubset,
-  'POST /api/bannerSubset/delete': postBannerSubset,
-  'POST /api/bannerSubset/enable': postBannerSubset,
+  'POST /api/banner/destroy': postBanner,
 };

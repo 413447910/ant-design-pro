@@ -8,41 +8,33 @@ import {
   Form,
   Input,
   Button,
-  message,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import TagForm from './TagForm';
+import BannerForm from './BannerForm';
+import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './TagList.less';
+import styles from './BannerList.less';
 
 const FormItem = Form.Item;
-const confirm = Modal.confirm;
-
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ tag, loading }) => ({
-  tag,
-  loading: loading.models.tag,
+@connect(({ banner, loading }) => ({
+  banner,
+  loading: loading.models.banner,
 }))
 @Form.create()
-class TagList extends PureComponent {
+class BannerList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
-    expandForm: false,
     selectedRows: [],
+    hiddenFields: ['parentId', 'remark'],
     formValues: {},
-    picture1ModalVisible: false,
-    picture1PreviewUrl: '',
   };
 
   columns = [
@@ -51,7 +43,7 @@ class TagList extends PureComponent {
       dataIndex: 'thumbUrl',
       width: 100,
       render: (val, record) => (
-        <img src={record.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
       )
     },
     {
@@ -61,6 +53,14 @@ class TagList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
+    },
+    {
+      title: ' 所属组',
+      dataIndex: 'groupName',
+    },
+    {
+      title: ' 跳转地址',
+      dataIndex: 'jumpUrl',
     },
     {
       title: '排序',
@@ -93,7 +93,7 @@ class TagList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'tag/fetch',
+      type: 'banner/fetch',
     });
   };
 
@@ -119,7 +119,7 @@ class TagList extends PureComponent {
     }
 
     dispatch({
-      type: 'tag/fetch',
+      type: 'banner/fetch',
       payload: params,
     });
   };
@@ -131,41 +131,17 @@ class TagList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'tag/fetch',
+      type: 'banner/fetch',
       payload: {},
     });
   };
 
-  handleRemove = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (!selectedRows) return;
 
-    Modal.confirm({
-      title: '您是否确认要删除选中内容',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        dispatch({
-            type: 'tag/delete',
-          payload: {
-            id: selectedRows.map(row => row.id),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-      }
-    });
-
-  }
 
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'tag/enable',
+      type: 'banner/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -198,7 +174,7 @@ class TagList extends PureComponent {
       });
 
       dispatch({
-        type: 'tag/fetch',
+        type: 'banner/fetch',
         payload: values,
       });
     });
@@ -206,7 +182,7 @@ class TagList extends PureComponent {
 
   handleModalVisible = (flag, type, record) => {
     switch(type){
-      case 'add' :
+      case 'store' :
         this.setState({
           modalVisible: !!flag,
           isUpdate: false,
@@ -224,37 +200,68 @@ class TagList extends PureComponent {
       default:
         this.setState({
           modalVisible: !!flag,
+          isUpdate: false,
           formValues: {},
         });
-        break;
     }
   };
+
+  reserveForm = fields => {
+    this.setState({
+      formValues: fields,
+    });
+  }
 
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'tag/add',
+      type: 'banner/store',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('添加成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
 
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'tag/update',
+      type: 'banner/update',
       payload: fields,
+      callback: this.handleModalVisible
     });
 
-    message.success('更新成功');
-    this.handleModalVisible();
+    this.reserveForm(fields);
   };
+
+  handleRemove = () => {
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+
+    Modal.confirm({
+      title: '您是否确认要删除选中内容',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'banner/destroy',
+          payload: {
+            id: selectedRows.map(row => row.id),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+      }
+    });
+  }
 
   setPreviewUrl = (record) => {
     this.setState({
-      previewUrl: record.thumbUrl,
+      previewUrl: record.thumbUrl.thumbUrl,
       previewModalVisible: true,
     });
   }
@@ -293,16 +300,18 @@ class TagList extends PureComponent {
   }
 
   renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      tag: { data },
+      banner: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
+        previewUrl, previewModalVisible } = this.state;
+
+    const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -311,12 +320,12 @@ class TagList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="标签列表">
+      <PageHeaderWrapper title="幻灯片">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'add')}>
+              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
               {selectedRows.length > 0 && (
@@ -329,19 +338,19 @@ class TagList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              columns={this.columns}
+              columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
-        <TagForm
+        <BannerForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
-          treeData={data.treeData}
-          common={data.common}
+          hiddenFields={hiddenFields}
+          data={data}
         />
         {
             previewModalVisible && (<Modal
@@ -361,4 +370,4 @@ class TagList extends PureComponent {
   }
 }
 
-export default TagList;
+export default BannerList;

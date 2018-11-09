@@ -22,7 +22,7 @@ for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i + 1,
     id: i + 1,
-    name: `BannerGroup ${i + 1}`,
+    name: `BdUser ${i + 1}`,
     remark: `remark`,
     isEnable: true,
     disabled: i % 6 === 0,
@@ -55,7 +55,7 @@ const treeData = [{
 }];
 
 
-function getBannerGroup(req, res, u) {
+function getBdUser(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -99,7 +99,7 @@ function getBannerGroup(req, res, u) {
   return res.json(result);
 }
 
-function postBannerGroup(req, res, u, b) {
+function postBdUser(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -166,9 +166,9 @@ function postBannerGroup(req, res, u, b) {
 }
 
 export default {
-  'GET /api/banner/group/index': getBannerGroup,
-  'POST /api/banner/group/store': postBannerGroup,
-  'POST /api/banner/group/update': postBannerGroup,
-  'POST /api/banner/group/enable': postBannerGroup,
-  'POST /api/banner/group/destroy': postBannerGroup,
+  'GET /api/beidou/users/index': getBdUser,
+  'POST /api/beidou/users/store': postBdUser,
+  'POST /api/beidou/users/update': postBdUser,
+  'POST /api/beidou/users/enable': postBdUser,
+  'POST /api/beidou/users/destroy': postBdUser,
 };
