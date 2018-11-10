@@ -174,6 +174,28 @@ export default [
           },
         ],
       },
+      {
+        path: '/cms',
+        icon: 'table',
+        name: 'cms',
+        routes: [
+          {
+            path: '/cms/category',
+            name: 'CmsCategory',
+            component: './Cms/CmsCategoryList',
+          },
+          {
+            path: '/cms/post',
+            name: 'CmsPost',
+            component: './Cms/CmsPostList',
+          },
+          {
+            path: '/cms/tag',
+            name: 'CmsTag',
+            component: './Cms/CmsTagList',
+          },
+        ]
+      },
       // list
       {
         path: '/list',
@@ -228,31 +250,6 @@ export default [
           },
         ],
       },
-      {
-        path: '/cms',
-        name: 'cms',
-        icon: 'profile',
-        routes: [
-          /*
-          {
-            path: '/cms/category',
-            name: 'categoryList',
-            component: './Cms/CategoryList',
-          },
-          {
-            path: '/cms/banner',
-            name: 'bannerList',
-            component: './Cms/bannerList',
-          },
-          {
-            path: '/cms/tag',
-            name: 'tagList',
-            component: './Cms/TagList',
-          },
-          */
-        ],
-      },
-
       {
         path: '/profile',
         name: 'profile',

@@ -218,4 +218,7 @@ export default {
 	'menu.beidou.Banner': 'Banner',
 	'menu.beidou.NavGroup': 'NavGroup',
 	'menu.beidou.Nav': 'Nav',
+	'menu.cms.CmsPost': 'CmsPost',
+	'menu.cms.CmsTag': 'CmsTag',
+	'menu.cms.CmsCategory': 'CmsCategory',
 };

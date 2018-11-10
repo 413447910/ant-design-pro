@@ -212,4 +212,7 @@ export default {
 	'menu.beidou.Banner': '幻灯片',
 	'menu.beidou.NavGroup': '导航组',
 	'menu.beidou.Nav': '导航',
+	'menu.cms.CmsPost': '文章列表',
+	'menu.cms.CmsTag': '标签列表',
+	'menu.cms.CmsCategory': '分类列表',
 };

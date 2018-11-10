@@ -14,26 +14,26 @@ import {
 import CategoryTable from '../Base/CategoryTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import NavForm from './NavForm';
+import CmsCategoryForm from './CmsCategoryForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './NavList.less';
+import styles from './CmsCategoryList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ nav, loading }) => ({
-  nav,
-  loading: loading.models.nav,
+@connect(({ cmscategory, loading }) => ({
+  cmscategory,
+  loading: loading.models.cmscategory,
 }))
 @Form.create()
-class NavList extends PureComponent {
+class CmsCategoryList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl','picture1','remark'],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
     expand: true,
     expandAllIds: [],
@@ -48,10 +48,6 @@ class NavList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
-    },
-    {
-      title: '所属组',
-      dataIndex: 'groupName',
     },
     {
       title: '缩略图',
@@ -92,7 +88,7 @@ class NavList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/fetch',
+      type: 'cmscategory/fetch',
       payload: {},
       callback: this.callbackIndex
     });
@@ -121,7 +117,7 @@ class NavList extends PureComponent {
     }
 
     dispatch({
-      type: 'nav/fetch',
+      type: 'cmscategory/fetch',
       payload: params,
     });
   };
@@ -133,7 +129,7 @@ class NavList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'nav/fetch',
+      type: 'cmscategory/fetch',
       payload: {},
     });
   };
@@ -142,7 +138,7 @@ class NavList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/enable',
+      type: 'cmscategory/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -175,7 +171,7 @@ class NavList extends PureComponent {
       });
 
       dispatch({
-        type: 'nav/fetch',
+        type: 'cmscategory/fetch',
         payload: values,
       });
     });
@@ -217,7 +213,7 @@ class NavList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/store',
+      type: 'cmscategory/store',
       payload: fields,
       callback: this.callbackAdd
     });
@@ -228,7 +224,7 @@ class NavList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/update',
+      type: 'cmscategory/update',
       payload: fields,
       callback: this.callbackUpdate
     });
@@ -247,7 +243,7 @@ class NavList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'nav/destroy',
+          type: 'cmscategory/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -316,7 +312,7 @@ class NavList extends PureComponent {
   }
 
   setAllExpandIds = () => {
-    const { nav: { data }} = this.props;
+    const { cmscategory: { data }} = this.props;
 
     let expandedId = [];
     data.list.forEach(item => {
@@ -350,7 +346,7 @@ class NavList extends PureComponent {
 
   render() {
     const {
-      nav: { data },
+      cmscategory: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
@@ -367,7 +363,7 @@ class NavList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="导航">
+      <PageHeaderWrapper title="分类列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
@@ -397,7 +393,7 @@ class NavList extends PureComponent {
             />
           </div>
         </Card>
-        <NavForm
+        <CmsCategoryForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -423,4 +419,4 @@ class NavList extends PureComponent {
   }
 }
 
-export default NavList;
+export default CmsCategoryList;

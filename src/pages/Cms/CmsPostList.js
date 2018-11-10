@@ -11,48 +11,33 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import CategoryTable from '../Base/CategoryTable';
+import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import NavForm from './NavForm';
+import CmsPostForm from './CmsPostForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './NavList.less';
+import styles from './CmsPostList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ nav, loading }) => ({
-  nav,
-  loading: loading.models.nav,
+@connect(({ cmspost, loading }) => ({
+  cmspost,
+  loading: loading.models.cmspost,
 }))
 @Form.create()
-class NavList extends PureComponent {
+class CmsPostList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl','picture1','remark'],
+    hiddenFields: [],
     formValues: {},
-    expand: true,
-    expandAllIds: [],
-    expandedRowKeys: [],
   };
 
   columns = [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '描述',
-      dataIndex: 'remark',
-    },
-    {
-      title: '所属组',
-      dataIndex: 'groupName',
-    },
     {
       title: '缩略图',
       dataIndex: 'thumbUrl',
@@ -60,6 +45,14 @@ class NavList extends PureComponent {
       render: (val, record) => (
         <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
       )
+    },
+    {
+      title: '名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '描述',
+      dataIndex: 'remark',
     },
     {
       title: '排序',
@@ -92,12 +85,9 @@ class NavList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/fetch',
-      payload: {},
-      callback: this.callbackIndex
+      type: 'cmspost/fetch',
     });
   };
-
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -121,7 +111,7 @@ class NavList extends PureComponent {
     }
 
     dispatch({
-      type: 'nav/fetch',
+      type: 'cmspost/fetch',
       payload: params,
     });
   };
@@ -133,16 +123,17 @@ class NavList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'nav/fetch',
+      type: 'cmspost/fetch',
       payload: {},
     });
   };
 
 
+
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/enable',
+      type: 'cmspost/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -175,7 +166,7 @@ class NavList extends PureComponent {
       });
 
       dispatch({
-        type: 'nav/fetch',
+        type: 'cmspost/fetch',
         payload: values,
       });
     });
@@ -207,7 +198,6 @@ class NavList extends PureComponent {
     }
   };
 
-
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -217,9 +207,9 @@ class NavList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/store',
+      type: 'cmspost/store',
       payload: fields,
-      callback: this.callbackAdd
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -228,9 +218,9 @@ class NavList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'nav/update',
+      type: 'cmspost/update',
       payload: fields,
-      callback: this.callbackUpdate
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -247,7 +237,7 @@ class NavList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'nav/destroy',
+          type: 'cmspost/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -301,64 +291,19 @@ class NavList extends PureComponent {
     );
   }
 
-  callbackIndex = () => {
-    this.setAllExpandIds()
-  }
-
-  callbackAdd = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  callbackUpdate = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  setAllExpandIds = () => {
-    const { nav: { data }} = this.props;
-
-    let expandedId = [];
-    data.list.forEach(item => {
-      expandedId.push(item.id)
-      item.childrenIds.forEach(id => {
-        expandedId.push(id)
-      })
-    })
-
-    this.setState({
-      expandedRowKeys: expandedId,
-      expandAllIds: expandedId
-    });
-
-  }
-
-
-  // 菜单展示和收起
-  handleExpansion  = () => {
-    const { expand, expandAllIds } = this.state
-    this.setState({
-      expand: !expand,
-      expandedRowKeys: expand ? [] : expandAllIds
-    });
-  }
-
-
-  handleChangeExpandedRowKeys = () => {
-    console.log('handleChangeExpandedRowKeys')
+  renderForm() {
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      nav: { data },
+      cmspost: { data },
       loading,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
+        previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
-
-    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -367,37 +312,31 @@ class NavList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="导航">
+      <PageHeaderWrapper title="文章列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
+            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
-              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
-                显示全部
-              </Button>
-
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
                 </span>
               )}
             </div>
-            <CategoryTable
+            <StandardTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
-              expandedRowKeys={expandedRowKeys}
-              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
-        <NavForm
+        <CmsPostForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -423,4 +362,4 @@ class NavList extends PureComponent {
   }
 }
 
-export default NavList;
+export default CmsPostList;

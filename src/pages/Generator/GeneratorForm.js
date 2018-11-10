@@ -142,7 +142,7 @@ class GeneratorForm extends PureComponent {
               <Card title="前端基本信息">
                 <FormItem {...formItemLayout} label="前台模版类型">
                   {form.getFieldDecorator('pageTemplateType', {
-                    initialValue: formValues.pageTemplateType || 'post',
+                    initialValue: formValues.pageTemplateType || 'simple',
                     rules: [],
                   })(
                     <Select
@@ -190,6 +190,7 @@ class GeneratorForm extends PureComponent {
                       <Select.Option value="Wenqu">Wenqu</Select.Option>
                       <Select.Option value="Kaiyang">Kaiyang</Select.Option>
                       <Select.Option value="System">System</Select.Option>
+                      <Select.Option value="Cms">Cms</Select.Option>
                     </Select>
                   )}
                 </FormItem>
@@ -223,7 +224,7 @@ class GeneratorForm extends PureComponent {
               <Card title="后端基本信息">
                 <FormItem {...formItemLayout} label="后台模版类型">
                   {form.getFieldDecorator('backendTemplateType', {
-                    initialValue: formValues.backendTemplateType || 'post',
+                    initialValue: formValues.backendTemplateType || 'simple',
                     rules: [],
                   })(
                     <Select
@@ -269,6 +270,7 @@ class GeneratorForm extends PureComponent {
                       <Select.Option value="Wenqu">Wenqu</Select.Option>
                       <Select.Option value="Kaiyang">Kaiyang</Select.Option>
                       <Select.Option value="System">System</Select.Option>
+                      <Select.Option value="Cms">Cms</Select.Option>
                     </Select>
                   )}
                 </FormItem>
@@ -307,7 +309,7 @@ class GeneratorForm extends PureComponent {
             <Col md={6}>
               <FormItem {...formItemLayout} label="生成前端">
                 {getFieldDecorator('generatePage', {
-                  initialValue: formValues.generatePage && true,
+                  initialValue: false,
                   valuePropName: 'checked',
                   rules: [],
                 })(<Switch checkedChildren="是" unCheckedChildren="否" />)}
@@ -316,7 +318,7 @@ class GeneratorForm extends PureComponent {
             <Col md={6}>
               <FormItem {...formItemLayout} label="生成后端">
                 {getFieldDecorator('generateBackend', {
-                  initialValue: formValues.generateBackend && true,
+                  initialValue: false,
                   valuePropName: 'checked',
                   rules: [],
                 })(<Switch checkedChildren="是" unCheckedChildren="否" />)}
