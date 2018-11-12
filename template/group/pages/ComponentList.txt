@@ -2,38 +2,31 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import {
-  Row,
-  Col,
   Card,
   Form,
-  Input,
   Button,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
+import BannerForm from './BannerForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
-
-import styles from './##COMPONENT_CAMEL##List.less';
-
-const FormItem = Form.Item;
+import styles from '../Less/DefaultList.less';
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ ##COMPONENT_LOWER##, loading }) => ({
-  ##COMPONENT_LOWER##,
-  loading: loading.models.##COMPONENT_LOWER##,
+@connect(({ banner, loading }) => ({
+  banner,
+  loading: loading.models.banner,
 }))
 @Form.create()
-class ##COMPONENT_CAMEL##List extends PureComponent {
+class BannerList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: [],
+    hiddenFields: ['parentId', 'remark'],
     formValues: {},
   };
 
@@ -53,6 +46,14 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
+    },
+    {
+      title: ' 所属组',
+      dataIndex: 'groupName',
+    },
+    {
+      title: ' 跳转地址',
+      dataIndex: 'jumpUrl',
     },
     {
       title: '排序',
@@ -83,10 +84,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
 
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
-    });
+
   };
 
 
@@ -111,7 +109,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     }
 
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'banner/fetch',
       payload: params,
     });
   };
@@ -123,7 +121,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: '##COMPONENT_LOWER##/fetch',
+      type: 'banner/fetch',
       payload: {},
     });
   };
@@ -133,7 +131,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/enable',
+      type: 'banner/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -166,7 +164,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       });
 
       dispatch({
-        type: '##COMPONENT_LOWER##/fetch',
+        type: 'banner/fetch',
         payload: values,
       });
     });
@@ -207,7 +205,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/store',
+      type: 'banner/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -218,7 +216,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: '##COMPONENT_LOWER##/update',
+      type: 'banner/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -237,7 +235,7 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: '##COMPONENT_LOWER##/destroy',
+          type: 'banner/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -264,41 +262,11 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     });
   }
 
-  renderSimpleForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
-  renderForm() {
-    return this.renderSimpleForm();
-  }
-
   render() {
     const {
-      ##COMPONENT_LOWER##: { data },
+      banner: { data },
       loading,
+      groupKey,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
         previewUrl, previewModalVisible } = this.state;
@@ -312,10 +280,9 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="##LIST_STR##">
+      <div>
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
@@ -336,13 +303,14 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
             />
           </div>
         </Card>
-        <##COMPONENT_CAMEL##Form
+        <BannerForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
           hiddenFields={hiddenFields}
           data={data}
+          groupKey={groupKey}
         />
         {
             previewModalVisible && (<Modal
@@ -357,9 +325,9 @@ class ##COMPONENT_CAMEL##List extends PureComponent {
             </Modal>
             )
         }
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }
 
-export default ##COMPONENT_CAMEL##List;
+export default BannerList;

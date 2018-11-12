@@ -25,7 +25,7 @@ export function buildFormSelectOption(common) {
   }
  // arr = [{'key' : 1, 'text': 'a'}]
  // console.log(arr)
-  const options = arr.map(d => <Select.Option key={d.key} value={d.key}>{d.text}</Select.Option>);
+  const options = arr.map(d => <Select.Option key={d.key} value={(d.key).toString()}>{d.text}</Select.Option>);
   return options
 }
 
@@ -69,7 +69,7 @@ export function getFormSelectOption(common, groupId) {
 
 // 获取上传文件
 export function getUploadFileId(formValues) {
-  console.log(formValues)
+ // console.log(formValues)
 
   if(issetParam(formValues.picture1)){
     const fileList = formValues.picture1
@@ -80,7 +80,10 @@ export function getUploadFileId(formValues) {
         return file.response.data.fileId
       }
       // 已存在
-      return file.uid
+
+      if(issetParam(file)){
+        return file.uid
+      }
     }
   }
   if(issetParam(formValues.fileThumbnail)){
@@ -113,6 +116,25 @@ export function checkRespData(respData, type) {
   message.success(successMsg)
 
   return true
+}
+
+
+export function getSelectGroupId(common, groupKey) {
+  let selectedGroupId = 0
+
+  if(!issetParam(common.selectOption)){
+    return selectedGroupId
+  }
+
+  for(let i = 0; i < common.selectOption.length; i++) {
+    const item = common.selectOption[i]
+    if(item.name === groupKey){
+      selectedGroupId = item.key
+      break;
+    }
+  }
+
+  return selectedGroupId
 }
 
 

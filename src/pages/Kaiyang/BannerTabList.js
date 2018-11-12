@@ -5,66 +5,61 @@ import { Menu } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from '../Less/DefaultTabList.less';
-import ConfigList from './ConfigList';
+import BannerList from './BannerList';
 
 const { Item } = Menu;
 
-@connect(({ user, config, loading }) => ({
+@connect(({ user, banner, loading }) => ({
   currentUser: user.currentUser,
-  config,
-  loading: loading.models.config,
+  banner,
+  loading: loading.models.banner,
 }))
-class ConfigTabList extends Component {
+class BannerTabList extends Component {
   constructor(props) {
     super(props);
-    const { match, location } = props;
-    const menuMap = {
-
-    };
-    const key = location.pathname.replace(`${match.path}/`, '');
     this.state = {
       mode: 'inline',
-      menuMap,
-      selectKey: menuMap[key] ? key : 'base',
+      menuMap: {},
+      selectKey: '',
     };
   }
-
-  static getDerivedStateFromProps(props, state) {
-    const { match, location } = props;
-    let selectKey = location.pathname.replace(`${match.path}/`, '');
-    selectKey = state.menuMap[selectKey] ? selectKey : 'base';
-    if (selectKey !== state.selectKey) {
-      return { selectKey };
-    }
-    return null;
-  }
-
 
   componentDidMount() {
 
     const { dispatch } = this.props;
     const { selectKey } = this.state;
     dispatch({
-      type: 'config/fetch',
+      type: 'banner/fetch',
       payload: {'groupKey' : selectKey},
-      callback: this.callbackConfigFetch
+      callback: this.callbackFetch
     });
 
     window.addEventListener('resize', this.resize);
     this.resize();
   }
 
-  callbackConfigFetch = (resp) => {
+  callbackFetch = (resp) => {
+    const { selectKey } = this.state
+    let defaultKey = '';
+
     const selectOption = resp.data.common.selectOption
     const respMenuMap = {}
     for(let i = 0; i < selectOption.length; i += 1){
       const item = selectOption[i]
-      const menuKey = item.name
+      const menuKey = item.key
       respMenuMap[menuKey]= item.text
+
+      if(i === 0){
+        defaultKey = menuKey
+      }
     }
 
+    const newSelectkey = selectKey !== '' ? selectKey : defaultKey
+
     this.setState({
-      menuMap : respMenuMap
+      menuMap : respMenuMap,
+      defaultSelectKey: newSelectkey,
+      selectKey: newSelectkey
     })
 
   }
@@ -84,11 +79,11 @@ class ConfigTabList extends Component {
   };
 
   selectKey = ({ key }) => {
-    router.push(`/config/index/${key}`);
+    router.push(`/beidou/banner/index/${key}`);
 
     const { dispatch } = this.props;
     dispatch({
-      type: 'config/fetch',
+      type: 'banner/fetch',
       payload: {'groupKey' : key},
     });
 
@@ -106,8 +101,9 @@ class ConfigTabList extends Component {
 //      return '';
     }
     const { mode, selectKey } = this.state;
+    console.log(this.state)
     return (
-      <PageHeaderWrapper title="配置列表">
+      <PageHeaderWrapper title="幻灯片列表">
         <GridContent>
           <div
             className={styles.main}
@@ -122,7 +118,7 @@ class ConfigTabList extends Component {
             </div>
             <div className={styles.right}>
               <div className={styles.title}>{this.getRightTitle()}</div>
-              <ConfigList groupKey={selectKey} />
+              <BannerList groupKey={selectKey} />
             </div>
           </div>
         </GridContent>
@@ -131,4 +127,4 @@ class ConfigTabList extends Component {
   }
 }
 
-export default ConfigTabList;
+export default BannerTabList;

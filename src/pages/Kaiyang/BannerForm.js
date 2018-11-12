@@ -15,7 +15,7 @@ import {
   Radio,
 } from 'antd';
 
-import { buildFormSelectOption, getFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
+import { buildFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -50,15 +50,18 @@ class BannerForm extends PureComponent {
     })
   }
 
+
   render(){
     const { modalVisible, form, handleAdd, handleModalVisible, formValues,
-      isUpdate, handleUpdate, data, hiddenFields} = this.props;
+      isUpdate, handleUpdate, data, hiddenFields, groupKey} = this.props;
 
     const {picture1ModalVisible, picture1PreviewUrl} = this.state;
     const {treeData, common} = data;
+    const formTitle = isUpdate ? '更新' : '新建'
 
     formValues.picture1 = formValues.picture1 || []
     formValues.fileThumbnail = getUploadFileId(formValues)
+    formValues.groupId = groupKey
 
     const propUpload = {
         listType: 'picture',
@@ -84,7 +87,7 @@ class BannerForm extends PureComponent {
     return (
       <Modal
         destroyOnClose
-        title="新建"
+        title={formTitle}
         width="60%"
         visible={modalVisible}
         onOk={okHandle}
@@ -115,7 +118,6 @@ class BannerForm extends PureComponent {
           !hiddenFields.includes('groupId') &&
           <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属组">
             {form.getFieldDecorator('groupId', {
-//              initialValue: getFormSelectOption(common, formValues.groupId) || '',
               initialValue: formValues.groupId || '',
               rules: [{required: true, message: '所属组不能为空！'}],
             })(
@@ -123,7 +125,7 @@ class BannerForm extends PureComponent {
                 showSearch
                 placeholder='请选择'
                 style={{width: '100%'}}
-                filterOption={true}
+                disabled
               >
                 {buildFormSelectOption(common)}
               </Select>

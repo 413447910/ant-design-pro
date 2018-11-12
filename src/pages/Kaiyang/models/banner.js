@@ -14,12 +14,13 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetch({ payload , callback}, { call, put }) {
       const response = yield call(queryBanner, payload);
       yield put({
         type: 'save',
         payload: response,
       });
+      if (callback) callback(response);
     },
     *store({ payload, callback }, { call, put }) {
       const response = yield call(storeBanner, payload);

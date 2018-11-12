@@ -160,7 +160,17 @@ export default [
           {
             path: '/beidou/banner/index',
             name: 'Banner',
-            component: './Kaiyang/BannerList',
+            component: './Kaiyang/BannerTabList',
+            routes: [
+              {
+                path: '/beidou/banner/index',
+                redirect: '/beidou/banner/index/base',
+              },
+              {
+                path: '/beidou/banner/index/:group',
+                component: './Kaiyang/BannerList',
+              },
+            ],
           },
           {
             path: '/beidou/nav/group',

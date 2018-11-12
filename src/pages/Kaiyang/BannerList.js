@@ -2,24 +2,17 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import {
-  Row,
-  Col,
   Card,
   Form,
-  Input,
   Button,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
 import BannerForm from './BannerForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
-
-import styles from './BannerList.less';
-
-const FormItem = Form.Item;
+import styles from '../Less/DefaultList.less';
 
 
 /* eslint react/no-multi-comp:0 */
@@ -91,10 +84,7 @@ class BannerList extends PureComponent {
 
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'banner/fetch',
-    });
+
   };
 
 
@@ -272,41 +262,11 @@ class BannerList extends PureComponent {
     });
   }
 
-  renderSimpleForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
-  renderForm() {
-    return this.renderSimpleForm();
-  }
-
   render() {
     const {
       banner: { data },
       loading,
+      groupKey,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
         previewUrl, previewModalVisible } = this.state;
@@ -320,10 +280,9 @@ class BannerList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="幻灯片">
+      <div>
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
@@ -351,6 +310,7 @@ class BannerList extends PureComponent {
           formValues={formValues}
           hiddenFields={hiddenFields}
           data={data}
+          groupKey={groupKey}
         />
         {
             previewModalVisible && (<Modal
@@ -365,7 +325,7 @@ class BannerList extends PureComponent {
             </Modal>
             )
         }
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }

@@ -16,7 +16,7 @@ import { FormattedMessage } from 'umi/locale';
 import ConfigForm from './ConfigForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './ConfigList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 

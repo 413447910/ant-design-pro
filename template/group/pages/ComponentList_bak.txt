@@ -14,21 +14,21 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import BannerGroupForm from './BannerGroupForm';
+import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from '../Less/DefaultList.less';
+import styles from './##COMPONENT_CAMEL##List.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ bannergroup, loading }) => ({
-  bannergroup,
-  loading: loading.models.bannergroup,
+@connect(({ ##COMPONENT_LOWER##, loading }) => ({
+  ##COMPONENT_LOWER##,
+  loading: loading.models.##COMPONENT_LOWER##,
 }))
 @Form.create()
-class BannerGroupList extends PureComponent {
+class ##COMPONENT_CAMEL##List extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
@@ -38,6 +38,14 @@ class BannerGroupList extends PureComponent {
   };
 
   columns = [
+    {
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
+    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -77,7 +85,7 @@ class BannerGroupList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'bannergroup/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
     });
   };
 
@@ -103,7 +111,7 @@ class BannerGroupList extends PureComponent {
     }
 
     dispatch({
-      type: 'bannergroup/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: params,
     });
   };
@@ -115,7 +123,7 @@ class BannerGroupList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'bannergroup/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: {},
     });
   };
@@ -125,7 +133,7 @@ class BannerGroupList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'bannergroup/enable',
+      type: '##COMPONENT_LOWER##/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -158,7 +166,7 @@ class BannerGroupList extends PureComponent {
       });
 
       dispatch({
-        type: 'bannergroup/fetch',
+        type: '##COMPONENT_LOWER##/fetch',
         payload: values,
       });
     });
@@ -199,7 +207,7 @@ class BannerGroupList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'bannergroup/store',
+      type: '##COMPONENT_LOWER##/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -210,7 +218,7 @@ class BannerGroupList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'bannergroup/update',
+      type: '##COMPONENT_LOWER##/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -229,7 +237,7 @@ class BannerGroupList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'bannergroup/destroy',
+          type: '##COMPONENT_LOWER##/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -240,6 +248,19 @@ class BannerGroupList extends PureComponent {
           },
         });
       }
+    });
+  }
+
+  setPreviewUrl = (record) => {
+    this.setState({
+      previewUrl: record.thumbUrl.thumbUrl,
+      previewModalVisible: true,
+    });
+  }
+
+  closePreviewModal = () => {
+    this.setState({
+      previewModalVisible: false,
     });
   }
 
@@ -276,10 +297,11 @@ class BannerGroupList extends PureComponent {
 
   render() {
     const {
-      bannergroup: { data },
+      ##COMPONENT_LOWER##: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
+        previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
@@ -290,7 +312,7 @@ class BannerGroupList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="幻灯片组">
+      <PageHeaderWrapper title="##LIST_STR##">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -314,7 +336,7 @@ class BannerGroupList extends PureComponent {
             />
           </div>
         </Card>
-        <BannerGroupForm
+        <##COMPONENT_CAMEL##Form
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -322,9 +344,22 @@ class BannerGroupList extends PureComponent {
           hiddenFields={hiddenFields}
           data={data}
         />
+        {
+            previewModalVisible && (<Modal
+              title="图片预览"
+              visible={previewModalVisible}
+              onOk={this.closePreviewModal}
+              onCancel={this.closePreviewModal}
+              afterClose={() => this.closePreviewModal}
+              footer={null}
+            >
+              <img src={previewUrl} width={'100%'}/>
+            </Modal>
+            )
+        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default BannerGroupList;
+export default ##COMPONENT_CAMEL##List;
