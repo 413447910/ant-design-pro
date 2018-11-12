@@ -76,7 +76,7 @@ export function getUploadFileId(formValues) {
     if(fileList.length > 0){
       const file = fileList[0]
       // 刚上传
-      if(issetParam(file.response)){
+      if(issetParam(file) && issetParam(file.response)){
         return file.response.data.fileId
       }
       // 已存在
@@ -115,9 +115,6 @@ export function checkRespData(respData, type) {
   return true
 }
 
-export function formatMomentTimeToStr(m) {
-  return m.format('YYYY-MM-DD HH:mm:ss')
-}
 
 export const getValue = obj =>
   Object.keys(obj)

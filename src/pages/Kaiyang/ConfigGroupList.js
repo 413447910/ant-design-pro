@@ -14,40 +14,36 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import CmsPostForm from './CmsPostForm';
+import ConfigGroupForm from './ConfigGroupForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './CmsPostList.less';
+import styles from './ConfigGroupList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ cmspost, loading }) => ({
-  cmspost,
-  loading: loading.models.cmspost,
+@connect(({ configgroup, loading }) => ({
+  configgroup,
+  loading: loading.models.configgroup,
 }))
 @Form.create()
-class CmsPostList extends PureComponent {
+class ConfigGroupList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: [],
+    hiddenFields: ['isEnable'],
     formValues: {},
   };
 
   columns = [
     {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
+      title: '组名称',
+      dataIndex: 'remark',
     },
     {
-      title: '标题',
+      title: '组标识',
       dataIndex: 'name',
     },
     {
@@ -81,7 +77,7 @@ class CmsPostList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'configgroup/fetch',
     });
   };
 
@@ -107,7 +103,7 @@ class CmsPostList extends PureComponent {
     }
 
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'configgroup/fetch',
       payload: params,
     });
   };
@@ -119,7 +115,7 @@ class CmsPostList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'configgroup/fetch',
       payload: {},
     });
   };
@@ -129,7 +125,7 @@ class CmsPostList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/enable',
+      type: 'configgroup/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -162,7 +158,7 @@ class CmsPostList extends PureComponent {
       });
 
       dispatch({
-        type: 'cmspost/fetch',
+        type: 'configgroup/fetch',
         payload: values,
       });
     });
@@ -203,7 +199,7 @@ class CmsPostList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/store',
+      type: 'configgroup/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -214,7 +210,7 @@ class CmsPostList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/update',
+      type: 'configgroup/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -233,7 +229,7 @@ class CmsPostList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'cmspost/destroy',
+          type: 'configgroup/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -244,19 +240,6 @@ class CmsPostList extends PureComponent {
           },
         });
       }
-    });
-  }
-
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl.thumbUrl,
-      previewModalVisible: true,
-    });
-  }
-
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
     });
   }
 
@@ -293,11 +276,10 @@ class CmsPostList extends PureComponent {
 
   render() {
     const {
-      cmspost: { data },
+      configgroup: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-        previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
@@ -308,7 +290,7 @@ class CmsPostList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="文章列表">
+      <PageHeaderWrapper title="配置组">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -332,7 +314,7 @@ class CmsPostList extends PureComponent {
             />
           </div>
         </Card>
-        <CmsPostForm
+        <ConfigGroupForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -340,22 +322,9 @@ class CmsPostList extends PureComponent {
           hiddenFields={hiddenFields}
           data={data}
         />
-        {
-            previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-            )
-        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default CmsPostList;
+export default ConfigGroupList;

@@ -22,7 +22,7 @@ import moment from 'moment'
 import 'braft-editor/dist/index.css'
 import BraftEditor from 'braft-editor'
 
-import { buildTagSelectOption, DATE_TIME_FORMAT, issetParam, getUploadFileId} from '@/utils/BdHelper';
+import { buildTagSelectOption, DATEIME_FORMAT, issetParam, getUploadFileId} from '@/utils/BdHelper';
 
 
 const FormItem = Form.Item;
@@ -65,7 +65,7 @@ class CmsPostForm extends PureComponent {
   }
 
   handlePublishedTimeChange = (t) => {
-    const tf = t.format(DATE_TIME_FORMAT)
+    const tf = t.format(DATEIME_FORMAT)
     this.setState({
       publishedAt: tf
     })

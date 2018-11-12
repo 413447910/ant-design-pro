@@ -158,7 +158,7 @@ export default [
             component: './Kaiyang/BannerGroupList',
           },
           {
-            path: '/beidou/banner',
+            path: '/beidou/banner/index',
             name: 'Banner',
             component: './Kaiyang/BannerList',
           },
@@ -193,6 +193,33 @@ export default [
             path: '/cms/tag',
             name: 'CmsTag',
             component: './Cms/CmsTagList',
+          },
+        ]
+      },
+      {
+        path: '/config',
+        icon: 'table',
+        name: 'kaiyang',
+        routes: [
+          {
+            path: '/config/group',
+            name: 'ConfigGroup',
+            component: './Kaiyang/ConfigGroupList',
+          },
+          {
+            path: '/config/index',
+            name: 'Config',
+            component: './Kaiyang/ConfigTabList',
+            routes: [
+              {
+                path: '/config/index',
+                redirect: '/config/index/base',
+              },
+              {
+                path: '/config/index/:group',
+                component: './Kaiyang/ConfigList',
+              },
+            ],
           },
         ]
       },

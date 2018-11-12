@@ -12,30 +12,30 @@ import {
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import CmsPostForm from './CmsPostForm';
+import ConfigForm from './ConfigForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './CmsPostList.less';
+import styles from './ConfigList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ cmspost, loading }) => ({
-  cmspost,
-  loading: loading.models.cmspost,
+@connect(({ config, loading }) => ({
+  config,
+  loading: loading.models.config,
 }))
 @Form.create()
-class CmsPostList extends PureComponent {
+class ConfigList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: [],
+    hiddenFields: ['thumbUrl', 'isEnable', 'updatedAt'],
     formValues: {},
   };
+
 
   columns = [
     {
@@ -47,8 +47,24 @@ class CmsPostList extends PureComponent {
       )
     },
     {
-      title: '标题',
+      title: '变量标题',
+      dataIndex: 'remark',
+      width: 120,
+    },
+    {
+      title: '变量标识',
       dataIndex: 'name',
+      width: 180,
+    },
+    {
+      title: '变量值',
+      dataIndex: 'content',
+      render: (val, record) => {
+        if (record.type === 'file') {
+          return <a href={record.thumbUrl.thumbUrl} target='_blank'> 查看文件</a>
+        }
+        return val
+      }
     },
     {
       title: '排序',
@@ -79,11 +95,14 @@ class CmsPostList extends PureComponent {
 
 
   componentDidMount() {
+    /*
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'config/fetch',
     });
+    */
   };
+
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -107,7 +126,7 @@ class CmsPostList extends PureComponent {
     }
 
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'config/fetch',
       payload: params,
     });
   };
@@ -119,17 +138,15 @@ class CmsPostList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'config/fetch',
       payload: {},
     });
   };
 
-
-
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/enable',
+      type: 'config/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -142,29 +159,6 @@ class CmsPostList extends PureComponent {
   handleSelectRows = rows => {
     this.setState({
       selectedRows: rows,
-    });
-  };
-
-  handleSearch = e => {
-    e.preventDefault();
-
-    const { dispatch, form } = this.props;
-
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-
-      const values = {
-        ...fieldsValue,
-      };
-
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'cmspost/fetch',
-        payload: values,
-      });
     });
   };
 
@@ -203,7 +197,7 @@ class CmsPostList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/store',
+      type: 'config/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -214,7 +208,7 @@ class CmsPostList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/update',
+      type: 'config/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -233,7 +227,7 @@ class CmsPostList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'cmspost/destroy',
+          type: 'config/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -260,41 +254,12 @@ class CmsPostList extends PureComponent {
     });
   }
 
-  renderSimpleForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
-  renderForm() {
-    return this.renderSimpleForm();
-  }
 
   render() {
     const {
-      cmspost: { data },
+      config: { data },
       loading,
+      groupKey,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
         previewUrl, previewModalVisible } = this.state;
@@ -308,10 +273,9 @@ class CmsPostList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="文章列表">
+      <div>
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
@@ -332,13 +296,14 @@ class CmsPostList extends PureComponent {
             />
           </div>
         </Card>
-        <CmsPostForm
+        <ConfigForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
           hiddenFields={hiddenFields}
           data={data}
+          groupKey={groupKey}
         />
         {
             previewModalVisible && (<Modal
@@ -353,9 +318,9 @@ class CmsPostList extends PureComponent {
             </Modal>
             )
         }
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }
 
-export default CmsPostList;
+export default ConfigList;

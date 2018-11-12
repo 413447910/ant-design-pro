@@ -221,4 +221,9 @@ export default {
 	'menu.cms.CmsPost': 'CmsPost',
 	'menu.cms.CmsTag': 'CmsTag',
 	'menu.cms.CmsCategory': 'CmsCategory',
+	'menu.kaiyang': 'kaiyang',
+	'menu.beidou.ConfigGroup': 'ConfigGroup',
+	'menu.kaiyang.ConfigGroup': 'ConfigGroup',
+	'menu.beidou.Config': 'Config',
+	'menu.kaiyang.Config': 'Config',
 };

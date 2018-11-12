@@ -192,7 +192,6 @@ export default {
 	'menu.cms.bannerList': '轮播图列表',
 	'menu.base.tagList': '标签列表',
 	'menu.cms.tagList': '标签列表',
-	'menu.beidou.BannerGroup': 'Banner组',
 	'menu.beidou.Tag': '标签',
 	'menu.beidou.Generator': '模版列表',
 	'menu.beidou.ExampleBasic': '基本模版',
@@ -215,4 +214,10 @@ export default {
 	'menu.cms.CmsPost': '文章列表',
 	'menu.cms.CmsTag': '标签列表',
 	'menu.cms.CmsCategory': '分类列表',
+	'menu.beidou.ConfigGroup': '配置组',
+	'menu.kaiyang': '基础信息',
+	'menu.kaiyang.ConfigGroup': '配置组',
+	'menu.beidou.Config': '基础配置',
+	'menu.kaiyang.Config': '基础配置',
+	'menu.kaiyang.Config': '配置列表',
 };

@@ -12,22 +12,28 @@ import {
   Icon,
   Select,
   TreeSelect,
+  Radio,
+  DatePicker,
 } from 'antd';
 
-import { buildFormSelectOption, getFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
+import moment from 'moment'
+
+import { issetParam, buildFormSelectOption, DATEIME_FORMAT, getUploadFileId} from '@/utils/BdHelper';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
 
 @Form.create()
-class ##COMPONENT_CAMEL##Form extends PureComponent {
+class ConfigForm extends PureComponent {
 
   constructor(props) {
     super(props);
     this.state = {
         picture1ModalVisible: false,
         picture1PreviewUrl: '',
+        paramType: 'string',
+        dateAt: null,
     };
   }
 
@@ -49,15 +55,50 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
     })
   }
 
+  changeParamType = (e) => {
+    this.setState({
+      paramType: e.target.value
+    })
+  }
+
+  handleDateAtChange = (t) => {
+    const tf = t.format(DATEIME_FORMAT)
+    this.setState({
+      dateAt: tf
+    })
+  }
+
+  getSelectGroupId = (common, groupKey) => {
+
+    let selectedGroupId = 0
+
+    if(!issetParam(common.selectOption)){
+      return selectedGroupId
+    }
+
+    for(let i = 0; i < common.selectOption.length; i++) {
+      const item = common.selectOption[i]
+      if(item.name === groupKey){
+        selectedGroupId = item.key
+        break;
+      }
+    }
+
+    return selectedGroupId
+  }
+
   render(){
     const { modalVisible, form, handleAdd, handleModalVisible, formValues,
-      isUpdate, handleUpdate, data, hiddenFields} = this.props;
+      isUpdate, handleUpdate, data, hiddenFields, groupKey } = this.props;
 
-    const {picture1ModalVisible, picture1PreviewUrl} = this.state;
+    const {picture1ModalVisible, picture1PreviewUrl, paramType, dateAt} = this.state;
     const {treeData, common} = data;
 
     formValues.picture1 = formValues.picture1 || []
     formValues.fileThumbnail = getUploadFileId(formValues)
+    formValues.groupId = this.getSelectGroupId(common, groupKey)
+
+    const showType = paramType || formValues.type
 
     const propUpload = {
         listType: 'picture',
@@ -70,6 +111,7 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
 
         const fileThumbnail = getUploadFileId(formValues)
         fieldsValue.fileThumbnail = fileThumbnail
+        fieldsValue.content = dateAt || fieldsValue.content
 
         if(isUpdate){
           fieldsValue.id = formValues.id
@@ -89,39 +131,18 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
         onOk={okHandle}
         onCancel={() => handleModalVisible()}
       >
-
-        {
-          !hiddenFields.includes('parentId') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="父级">
-              {form.getFieldDecorator('parentId', {
-                initialValue: formValues.parentId || '0-0',
-                rules: [{required: true, message: '父级不能为空！'}],
-              })(
-                <TreeSelect
-                  showSearch
-                  style={{width: '100%'}}
-                  dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-                  treeData={treeData}
-                  allowClear
-                  placeholder="请选择"
-                  treeDefaultExpandAll
-                  onChange={(value) => console.log(value)}
-                />
-              )}
-            </FormItem>
-        }
         {
           !hiddenFields.includes('groupId') &&
           <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属组">
             {form.getFieldDecorator('groupId', {
-              initialValue: formValues.groupId) || 'ant',
+              initialValue: formValues.groupId || 'ant',
               rules: [{required: true, message: '所属组不能为空！'}],
             })(
               <Select
                 showSearch
                 placeholder='请选择'
                 style={{width: '100%'}}
-                filterOption={true}
+                disabled
               >
                 {buildFormSelectOption(common)}
               </Select>
@@ -129,19 +150,62 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
           </FormItem>
         }
 
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}}  label="变量类型">
+          {form.getFieldDecorator('type', {
+            initialValue: formValues.type || 'string',
+            rules: [],
+          })(
+            <Radio.Group  buttonStyle="solid" onChange={this.changeParamType}>
+              <Radio.Button value="string">整数(字符)</Radio.Button>
+              <Radio.Button value="date">日期</Radio.Button>
+              <Radio.Button value="file">文件</Radio.Button>
+            </Radio.Group>
+          )}
+        </FormItem>
+
+        {
+          !hiddenFields.includes('remark') &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="变量标题">
+            {form.getFieldDecorator('remark', {
+              initialValue: formValues.remark || '',
+              rules: [{required: true, message: '变量标题不能为空!'}],
+            })(<Input rows={1} placeholder="" />)}
+          </FormItem>
+        }
+
         {
           !hiddenFields.includes('name') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="名称">
+            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="变量标识">
               {form.getFieldDecorator('name', {
                 initialValue: formValues.name || '',
-                rules: [{required: true, message: '名称不能为空！'}],
-              })(<Input placeholder="" />)}
+                rules: [{required: true, message: '变量标识不能为空！'}],
+              })(<Input placeholder="如 appId" />)}
             </FormItem>
         }
 
         {
-          !hiddenFields.includes('picture1') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="图片">
+          showType === 'string' &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="变量值">
+            {form.getFieldDecorator('content', {
+              initialValue: formValues.content || '',
+              rules: [{required: true, message: '变量值不能为空！'}],
+            })(<TextArea rows={1} placeholder="" />)}
+          </FormItem>
+        }
+
+        {
+          showType === 'date' &&
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="时间">
+            {form.getFieldDecorator('content', {
+              initialValue: moment(formValues.content) || '',
+              rules: [{required: true, message: '时间不能为空！'}],
+            })(<DatePicker format={DATEIME_FORMAT} style={{ width: '100%' }} placeholder="" onChange={this.handleDateAtChange} />)}
+          </FormItem>
+        }
+
+        {
+          !hiddenFields.includes('picture1') && showType === 'file' &&
+            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="文件">
               {form.getFieldDecorator('picture1', {
                 initialValue: formValues.picture1 || '',
               })(
@@ -155,7 +219,8 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
                   onPreview={this.previewPicture1}
                 >
                   {
-                    formValues.picture1.length === 0 && formValues.fileThumbnail === '' ? (
+                    formValues.picture1.length === 0 ? (
+                    // formValues.picture1.length === 0 && formValues.fileThumbnail === '' ? (
                       <Button>
                         <Icon type="upload" /> 点击上传
                       </Button>
@@ -166,15 +231,7 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
             </FormItem>
         }
 
-        {
-          !hiddenFields.includes('remark') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="备注">
-              {form.getFieldDecorator('remark', {
-                initialValue: formValues.remark || '',
-                rules: [],
-              })(<TextArea rows={2} placeholder="" />)}
-            </FormItem>
-        }
+
 
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="排序">
           {form.getFieldDecorator('rankNum', {
@@ -210,4 +267,4 @@ class ##COMPONENT_CAMEL##Form extends PureComponent {
 };
 
 
-export default ##COMPONENT_CAMEL##Form;
+export default ConfigForm;
