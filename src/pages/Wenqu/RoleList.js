@@ -18,7 +18,7 @@ import { FormattedMessage } from 'umi/locale';
 import RoleForm from './RoleForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './RoleList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 

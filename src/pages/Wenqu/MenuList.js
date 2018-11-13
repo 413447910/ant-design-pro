@@ -17,7 +17,7 @@ import { FormattedMessage } from 'umi/locale';
 import MenuForm from './MenuForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './MenuList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 

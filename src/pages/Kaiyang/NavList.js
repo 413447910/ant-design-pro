@@ -17,7 +17,7 @@ import { FormattedMessage } from 'umi/locale';
 import NavForm from './NavForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './NavList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 

@@ -17,7 +17,7 @@ import { FormattedMessage } from 'umi/locale';
 import PermissionForm from './PermissionForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './PermissionList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 
