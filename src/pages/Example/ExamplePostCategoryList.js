@@ -11,10 +11,10 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import StandardTable from '@/components/StandardTable';
+import CategoryTable from '../Base/CategoryTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import CmsPostForm from './CmsPostForm';
+import ExamplePostCategoryForm from './ExamplePostCategoryForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
 import styles from '../Less/DefaultList.less';
@@ -23,29 +23,24 @@ const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ cmspost, loading }) => ({
-  cmspost,
-  loading: loading.models.cmspost,
+@connect(({ examplepostcategory, loading }) => ({
+  examplepostcategory,
+  loading: loading.models.examplepostcategory,
 }))
 @Form.create()
-class CmsPostList extends PureComponent {
+class ExamplePostCategoryList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: [],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
+    expand: true,
+    expandAllIds: [],
+    expandedRowKeys: [],
   };
 
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -53,6 +48,14 @@ class CmsPostList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
+    },
+    {
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
     },
     {
       title: '排序',
@@ -85,9 +88,12 @@ class CmsPostList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'examplepostcategory/fetch',
+      payload: {},
+      callback: this.callbackIndex
     });
   };
+
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -111,7 +117,7 @@ class CmsPostList extends PureComponent {
     }
 
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'examplepostcategory/fetch',
       payload: params,
     });
   };
@@ -123,17 +129,16 @@ class CmsPostList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'examplepostcategory/fetch',
       payload: {},
     });
   };
 
 
-
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/enable',
+      type: 'examplepostcategory/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -166,7 +171,7 @@ class CmsPostList extends PureComponent {
       });
 
       dispatch({
-        type: 'cmspost/fetch',
+        type: 'examplepostcategory/fetch',
         payload: values,
       });
     });
@@ -198,6 +203,7 @@ class CmsPostList extends PureComponent {
     }
   };
 
+
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -207,9 +213,9 @@ class CmsPostList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/store',
+      type: 'examplepostcategory/store',
       payload: fields,
-      callback: this.handleModalVisible
+      callback: this.callbackAdd
     });
 
     this.reserveForm(fields);
@@ -218,9 +224,9 @@ class CmsPostList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/update',
+      type: 'examplepostcategory/update',
       payload: fields,
-      callback: this.handleModalVisible
+      callback: this.callbackUpdate
     });
 
     this.reserveForm(fields);
@@ -237,7 +243,7 @@ class CmsPostList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'cmspost/destroy',
+          type: 'examplepostcategory/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -291,20 +297,64 @@ class CmsPostList extends PureComponent {
     );
   }
 
-  renderForm() {
-    return this.renderSimpleForm();
+  callbackIndex = () => {
+    this.setAllExpandIds()
+  }
+
+  callbackAdd = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  callbackUpdate = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  setAllExpandIds = () => {
+    const { examplepostcategory: { data }} = this.props;
+
+    let expandedId = [];
+    data.list.forEach(item => {
+      expandedId.push(item.id)
+      item.childrenIds.forEach(id => {
+        expandedId.push(id)
+      })
+    })
+
+    this.setState({
+      expandedRowKeys: expandedId,
+      expandAllIds: expandedId
+    });
+
+  }
+
+
+  // 菜单展示和收起
+  handleExpansion  = () => {
+    const { expand, expandAllIds } = this.state
+    this.setState({
+      expand: !expand,
+      expandedRowKeys: expand ? [] : expandAllIds
+    });
+  }
+
+
+  handleChangeExpandedRowKeys = () => {
+    console.log('handleChangeExpandedRowKeys')
   }
 
   render() {
     const {
-      cmspost: { data },
+      examplepostcategory: { data },
       loading,
     } = this.props;
-    console.log(this.props)
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-        previewUrl, previewModalVisible } = this.state;
+      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
+
+    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -313,31 +363,37 @@ class CmsPostList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="文章列表">
+      <PageHeaderWrapper title="文章模版-分类">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
+              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
+                显示全部
+              </Button>
+
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
                 </span>
               )}
             </div>
-            <StandardTable
+            <CategoryTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              expandedRowKeys={expandedRowKeys}
+              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
-        <CmsPostForm
+        <ExamplePostCategoryForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -363,4 +419,4 @@ class CmsPostList extends PureComponent {
   }
 }
 
-export default CmsPostList;
+export default ExamplePostCategoryList;

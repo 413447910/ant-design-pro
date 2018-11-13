@@ -1,8 +1,8 @@
-import {queryCmsTag, updateCmsTag, destroyCmsTag , storeCmsTag, enableCmsTag} from '@/services/cmstag';
+import {queryCmsPostTag, updateCmsPostTag, destroyCmsPostTag , storeCmsPostTag, enableCmsPostTag} from '@/services/cmsposttag';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'cmstag',
+  namespace: 'cmsposttag',
 
   state: {
     data: {
@@ -15,14 +15,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryCmsTag, payload);
+      const response = yield call(queryCmsPostTag, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(storeCmsTag, payload);
+      const response = yield call(storeCmsPostTag, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -33,7 +33,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroyCmsTag , payload);
+      const response = yield call(destroyCmsPostTag , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -46,7 +46,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateCmsTag, payload);
+      const response = yield call(updateCmsPostTag, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -60,7 +60,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableCmsTag, payload);
+      const response = yield call(enableCmsPostTag, payload);
 
       if(!checkRespData(response, 'enable')){
         return;

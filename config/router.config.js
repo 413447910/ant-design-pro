@@ -128,6 +128,16 @@ export default [
             component: './Example/ExamplePostList',
           },
           {
+            path: '/beidou/example/post/tag',
+            name: 'ExamplePostTag',
+            component: './Example/ExamplePostTagList',
+          },
+          {
+            path: '/beidou/example/post/category',
+            name: 'ExamplePostCategory',
+            component: './Example/ExamplePostCategoryList',
+          },
+          {
             path: '/beidou/menu',
             name: 'Menu',
             component: './Wenqu/MenuList',
@@ -152,59 +162,7 @@ export default [
             name: 'BdUser',
             component: './Wenqu/BdUserList',
           },
-          {
-            path: '/beidou/banner/group',
-            name: 'BannerGroup',
-            component: './Kaiyang/BannerGroupList',
-          },
-          {
-            path: '/beidou/banner/index',
-            name: 'Banner',
-            component: './Kaiyang/BannerTabList',
-            routes: [
-              {
-                path: '/beidou/banner/index',
-                redirect: '/beidou/banner/index/base',
-              },
-              {
-                path: '/beidou/banner/index/:group',
-                component: './Kaiyang/BannerList',
-              },
-            ],
-          },
-          {
-            path: '/beidou/nav/group',
-            name: 'NavGroup',
-            component: './Kaiyang/NavGroupList',
-          },
-          {
-            path: '/beidou/nav/index',
-            name: 'Nav',
-            component: './Kaiyang/NavList',
-          },
         ],
-      },
-      {
-        path: '/cms',
-        icon: 'table',
-        name: 'cms',
-        routes: [
-          {
-            path: '/cms/category',
-            name: 'CmsCategory',
-            component: './Cms/CmsCategoryList',
-          },
-          {
-            path: '/cms/post',
-            name: 'CmsPost',
-            component: './Cms/CmsPostList',
-          },
-          {
-            path: '/cms/tag',
-            name: 'CmsTag',
-            component: './Cms/CmsTagList',
-          },
-        ]
       },
       {
         path: '/config',
@@ -231,19 +189,85 @@ export default [
               },
             ],
           },
+          {
+            path: '/config/banner/group',
+            name: 'BannerGroup',
+            component: './Kaiyang/BannerGroupList',
+          },
+          {
+            path: '/config/banner/index',
+            name: 'Banner',
+            component: './Kaiyang/BannerTabList',
+            routes: [
+              {
+                path: '/config/banner/index',
+                redirect: '/config/banner/index/base',
+              },
+              {
+                path: '/config/banner/index/:group',
+                component: './Kaiyang/BannerList',
+              },
+            ],
+          },
+          {
+            path: '/config/nav/group',
+            name: 'NavGroup',
+            component: './Kaiyang/NavGroupList',
+          },
+          {
+            path: '/config/nav/index',
+            name: 'Nav',
+            component: './Kaiyang/NavList',
+          },
         ]
       },
+      {
+        path: '/cms',
+        icon: 'table',
+        name: 'cms',
+        routes: [
+          {
+            path: '/cms/post/tag',
+            name: 'CmsPostTag',
+            component: './Cms/CmsPostTagList',
+          },
+          {
+            path: '/cms/post/category',
+            name: 'CmsPostCategory',
+            component: './Cms/CmsPostCategoryList',
+          },
+          {
+            path: '/cms/post/index',
+            name: 'CmsPost',
+            component: './Cms/CmsPostList',
+          },
+
+          {
+            path: '/cms/product/tag',
+            name: 'CmsProductTag',
+            component: './Cms/CmsProductTagList',
+          },
+          {
+            path: '/cms/product/category',
+            name: 'CmsProductCategory',
+            component: './Cms/CmsProductCategoryList',
+          },
+          {
+            path: '/cms/product/index',
+            name: 'CmsProduct',
+            component: './Cms/CmsProductList',
+          },
+          /*
+          */
+        ]
+      },
+
       // list
       {
         path: '/list',
         icon: 'table',
         name: 'list',
         routes: [
-          {
-            path: '/list/app-list',
-            name: 'appList',
-            component: './Base/appList',
-          },
           {
             path: '/list/table-list',
             name: 'searchtable',

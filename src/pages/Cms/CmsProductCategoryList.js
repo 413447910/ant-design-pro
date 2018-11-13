@@ -11,30 +11,33 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import StandardTable from '@/components/StandardTable';
+import CategoryTable from '../Base/CategoryTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import CmsTagForm from './CmsTagForm';
+import CmsProductCategoryForm from './CmsProductCategoryForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './CmsTagList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ cmstag, loading }) => ({
-  cmstag,
-  loading: loading.models.cmstag,
+@connect(({ cmsproductcategory, loading }) => ({
+  cmsproductcategory,
+  loading: loading.models.cmsproductcategory,
 }))
 @Form.create()
-class CmsTagList extends PureComponent {
+class CmsProductCategoryList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: [],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
+    expand: true,
+    expandAllIds: [],
+    expandedRowKeys: [],
   };
 
   columns = [
@@ -45,6 +48,14 @@ class CmsTagList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
+    },
+    {
+      title: '缩略图',
+      dataIndex: 'thumbUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+      )
     },
     {
       title: '排序',
@@ -77,9 +88,12 @@ class CmsTagList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmstag/fetch',
+      type: 'cmsproductcategory/fetch',
+      payload: {},
+      callback: this.callbackIndex
     });
   };
+
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -103,7 +117,7 @@ class CmsTagList extends PureComponent {
     }
 
     dispatch({
-      type: 'cmstag/fetch',
+      type: 'cmsproductcategory/fetch',
       payload: params,
     });
   };
@@ -115,17 +129,16 @@ class CmsTagList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'cmstag/fetch',
+      type: 'cmsproductcategory/fetch',
       payload: {},
     });
   };
 
 
-
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmstag/enable',
+      type: 'cmsproductcategory/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -158,7 +171,7 @@ class CmsTagList extends PureComponent {
       });
 
       dispatch({
-        type: 'cmstag/fetch',
+        type: 'cmsproductcategory/fetch',
         payload: values,
       });
     });
@@ -190,6 +203,7 @@ class CmsTagList extends PureComponent {
     }
   };
 
+
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -199,9 +213,9 @@ class CmsTagList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmstag/store',
+      type: 'cmsproductcategory/store',
       payload: fields,
-      callback: this.handleModalVisible
+      callback: this.callbackAdd
     });
 
     this.reserveForm(fields);
@@ -210,9 +224,9 @@ class CmsTagList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmstag/update',
+      type: 'cmsproductcategory/update',
       payload: fields,
-      callback: this.handleModalVisible
+      callback: this.callbackUpdate
     });
 
     this.reserveForm(fields);
@@ -229,7 +243,7 @@ class CmsTagList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'cmstag/destroy',
+          type: 'cmsproductcategory/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -240,6 +254,19 @@ class CmsTagList extends PureComponent {
           },
         });
       }
+    });
+  }
+
+  setPreviewUrl = (record) => {
+    this.setState({
+      previewUrl: record.thumbUrl.thumbUrl,
+      previewModalVisible: true,
+    });
+  }
+
+  closePreviewModal = () => {
+    this.setState({
+      previewModalVisible: false,
     });
   }
 
@@ -270,18 +297,64 @@ class CmsTagList extends PureComponent {
     );
   }
 
-  renderForm() {
-    return this.renderSimpleForm();
+  callbackIndex = () => {
+    this.setAllExpandIds()
+  }
+
+  callbackAdd = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  callbackUpdate = () => {
+    this.setAllExpandIds()
+    this.handleModalVisible()
+  }
+
+  setAllExpandIds = () => {
+    const { cmsproductcategory: { data }} = this.props;
+
+    let expandedId = [];
+    data.list.forEach(item => {
+      expandedId.push(item.id)
+      item.childrenIds.forEach(id => {
+        expandedId.push(id)
+      })
+    })
+
+    this.setState({
+      expandedRowKeys: expandedId,
+      expandAllIds: expandedId
+    });
+
+  }
+
+
+  // 菜单展示和收起
+  handleExpansion  = () => {
+    const { expand, expandAllIds } = this.state
+    this.setState({
+      expand: !expand,
+      expandedRowKeys: expand ? [] : expandAllIds
+    });
+  }
+
+
+  handleChangeExpandedRowKeys = () => {
+    console.log('handleChangeExpandedRowKeys')
   }
 
   render() {
     const {
-      cmstag: { data },
+      cmsproductcategory: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
+      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
+
+    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -290,31 +363,37 @@ class CmsTagList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="标签列表">
+      <PageHeaderWrapper title="产品分类">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
+              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
+                显示全部
+              </Button>
+
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
                 </span>
               )}
             </div>
-            <StandardTable
+            <CategoryTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              expandedRowKeys={expandedRowKeys}
+              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
-        <CmsTagForm
+        <CmsProductCategoryForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -322,9 +401,22 @@ class CmsTagList extends PureComponent {
           hiddenFields={hiddenFields}
           data={data}
         />
+        {
+            previewModalVisible && (<Modal
+              title="图片预览"
+              visible={previewModalVisible}
+              onOk={this.closePreviewModal}
+              onCancel={this.closePreviewModal}
+              afterClose={() => this.closePreviewModal}
+              footer={null}
+            >
+              <img src={previewUrl} width={'100%'}/>
+            </Modal>
+            )
+        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default CmsTagList;
+export default CmsProductCategoryList;

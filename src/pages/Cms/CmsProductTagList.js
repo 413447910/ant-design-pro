@@ -11,10 +11,10 @@ import {
   Modal,
   Switch,
 } from 'antd';
-import CategoryTable from '../Base/CategoryTable';
+import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ExampleCategoryForm from './ExampleCategoryForm';
+import CmsProductTagForm from './CmsProductTagForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
 import styles from '../Less/DefaultList.less';
@@ -23,21 +23,18 @@ const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ examplecategory, loading }) => ({
-  examplecategory,
-  loading: loading.models.examplecategory,
+@connect(({ cmsproducttag, loading }) => ({
+  cmsproducttag,
+  loading: loading.models.cmsproducttag,
 }))
 @Form.create()
-class ExampleCategoryList extends PureComponent {
+class CmsProductTagList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl'],
+    hiddenFields: [],
     formValues: {},
-    expand: true,
-    expandAllIds: [],
-    expandedRowKeys: [],
   };
 
   columns = [
@@ -48,14 +45,6 @@ class ExampleCategoryList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
-    },
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
     },
     {
       title: '排序',
@@ -88,12 +77,9 @@ class ExampleCategoryList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'examplecategory/fetch',
-      payload: {},
-      callback: this.callbackIndex
+      type: 'cmsproducttag/fetch',
     });
   };
-
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -117,7 +103,7 @@ class ExampleCategoryList extends PureComponent {
     }
 
     dispatch({
-      type: 'examplecategory/fetch',
+      type: 'cmsproducttag/fetch',
       payload: params,
     });
   };
@@ -129,16 +115,17 @@ class ExampleCategoryList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'examplecategory/fetch',
+      type: 'cmsproducttag/fetch',
       payload: {},
     });
   };
 
 
+
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'examplecategory/enable',
+      type: 'cmsproducttag/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -171,7 +158,7 @@ class ExampleCategoryList extends PureComponent {
       });
 
       dispatch({
-        type: 'examplecategory/fetch',
+        type: 'cmsproducttag/fetch',
         payload: values,
       });
     });
@@ -203,7 +190,6 @@ class ExampleCategoryList extends PureComponent {
     }
   };
 
-
   reserveForm = fields => {
     this.setState({
       formValues: fields,
@@ -213,9 +199,9 @@ class ExampleCategoryList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'examplecategory/store',
+      type: 'cmsproducttag/store',
       payload: fields,
-      callback: this.callbackAdd
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -224,9 +210,9 @@ class ExampleCategoryList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'examplecategory/update',
+      type: 'cmsproducttag/update',
       payload: fields,
-      callback: this.callbackUpdate
+      callback: this.handleModalVisible
     });
 
     this.reserveForm(fields);
@@ -243,7 +229,7 @@ class ExampleCategoryList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'examplecategory/destroy',
+          type: 'cmsproducttag/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -254,19 +240,6 @@ class ExampleCategoryList extends PureComponent {
           },
         });
       }
-    });
-  }
-
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl.thumbUrl,
-      previewModalVisible: true,
-    });
-  }
-
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
     });
   }
 
@@ -297,64 +270,18 @@ class ExampleCategoryList extends PureComponent {
     );
   }
 
-  callbackIndex = () => {
-    this.setAllExpandIds()
-  }
-
-  callbackAdd = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  callbackUpdate = () => {
-    this.setAllExpandIds()
-    this.handleModalVisible()
-  }
-
-  setAllExpandIds = () => {
-    const { examplecategory: { data }} = this.props;
-
-    let expandedId = [];
-    data.list.forEach(item => {
-      expandedId.push(item.id)
-      item.childrenIds.forEach(id => {
-        expandedId.push(id)
-      })
-    })
-
-    this.setState({
-      expandedRowKeys: expandedId,
-      expandAllIds: expandedId
-    });
-
-  }
-
-
-  // 菜单展示和收起
-  handleExpansion  = () => {
-    const { expand, expandAllIds } = this.state
-    this.setState({
-      expand: !expand,
-      expandedRowKeys: expand ? [] : expandAllIds
-    });
-  }
-
-
-  handleChangeExpandedRowKeys = () => {
-    console.log('handleChangeExpandedRowKeys')
+  renderForm() {
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      examplecategory: { data },
+      cmsproducttag: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
-
-    const expandIcon = expand ? 'minus' : 'plus'
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -363,37 +290,31 @@ class ExampleCategoryList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="分类模版">
+      <PageHeaderWrapper title="产品标签">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
+            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
               </Button>
-              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
-                显示全部
-              </Button>
-
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={this.handleRemove}>删除</Button>
                 </span>
               )}
             </div>
-            <CategoryTable
+            <StandardTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
-              expandedRowKeys={expandedRowKeys}
-              onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
         </Card>
-        <ExampleCategoryForm
+        <CmsProductTagForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -401,22 +322,9 @@ class ExampleCategoryList extends PureComponent {
           hiddenFields={hiddenFields}
           data={data}
         />
-        {
-          previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-          )
-        }
       </PageHeaderWrapper>
     );
   }
 }
 
-export default ExampleCategoryList;
+export default CmsProductTagList;

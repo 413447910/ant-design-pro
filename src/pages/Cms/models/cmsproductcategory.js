@@ -1,8 +1,8 @@
-import {queryCmsCategory, updateCmsCategory, destroyCmsCategory , storeCmsCategory, enableCmsCategory} from '@/services/cmscategory';
+import {queryCmsProductCategory, updateCmsProductCategory, destroyCmsProductCategory , storeCmsProductCategory, enableCmsProductCategory} from '@/services/cmsproductcategory';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'cmscategory',
+  namespace: 'cmsproductcategory',
 
   state: {
     data: {
@@ -15,7 +15,7 @@ export default {
 
   effects: {
     *fetch({ payload, callback }, { call, put }) {
-      const response = yield call(queryCmsCategory, payload);
+      const response = yield call(queryCmsProductCategory, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -23,7 +23,7 @@ export default {
       if (callback) callback();
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(storeCmsCategory, payload);
+      const response = yield call(storeCmsProductCategory, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -34,7 +34,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroyCmsCategory , payload);
+      const response = yield call(destroyCmsProductCategory , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -47,7 +47,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateCmsCategory, payload);
+      const response = yield call(updateCmsProductCategory, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -61,7 +61,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableCmsCategory, payload);
+      const response = yield call(enableCmsProductCategory, payload);
 
       if(!checkRespData(response, 'enable')){
         return;

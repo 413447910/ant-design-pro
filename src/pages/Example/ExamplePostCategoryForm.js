@@ -21,7 +21,7 @@ const { TextArea } = Input;
 
 
 @Form.create()
-class CmsCategoryForm extends PureComponent {
+class ExamplePostCategoryForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -191,4 +191,4 @@ class CmsCategoryForm extends PureComponent {
 };
 
 
-export default CmsCategoryForm;
+export default ExamplePostCategoryForm;

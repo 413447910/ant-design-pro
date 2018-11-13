@@ -14,7 +14,7 @@ import {
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import CmsPostForm from './CmsPostForm';
+import CmsProductForm from './CmsProductForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
 import styles from '../Less/DefaultList.less';
@@ -23,12 +23,12 @@ const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ cmspost, loading }) => ({
-  cmspost,
-  loading: loading.models.cmspost,
+@connect(({ cmsproduct, loading }) => ({
+  cmsproduct,
+  loading: loading.models.cmsproduct,
 }))
 @Form.create()
-class CmsPostList extends PureComponent {
+class CmsProductList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
@@ -85,7 +85,7 @@ class CmsPostList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'cmsproduct/fetch',
     });
   };
 
@@ -111,7 +111,7 @@ class CmsPostList extends PureComponent {
     }
 
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'cmsproduct/fetch',
       payload: params,
     });
   };
@@ -123,7 +123,7 @@ class CmsPostList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'cmspost/fetch',
+      type: 'cmsproduct/fetch',
       payload: {},
     });
   };
@@ -133,7 +133,7 @@ class CmsPostList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/enable',
+      type: 'cmsproduct/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -166,7 +166,7 @@ class CmsPostList extends PureComponent {
       });
 
       dispatch({
-        type: 'cmspost/fetch',
+        type: 'cmsproduct/fetch',
         payload: values,
       });
     });
@@ -207,7 +207,7 @@ class CmsPostList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/store',
+      type: 'cmsproduct/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -218,7 +218,7 @@ class CmsPostList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cmspost/update',
+      type: 'cmsproduct/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -237,7 +237,7 @@ class CmsPostList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'cmspost/destroy',
+          type: 'cmsproduct/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -297,10 +297,9 @@ class CmsPostList extends PureComponent {
 
   render() {
     const {
-      cmspost: { data },
+      cmsproduct: { data },
       loading,
     } = this.props;
-    console.log(this.props)
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
         previewUrl, previewModalVisible } = this.state;
 
@@ -313,7 +312,7 @@ class CmsPostList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="文章列表">
+      <PageHeaderWrapper title="产品列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
@@ -337,7 +336,7 @@ class CmsPostList extends PureComponent {
             />
           </div>
         </Card>
-        <CmsPostForm
+        <CmsProductForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -363,4 +362,4 @@ class CmsPostList extends PureComponent {
   }
 }
 
-export default CmsPostList;
+export default CmsProductList;

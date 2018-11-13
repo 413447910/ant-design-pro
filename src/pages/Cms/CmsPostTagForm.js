@@ -21,7 +21,7 @@ const { TextArea } = Input;
 
 
 @Form.create()
-class CmsTagForm extends PureComponent {
+class CmsPostTagForm extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -102,4 +102,4 @@ class CmsTagForm extends PureComponent {
 };
 
 
-export default CmsTagForm;
+export default CmsPostTagForm;

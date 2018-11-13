@@ -1,8 +1,8 @@
-import {queryExamplePost, updateExamplePost, destroyExamplePost , storeExamplePost, enableExamplePost} from '@/services/examplepost';
+import {queryCmsPostCategory, updateCmsPostCategory, destroyCmsPostCategory , storeCmsPostCategory, enableCmsPostCategory} from '@/services/cmspostcategory';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'examplepost',
+  namespace: 'cmspostcategory',
 
   state: {
     data: {
@@ -15,7 +15,7 @@ export default {
 
   effects: {
     *fetch({ payload, callback }, { call, put }) {
-      const response = yield call(queryExamplePost, payload);
+      const response = yield call(queryCmsPostCategory, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -23,7 +23,7 @@ export default {
       if (callback) callback();
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(storeExamplePost, payload);
+      const response = yield call(storeCmsPostCategory, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -34,7 +34,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroyExamplePost , payload);
+      const response = yield call(destroyCmsPostCategory , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -47,7 +47,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateExamplePost, payload);
+      const response = yield call(updateCmsPostCategory, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -61,7 +61,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableExamplePost, payload);
+      const response = yield call(enableCmsPostCategory, payload);
 
       if(!checkRespData(response, 'enable')){
         return;

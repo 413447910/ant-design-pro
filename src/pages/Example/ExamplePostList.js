@@ -17,7 +17,7 @@ import { FormattedMessage } from 'umi/locale';
 import ExamplePostForm from './ExamplePostForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 
-import styles from './ExamplePostList.less';
+import styles from '../Less/DefaultList.less';
 
 const FormItem = Form.Item;
 

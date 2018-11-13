@@ -1,8 +1,8 @@
-import {queryExamplePost, updateExamplePost, destroyExamplePost , storeExamplePost, enableExamplePost} from '@/services/examplepost';
+import {queryExamplePostTag, updateExamplePostTag, destroyExamplePostTag , storeExamplePostTag, enableExamplePostTag} from '@/services/exampleposttag';
 import {checkRespData} from '@/utils/BdHelper';
 
 export default {
-  namespace: 'examplepost',
+  namespace: 'exampleposttag',
 
   state: {
     data: {
@@ -14,16 +14,15 @@ export default {
   },
 
   effects: {
-    *fetch({ payload, callback }, { call, put }) {
-      const response = yield call(queryExamplePost, payload);
+    *fetch({ payload }, { call, put }) {
+      const response = yield call(queryExamplePostTag, payload);
       yield put({
         type: 'save',
         payload: response,
       });
-      if (callback) callback();
     },
     *store({ payload, callback }, { call, put }) {
-      const response = yield call(storeExamplePost, payload);
+      const response = yield call(storeExamplePostTag, payload);
       if(!checkRespData(response, 'store')){
         return;
       }
@@ -34,7 +33,7 @@ export default {
       if (callback) callback();
     },
     *destroy({ payload, callback }, { call, put }) {
-      const response = yield call(destroyExamplePost , payload);
+      const response = yield call(destroyExamplePostTag , payload);
 
       if(!checkRespData(response, 'destroy')){
         return;
@@ -47,7 +46,7 @@ export default {
       if (callback) callback();
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateExamplePost, payload);
+      const response = yield call(updateExamplePostTag, payload);
 
       if(!checkRespData(response, 'update')){
         return;
@@ -61,7 +60,7 @@ export default {
     },
 
     *enable({ payload, callback }, { call, put }) {
-      const response = yield call(enableExamplePost, payload);
+      const response = yield call(enableExamplePostTag, payload);
 
       if(!checkRespData(response, 'enable')){
         return;

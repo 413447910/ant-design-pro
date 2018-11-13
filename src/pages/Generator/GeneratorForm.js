@@ -186,7 +186,7 @@ class GeneratorForm extends PureComponent {
                       filterOption={false}
                       onChange={this.handlePageSubFolderNameChange}
                     >
-                      <Select.Option value="Exapmle">Example</Select.Option>
+                      <Select.Option value="Example">Example</Select.Option>
                       <Select.Option value="Wenqu">Wenqu</Select.Option>
                       <Select.Option value="Kaiyang">Kaiyang</Select.Option>
                       <Select.Option value="System">System</Select.Option>
@@ -266,7 +266,7 @@ class GeneratorForm extends PureComponent {
                       style={{width: '100%'}}
                       filterOption={false}
                     >
-                      <Select.Option value="Exapmle">Example</Select.Option>
+                      <Select.Option value="Example">Example</Select.Option>
                       <Select.Option value="Wenqu">Wenqu</Select.Option>
                       <Select.Option value="Kaiyang">Kaiyang</Select.Option>
                       <Select.Option value="System">System</Select.Option>

@@ -78,7 +78,7 @@ class BannerTabList extends Component {
   };
 
   selectKey = ({ key }) => {
-    router.push(`/beidou/banner/index/${key}`);
+    router.push(`/config/banner/index/${key}`);
 
     const { dispatch } = this.props;
     dispatch({
