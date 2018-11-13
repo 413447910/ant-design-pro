@@ -20,7 +20,7 @@ export default {
         type: 'save',
         payload: response,
       });
-      if (callback) callback();
+      if (callback) callback(response);
     },
     *store({ payload, callback }, { call, put }) {
       const response = yield call(storeNav, payload);

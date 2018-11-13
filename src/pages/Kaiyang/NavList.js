@@ -33,7 +33,7 @@ class NavList extends PureComponent {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl'],
+    hiddenFields: ['thumbUrl', 'picture1'],
     formValues: {},
     expand: true,
     expandAllIds: [],
@@ -86,12 +86,14 @@ class NavList extends PureComponent {
 
 
   componentDidMount() {
+    /*
     const { dispatch } = this.props;
     dispatch({
       type: 'nav/fetch',
       payload: {},
       callback: this.callbackIndex
     });
+    */
   };
 
 
@@ -270,33 +272,6 @@ class NavList extends PureComponent {
     });
   }
 
-  renderSimpleForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
   callbackIndex = () => {
     this.setAllExpandIds()
   }
@@ -329,6 +304,19 @@ class NavList extends PureComponent {
 
   }
 
+  getAllExpandIds = () => {
+    const { nav: { data }} = this.props;
+
+    let expandedId = [];
+    data.list.forEach(item => {
+      expandedId.push(item.id)
+      item.childrenIds.forEach(id => {
+        expandedId.push(id)
+      })
+    })
+
+    return expandedId
+  }
 
   // 菜单展示和收起
   handleExpansion  = () => {
@@ -348,13 +336,15 @@ class NavList extends PureComponent {
     const {
       nav: { data },
       loading,
+      groupKey,
     } = this.props;
     const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-      expand, expandedRowKeys, previewUrl, previewModalVisible } = this.state;
+       previewUrl, previewModalVisible } = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
-    const expandIcon = expand ? 'minus' : 'plus'
+
+    const allExpandedIds = this.getAllExpandIds()
 
     const parentMethods = {
       handleAdd: this.handleAdd,
@@ -363,16 +353,12 @@ class NavList extends PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="导航">
+      <div>
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
-              </Button>
-              <Button icon={expandIcon} type="default"  onClick={() => this.handleExpansion()}>
-                显示全部
               </Button>
 
               {selectedRows.length > 0 && (
@@ -388,7 +374,7 @@ class NavList extends PureComponent {
               columns={showColumn}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
-              expandedRowKeys={expandedRowKeys}
+              expandedRowKeys={allExpandedIds}
               onChangeExpandedRowKeys={this.handleChangeExpandedRowKeys}
             />
           </div>
@@ -400,6 +386,7 @@ class NavList extends PureComponent {
           formValues={formValues}
           hiddenFields={hiddenFields}
           data={data}
+          groupKey={groupKey}
         />
         {
             previewModalVisible && (<Modal
@@ -414,7 +401,7 @@ class NavList extends PureComponent {
             </Modal>
             )
         }
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }

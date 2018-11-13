@@ -217,7 +217,17 @@ export default [
           {
             path: '/config/nav/index',
             name: 'Nav',
-            component: './Kaiyang/NavList',
+            component: './Kaiyang/NavTabList',
+            routes: [
+              {
+                path: '/config/nav/index',
+                redirect: '/config/nav/index/base',
+              },
+              {
+                path: '/config/nav/index/:group',
+                component: './Kaiyang/NavList',
+              },
+            ],
           },
         ]
       },
