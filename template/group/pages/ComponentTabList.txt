@@ -5,16 +5,16 @@ import { Menu } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from '../Less/DefaultTabList.less';
-import BannerList from './BannerList';
+import ##COMPONENT_CAMEL##List from './##COMPONENT_CAMEL##List';
 
 const { Item } = Menu;
 
-@connect(({ user, banner, loading }) => ({
+@connect(({ user, ##COMPONENT_LOWER##, loading }) => ({
   currentUser: user.currentUser,
-  banner,
-  loading: loading.models.banner,
+  ##COMPONENT_LOWER##,
+  loading: loading.models.##COMPONENT_LOWER##,
 }))
-class BannerTabList extends Component {
+class ##COMPONENT_CAMEL##TabList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +29,7 @@ class BannerTabList extends Component {
     const { dispatch } = this.props;
     const { selectKey } = this.state;
     dispatch({
-      type: 'banner/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: {'groupKey' : selectKey},
       callback: this.callbackFetch
     });
@@ -78,11 +78,11 @@ class BannerTabList extends Component {
   };
 
   selectKey = ({ key }) => {
-    router.push(`/beidou/banner/index/${key}`);
+    router.push(`/beidou/##COMPONENT_LOWER##/index/${key}`);
 
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: {'groupKey' : key},
     });
 
@@ -117,7 +117,7 @@ class BannerTabList extends Component {
             </div>
             <div className={styles.right}>
               <div className={styles.title}>{this.getRightTitle()}</div>
-              <BannerList groupKey={selectKey} />
+              <##COMPONENT_CAMEL##List groupKey={selectKey} />
             </div>
           </div>
         </GridContent>
@@ -126,4 +126,4 @@ class BannerTabList extends Component {
   }
 }
 
-export default BannerTabList;
+export default ##COMPONENT_CAMEL##TabList;

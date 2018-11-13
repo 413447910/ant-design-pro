@@ -12,7 +12,6 @@ import {
   Icon,
   Select,
   TreeSelect,
-  Radio,
 } from 'antd';
 
 import { buildFormSelectOption, getFormSelectOption, getUploadFileId} from '@/utils/BdHelper';
@@ -92,25 +91,6 @@ class NavForm extends PureComponent {
       >
 
         {
-          !hiddenFields.includes('groupId') &&
-          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属组">
-            {form.getFieldDecorator('groupId', {
-              initialValue: formValues.groupId || '',
-              rules: [{required: true, message: '所属组不能为空！'}],
-            })(
-              <Select
-                showSearch
-                placeholder='请选择'
-                style={{width: '100%'}}
-                filterOption={true}
-              >
-                {buildFormSelectOption(common)}
-              </Select>
-            )}
-          </FormItem>
-        }
-
-        {
           !hiddenFields.includes('parentId') &&
             <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="父级">
               {form.getFieldDecorator('parentId', {
@@ -138,26 +118,6 @@ class NavForm extends PureComponent {
                 rules: [{required: true, message: '名称不能为空！'}],
               })(<Input placeholder="" />)}
             </FormItem>
-        }
-        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}}  label="跳转方式">
-          {form.getFieldDecorator('linkTarget', {
-            initialValue: formValues.linkTarget || '_blank',
-            rules: [],
-          })(
-            <Radio.Group  buttonStyle="solid">
-              <Radio.Button value="_blank">新标签页打开</Radio.Button>
-              <Radio.Button value="_self">原标签页打开</Radio.Button>
-            </Radio.Group>
-          )}
-        </FormItem>
-        {
-          !hiddenFields.includes('linkHref') &&
-          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="链接">
-            {form.getFieldDecorator('linkHref', {
-              initialValue: formValues.linkHref || '',
-              rules: [{required: true, message: '链接不能为空！'}],
-            })(<Input placeholder="" />)}
-          </FormItem>
         }
         {
           !hiddenFields.includes('picture1') &&

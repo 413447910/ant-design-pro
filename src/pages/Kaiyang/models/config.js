@@ -14,7 +14,7 @@ export default {
   },
 
   effects: {
-    *fetch({ payload, callback }, { call, put }) {
+    *fetch({ payload , callback}, { call, put }) {
       const response = yield call(queryConfig, payload);
       yield put({
         type: 'save',

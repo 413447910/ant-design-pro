@@ -208,9 +208,7 @@ export default {
 	'menu.beidou.User': '用户管理',
 	'menu.beidou.BdUser': '用户列表',
 	'menu.beidou.BannerGroup': '幻灯片组',
-	'menu.beidou.Banner': '幻灯片',
 	'menu.beidou.NavGroup': '导航组',
-	'menu.beidou.Nav': '导航',
 	'menu.cms.CmsPost': '文章列表',
 	'menu.cms.CmsTag': '标签列表',
 	'menu.cms.CmsCategory': '分类列表',
@@ -219,5 +217,7 @@ export default {
 	'menu.kaiyang.ConfigGroup': '配置组',
 	'menu.beidou.Config': '基础配置',
 	'menu.kaiyang.Config': '基础配置',
+	'menu.beidou.Nav': '导航',
+	'menu.beidou.Banner': '幻灯片',
 	'menu.kaiyang.Config': '配置列表',
 };

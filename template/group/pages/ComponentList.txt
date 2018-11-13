@@ -10,18 +10,18 @@ import {
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import { FormattedMessage } from 'umi/locale';
-import BannerForm from './BannerForm';
+import ##COMPONENT_CAMEL##Form from './##COMPONENT_CAMEL##Form';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
 import styles from '../Less/DefaultList.less';
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ banner, loading }) => ({
-  banner,
-  loading: loading.models.banner,
+@connect(({ ##COMPONENT_LOWER##, loading }) => ({
+  ##COMPONENT_LOWER##,
+  loading: loading.models.##COMPONENT_LOWER##,
 }))
 @Form.create()
-class BannerList extends PureComponent {
+class ##COMPONENT_CAMEL##List extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
@@ -109,7 +109,7 @@ class BannerList extends PureComponent {
     }
 
     dispatch({
-      type: 'banner/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: params,
     });
   };
@@ -121,7 +121,7 @@ class BannerList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'banner/fetch',
+      type: '##COMPONENT_LOWER##/fetch',
       payload: {},
     });
   };
@@ -131,7 +131,7 @@ class BannerList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/enable',
+      type: '##COMPONENT_LOWER##/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -164,7 +164,7 @@ class BannerList extends PureComponent {
       });
 
       dispatch({
-        type: 'banner/fetch',
+        type: '##COMPONENT_LOWER##/fetch',
         payload: values,
       });
     });
@@ -205,7 +205,7 @@ class BannerList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/store',
+      type: '##COMPONENT_LOWER##/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -216,7 +216,7 @@ class BannerList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'banner/update',
+      type: '##COMPONENT_LOWER##/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -235,7 +235,7 @@ class BannerList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'banner/destroy',
+          type: '##COMPONENT_LOWER##/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -264,7 +264,7 @@ class BannerList extends PureComponent {
 
   render() {
     const {
-      banner: { data },
+      ##COMPONENT_LOWER##: { data },
       loading,
       groupKey,
     } = this.props;
@@ -303,7 +303,7 @@ class BannerList extends PureComponent {
             />
           </div>
         </Card>
-        <BannerForm
+        <##COMPONENT_CAMEL##Form
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
@@ -330,4 +330,4 @@ class BannerList extends PureComponent {
   }
 }
 
-export default BannerList;
+export default ##COMPONENT_CAMEL##List;

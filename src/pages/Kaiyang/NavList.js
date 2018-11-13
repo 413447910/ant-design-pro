@@ -33,7 +33,7 @@ class NavList extends PureComponent {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl','picture1','remark'],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
     expand: true,
     expandAllIds: [],
@@ -48,10 +48,6 @@ class NavList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
-    },
-    {
-      title: '所属组',
-      dataIndex: 'groupName',
     },
     {
       title: '缩略图',

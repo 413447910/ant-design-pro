@@ -215,9 +215,7 @@ export default {
 	'menu.beidou.User': 'User',
 	'menu.beidou.BdUser': 'BdUser',
 	'menu.beidou.BannerGroup': 'BannerGroup',
-	'menu.beidou.Banner': 'Banner',
 	'menu.beidou.NavGroup': 'NavGroup',
-	'menu.beidou.Nav': 'Nav',
 	'menu.cms.CmsPost': 'CmsPost',
 	'menu.cms.CmsTag': 'CmsTag',
 	'menu.cms.CmsCategory': 'CmsCategory',
@@ -225,5 +223,7 @@ export default {
 	'menu.beidou.ConfigGroup': 'ConfigGroup',
 	'menu.kaiyang.ConfigGroup': 'ConfigGroup',
 	'menu.beidou.Config': 'Config',
+	'menu.beidou.Nav': 'Nav',
+	'menu.beidou.Banner': 'Banner',
 	'menu.kaiyang.Config': 'Config',
 };

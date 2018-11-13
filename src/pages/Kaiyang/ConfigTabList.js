@@ -17,28 +17,12 @@ const { Item } = Menu;
 class ConfigTabList extends Component {
   constructor(props) {
     super(props);
-    const { match, location } = props;
-    const menuMap = {
-
-    };
-    const key = location.pathname.replace(`${match.path}/`, '');
     this.state = {
       mode: 'inline',
-      menuMap,
-      selectKey: menuMap[key] ? key : 'base',
+      menuMap: {},
+      selectKey: '',
     };
   }
-
-  static getDerivedStateFromProps(props, state) {
-    const { match, location } = props;
-    let selectKey = location.pathname.replace(`${match.path}/`, '');
-    selectKey = state.menuMap[selectKey] ? selectKey : 'base';
-    if (selectKey !== state.selectKey) {
-      return { selectKey };
-    }
-    return null;
-  }
-
 
   componentDidMount() {
 
@@ -47,24 +31,34 @@ class ConfigTabList extends Component {
     dispatch({
       type: 'config/fetch',
       payload: {'groupKey' : selectKey},
-      callback: this.callbackConfigFetch
+      callback: this.callbackFetch
     });
 
     window.addEventListener('resize', this.resize);
     this.resize();
   }
 
-  callbackConfigFetch = (resp) => {
+  callbackFetch = (resp) => {
+    const { selectKey } = this.state
+    let defaultKey = '';
+
     const selectOption = resp.data.common.selectOption
     const respMenuMap = {}
     for(let i = 0; i < selectOption.length; i += 1){
       const item = selectOption[i]
-      const menuKey = item.name
+      const menuKey = item.key
       respMenuMap[menuKey]= item.text
+
+      if(i === 0){
+        defaultKey = menuKey
+      }
     }
 
+    const newSelectkey = selectKey !== '' ? selectKey : defaultKey
+
     this.setState({
-      menuMap : respMenuMap
+      menuMap : respMenuMap,
+      selectKey: newSelectkey
     })
 
   }
@@ -106,8 +100,10 @@ class ConfigTabList extends Component {
 //      return '';
     }
     const { mode, selectKey } = this.state;
+
+    console.log(this.state)
     return (
-      <PageHeaderWrapper title="配置列表">
+      <PageHeaderWrapper title="幻灯片列表">
         <GridContent>
           <div
             className={styles.main}

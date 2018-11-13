@@ -57,6 +57,7 @@ class BannerForm extends PureComponent {
 
     const {picture1ModalVisible, picture1PreviewUrl} = this.state;
     const {treeData, common} = data;
+
     const formTitle = isUpdate ? '更新' : '新建'
 
     formValues.picture1 = formValues.picture1 || []

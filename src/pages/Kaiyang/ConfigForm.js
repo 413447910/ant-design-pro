@@ -13,12 +13,11 @@ import {
   Select,
   TreeSelect,
   Radio,
-  DatePicker,
+  DatePicker
 } from 'antd';
 
 import moment from 'moment'
-
-import { issetParam, buildFormSelectOption, DATEIME_FORMAT, getUploadFileId} from '@/utils/BdHelper';
+import { buildFormSelectOption, DATEIME_FORMAT, getUploadFileId} from '@/utils/BdHelper';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -68,37 +67,20 @@ class ConfigForm extends PureComponent {
     })
   }
 
-  getSelectGroupId = (common, groupKey) => {
-
-    let selectedGroupId = 0
-
-    if(!issetParam(common.selectOption)){
-      return selectedGroupId
-    }
-
-    for(let i = 0; i < common.selectOption.length; i++) {
-      const item = common.selectOption[i]
-      if(item.name === groupKey){
-        selectedGroupId = item.key
-        break;
-      }
-    }
-
-    return selectedGroupId
-  }
-
   render(){
     const { modalVisible, form, handleAdd, handleModalVisible, formValues,
-      isUpdate, handleUpdate, data, hiddenFields, groupKey } = this.props;
+      isUpdate, handleUpdate, data, hiddenFields, groupKey} = this.props;
 
     const {picture1ModalVisible, picture1PreviewUrl, paramType, dateAt} = this.state;
     const {treeData, common} = data;
 
+    const formTitle = isUpdate ? '更新' : '新建'
+
     formValues.picture1 = formValues.picture1 || []
     formValues.fileThumbnail = getUploadFileId(formValues)
-    formValues.groupId = this.getSelectGroupId(common, groupKey)
+    formValues.groupId = groupKey
 
-    const showType = paramType || formValues.type
+    const showType = isUpdate ? formValues.type : paramType
 
     const propUpload = {
         listType: 'picture',
@@ -111,7 +93,11 @@ class ConfigForm extends PureComponent {
 
         const fileThumbnail = getUploadFileId(formValues)
         fieldsValue.fileThumbnail = fileThumbnail
-        fieldsValue.content = dateAt || fieldsValue.content
+
+        // 日期类型
+        if(paramType === 'date' || fieldsValue.type === 'date'){
+          fieldsValue.content = dateAt
+        }
 
         if(isUpdate){
           fieldsValue.id = formValues.id
@@ -125,17 +111,18 @@ class ConfigForm extends PureComponent {
     return (
       <Modal
         destroyOnClose
-        title="新建"
+        title={formTitle}
         width="60%"
         visible={modalVisible}
         onOk={okHandle}
         onCancel={() => handleModalVisible()}
       >
+
         {
           !hiddenFields.includes('groupId') &&
           <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属组">
             {form.getFieldDecorator('groupId', {
-              initialValue: formValues.groupId || 'ant',
+              initialValue: formValues.groupId || '',
               rules: [{required: true, message: '所属组不能为空！'}],
             })(
               <Select
@@ -150,18 +137,20 @@ class ConfigForm extends PureComponent {
           </FormItem>
         }
 
+
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}}  label="变量类型">
           {form.getFieldDecorator('type', {
             initialValue: formValues.type || 'string',
             rules: [],
           })(
-            <Radio.Group  buttonStyle="solid" onChange={this.changeParamType}>
+            <Radio.Group  buttonStyle="solid" onChange={this.changeParamType} disabled>
               <Radio.Button value="string">整数(字符)</Radio.Button>
               <Radio.Button value="date">日期</Radio.Button>
               <Radio.Button value="file">文件</Radio.Button>
             </Radio.Group>
           )}
         </FormItem>
+
 
         {
           !hiddenFields.includes('remark') &&
@@ -173,14 +162,15 @@ class ConfigForm extends PureComponent {
           </FormItem>
         }
 
+
         {
           !hiddenFields.includes('name') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="变量标识">
-              {form.getFieldDecorator('name', {
-                initialValue: formValues.name || '',
-                rules: [{required: true, message: '变量标识不能为空！'}],
-              })(<Input placeholder="如 appId" />)}
-            </FormItem>
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="变量标识">
+            {form.getFieldDecorator('name', {
+              initialValue: formValues.name || '',
+              rules: [{required: true, message: '变量标识不能为空！'}],
+            })(<Input placeholder="如 appId" />)}
+          </FormItem>
         }
 
         {
@@ -205,33 +195,31 @@ class ConfigForm extends PureComponent {
 
         {
           !hiddenFields.includes('picture1') && showType === 'file' &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="文件">
-              {form.getFieldDecorator('picture1', {
-                initialValue: formValues.picture1 || '',
-              })(
-                <Upload
-                  {...propUpload}
-                  action="/api/file/upload"
-                  defaultFileList={formValues.picture1}
-                  beforeUpload={(file) => {console.log('before upload file type', file.type)}}
-                  onRemove={() => {formValues.picture1 = []}}
-                  onChange={this.uploadChangeOnPicture1}
-                  onPreview={this.previewPicture1}
-                >
-                  {
-                    formValues.picture1.length === 0 ? (
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="文件">
+            {form.getFieldDecorator('picture1', {
+              initialValue: formValues.picture1 || '',
+            })(
+              <Upload
+                {...propUpload}
+                action="/api/file/upload"
+                defaultFileList={formValues.picture1}
+                beforeUpload={(file) => {console.log('before upload file type', file.type)}}
+                onRemove={() => {formValues.picture1 = []}}
+                onChange={this.uploadChangeOnPicture1}
+                onPreview={this.previewPicture1}
+              >
+                {
+                  formValues.picture1.length === 0 ? (
                     // formValues.picture1.length === 0 && formValues.fileThumbnail === '' ? (
-                      <Button>
-                        <Icon type="upload" /> 点击上传
-                      </Button>
-                    ) : null
-                  }
-                </Upload>
-              )}
-            </FormItem>
+                    <Button>
+                      <Icon type="upload" /> 点击上传
+                    </Button>
+                  ) : null
+                }
+              </Upload>
+            )}
+          </FormItem>
         }
-
-
 
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="排序">
           {form.getFieldDecorator('rankNum', {
@@ -240,15 +228,16 @@ class ConfigForm extends PureComponent {
           })(<InputNumber style={{width: '100%'}} placeholder="升序排列" min={1} />)}
         </FormItem>
 
+
         {
           !hiddenFields.includes('isEnable') &&
-            <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="状态">
-              {form.getFieldDecorator('isEnable', {
-                initialValue: !isUpdate || isUpdate && formValues.isEnable,
-                valuePropName: 'checked',
-                rules: [],
-              })(<Switch checkedChildren="启用" unCheckedChildren="隐藏" />)}
-            </FormItem>
+          <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="状态">
+            {form.getFieldDecorator('isEnable', {
+              initialValue: !isUpdate || isUpdate && formValues.isEnable,
+              valuePropName: 'checked',
+              rules: [],
+            })(<Switch checkedChildren="启用" unCheckedChildren="隐藏" />)}
+          </FormItem>
         }
 
         <Modal

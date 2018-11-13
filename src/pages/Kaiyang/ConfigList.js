@@ -2,11 +2,8 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import {
-  Row,
-  Col,
   Card,
   Form,
-  Input,
   Button,
   Modal,
   Switch,
@@ -15,10 +12,7 @@ import StandardTable from '@/components/StandardTable';
 import { FormattedMessage } from 'umi/locale';
 import ConfigForm from './ConfigForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
-
 import styles from '../Less/DefaultList.less';
-
-const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
@@ -32,20 +26,11 @@ class ConfigList extends PureComponent {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['thumbUrl', 'isEnable', 'updatedAt'],
+    hiddenFields: ['parentId','isEnable'],
     formValues: {},
   };
 
-
   columns = [
-    {
-      title: '缩略图',
-      dataIndex: 'thumbUrl',
-      width: 100,
-      render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
-      )
-    },
     {
       title: '变量标题',
       dataIndex: 'remark',
@@ -95,14 +80,8 @@ class ConfigList extends PureComponent {
 
 
   componentDidMount() {
-    /*
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'config/fetch',
-    });
-    */
-  };
 
+  };
 
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -143,6 +122,8 @@ class ConfigList extends PureComponent {
     });
   };
 
+
+
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
@@ -159,6 +140,29 @@ class ConfigList extends PureComponent {
   handleSelectRows = rows => {
     this.setState({
       selectedRows: rows,
+    });
+  };
+
+  handleSearch = e => {
+    e.preventDefault();
+
+    const { dispatch, form } = this.props;
+
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      this.setState({
+        formValues: values,
+      });
+
+      dispatch({
+        type: 'config/fetch',
+        payload: values,
+      });
     });
   };
 
@@ -253,7 +257,6 @@ class ConfigList extends PureComponent {
       previewModalVisible: false,
     });
   }
-
 
   render() {
     const {
