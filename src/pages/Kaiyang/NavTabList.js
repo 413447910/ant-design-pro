@@ -6,6 +6,7 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from '../Less/DefaultTabList.less';
 import NavList from './NavList';
+import { PREFIX_GROUP } from '@/utils/BdHelper';
 
 const { Item } = Menu;
 
@@ -46,7 +47,7 @@ class NavTabList extends Component {
     const respMenuMap = {}
     for(let i = 0; i < selectOption.length; i += 1){
       const item = selectOption[i]
-      const menuKey = item.key
+      const menuKey = `${PREFIX_GROUP}${item.key}`
       respMenuMap[menuKey]= item.text
 
       if(i === 0){
@@ -80,9 +81,10 @@ class NavTabList extends Component {
   selectKey = ({ key }) => {
     router.push(`/config/nav/index/${key}`);
     const { dispatch } = this.props;
+    const queryKey = key.replace(new RegExp(PREFIX_GROUP, "g"), '')
     dispatch({
       type: 'nav/fetch',
-      payload: {'groupKey' : key},
+      payload: {'groupKey' : queryKey},
     });
 
     this.setState({

@@ -2,6 +2,7 @@
 import { Select, message, Checkbox,Modal, Button, Row, Col } from 'antd';
 
 export const DATEIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
+export const PREFIX_GROUP = 'GROUP_'
 
 export function componentHiddenFields(columns, hiddenFields) {
     const showColumn = columns.filter( (item) => {
