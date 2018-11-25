@@ -214,12 +214,11 @@ export default {
 	'menu.beidou.Config': '基础配置',
 	'menu.beidou.Nav': '导航',
 	'menu.beidou.Banner': '幻灯片',
-
 	'menu.kaiyang.Config': '配置列表',
-    'menu.kaiyang.BannerGroup': '幻灯片组',
-    'menu.kaiyang.Banner': '幻灯片',
-    'menu.kaiyang.NavGroup': '导航组',
-    'menu.kaiyang.Nav': '导航',
+	'menu.kaiyang.BannerGroup': '幻灯片组',
+	'menu.kaiyang.Banner': '幻灯片',
+	'menu.kaiyang.NavGroup': '导航组',
+	'menu.kaiyang.Nav': '导航',
 	'menu.beidou.ExamplePost': '文章模版',
 	'menu.beidou.ExamplePostTag': '文章模版-标签',
 	'menu.beidou.ExamplePostCategory': '文章模版-分类',
@@ -232,4 +231,5 @@ export default {
 	'menu.cms.CmsProductTag': '产品标签',
 	'menu.cms.CmsProductCategory': '产品分类',
 	'menu.cms.CmsProduct': '产品列表',
+	'menu.cms.CmsScrapy': '数据对接',
 };

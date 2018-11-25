@@ -251,7 +251,11 @@ export default [
             name: 'CmsPost',
             component: './Cms/CmsPostList',
           },
-
+          {
+            path: '/cms/scrapy/index',
+            name: 'CmsScrapy',
+            component: './Cms/CmsScrapyList',
+          },
           {
             path: '/cms/product/tag',
             name: 'CmsProductTag',
