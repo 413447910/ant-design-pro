@@ -80,6 +80,7 @@ class ConfigForm extends PureComponent {
     formValues.fileThumbnail = getUploadFileId(formValues)
     formValues.groupId = groupKey
 
+
     const showType = isUpdate ? formValues.type : paramType
 
     const propUpload = {
@@ -143,7 +144,7 @@ class ConfigForm extends PureComponent {
             initialValue: formValues.type || 'string',
             rules: [],
           })(
-            <Radio.Group  buttonStyle="solid" onChange={this.changeParamType} disabled>
+            <Radio.Group  buttonStyle="solid" onChange={this.changeParamType} disabled={isUpdate}>
               <Radio.Button value="string">整数(字符)</Radio.Button>
               <Radio.Button value="date">日期</Radio.Button>
               <Radio.Button value="file">文件</Radio.Button>

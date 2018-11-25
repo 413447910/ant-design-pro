@@ -57,7 +57,6 @@ class ConfigTabList extends Component {
 
     const newSelectkey = selectKey !== '' ? selectKey : defaultKey
 
-    console.log('new menu map', respMenuMap)
     this.setState({
       menuMap : respMenuMap,
       selectKey: newSelectkey
@@ -103,8 +102,9 @@ class ConfigTabList extends Component {
 //      return '';
     }
     const { mode, selectKey } = this.state;
+    console.log('tab state', this.state)
+    const realGroupKey = selectKey.replace(new RegExp(PREFIX_GROUP, "g"), '')
 
-    console.log(this.state)
     return (
       <PageHeaderWrapper title="幻灯片列表">
         <GridContent>
@@ -121,7 +121,7 @@ class ConfigTabList extends Component {
             </div>
             <div className={styles.right}>
               <div className={styles.title}>{this.getRightTitle()}</div>
-              <ConfigList groupKey={selectKey} />
+              <ConfigList groupKey={realGroupKey} />
             </div>
           </div>
         </GridContent>

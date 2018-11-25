@@ -33,7 +33,7 @@ class CmsProductList extends PureComponent {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: [],
+    hiddenFields: ['thumbUrl'],
     formValues: {},
   };
 
@@ -43,7 +43,7 @@ class CmsProductList extends PureComponent {
       dataIndex: 'thumbUrl',
       width: 100,
       render: (val, record) => (
-        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record)}/>
+        <img src={record.thumbUrl.thumbUrl} width={'100%'} onClick={() => this.setPreviewUrl(record, record.thumbUrl.thumbUrl)}/>
       )
     },
     {
@@ -53,6 +53,21 @@ class CmsProductList extends PureComponent {
     {
       title: '描述',
       dataIndex: 'remark',
+    },
+    {
+      title: '封面',
+      dataIndex: 'coverUrl',
+      width: 100,
+      render: (val, record) => (
+        <img src={record.coverUrl} width={'100%'} onClick={() => this.setPreviewUrl(record, record.coverUrl)}/>
+      )
+    },
+    {
+      title: '预览',
+      dataIndex: 'previewUri',
+      render: (val, record) => {
+        return <a href={record.previewUri} target='_blank'>查看</a>;
+      }
     },
     {
       title: '排序',
@@ -251,9 +266,9 @@ class CmsProductList extends PureComponent {
     });
   }
 
-  setPreviewUrl = (record) => {
+  setPreviewUrl = (record, imgUrl) => {
     this.setState({
-      previewUrl: record.thumbUrl.thumbUrl,
+      previewUrl: imgUrl,
       previewModalVisible: true,
     });
   }
