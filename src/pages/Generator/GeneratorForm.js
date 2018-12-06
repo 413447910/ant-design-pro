@@ -191,6 +191,7 @@ class GeneratorForm extends PureComponent {
                       <Select.Option value="Kaiyang">Kaiyang</Select.Option>
                       <Select.Option value="System">System</Select.Option>
                       <Select.Option value="Cms">Cms</Select.Option>
+                      <Select.Option value="Generator">Generator</Select.Option>
                     </Select>
                   )}
                 </FormItem>
@@ -271,6 +272,7 @@ class GeneratorForm extends PureComponent {
                       <Select.Option value="Kaiyang">Kaiyang</Select.Option>
                       <Select.Option value="System">System</Select.Option>
                       <Select.Option value="Cms">Cms</Select.Option>
+                      <Select.Option value="Generator">Generator</Select.Option>
                     </Select>
                   )}
                 </FormItem>

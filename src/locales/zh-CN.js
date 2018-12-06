@@ -232,4 +232,5 @@ export default {
 	'menu.cms.CmsProductCategory': '产品分类',
 	'menu.cms.CmsProduct': '产品列表',
 	'menu.cms.CmsScrapy': '数据对接',
+	'menu.beidou.GeneratorStar': '模版之星',
 };

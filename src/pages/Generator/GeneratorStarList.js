@@ -2,54 +2,49 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import {
+  Row,
+  Col,
   Card,
   Form,
+  Input,
   Button,
   Modal,
   Switch,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { FormattedMessage } from 'umi/locale';
-import ConfigForm from './ConfigForm';
+import GeneratorStarForm from './GeneratorStarForm';
 import {componentHiddenFields, getValue} from '@/utils/BdHelper';
+
 import styles from '../Less/DefaultList.less';
+
+const FormItem = Form.Item;
 
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ config, loading }) => ({
-  config,
-  loading: loading.models.config,
+@connect(({ generatorstar, loading }) => ({
+  generatorstar,
+  loading: loading.models.generatorstar,
 }))
 @Form.create()
-class ConfigList extends PureComponent {
+class GeneratorStarList extends PureComponent {
   state = {
     modalVisible: false,
     isUpdate: false,
     selectedRows: [],
-    hiddenFields: ['parentId','isEnable'],
+    hiddenFields: [],
     formValues: {},
   };
 
   columns = [
     {
-      title: '变量标题',
-      dataIndex: 'remark',
-      width: 150,
-    },
-    {
-      title: '变量标识',
+      title: '名称',
       dataIndex: 'name',
-      width: 200,
     },
     {
-      title: '变量值',
-      dataIndex: 'content',
-      render: (val, record) => {
-        if (record.type === 'file') {
-          return <a href={record.thumbUrl.thumbUrl} target='_blank'> 查看文件</a>
-        }
-        return val
-      }
+      title: '描述',
+      dataIndex: 'remark',
     },
     {
       title: '排序',
@@ -80,7 +75,10 @@ class ConfigList extends PureComponent {
 
 
   componentDidMount() {
-
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'generatorstar/fetch',
+    });
   };
 
 
@@ -105,7 +103,7 @@ class ConfigList extends PureComponent {
     }
 
     dispatch({
-      type: 'config/fetch',
+      type: 'generatorstar/fetch',
       payload: params,
     });
   };
@@ -117,7 +115,7 @@ class ConfigList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'config/fetch',
+      type: 'generatorstar/fetch',
       payload: {},
     });
   };
@@ -127,7 +125,7 @@ class ConfigList extends PureComponent {
   handleChangeEnable = (record) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'config/enable',
+      type: 'generatorstar/enable',
       payload: {
         id: record.id,
         isEnable: !record.isEnable,
@@ -160,7 +158,7 @@ class ConfigList extends PureComponent {
       });
 
       dispatch({
-        type: 'config/fetch',
+        type: 'generatorstar/fetch',
         payload: values,
       });
     });
@@ -201,7 +199,7 @@ class ConfigList extends PureComponent {
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'config/store',
+      type: 'generatorstar/store',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -212,7 +210,7 @@ class ConfigList extends PureComponent {
   handleUpdate = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'config/update',
+      type: 'generatorstar/update',
       payload: fields,
       callback: this.handleModalVisible
     });
@@ -231,7 +229,7 @@ class ConfigList extends PureComponent {
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'config/destroy',
+          type: 'generatorstar/destroy',
           payload: {
             id: selectedRows.map(row => row.id),
           },
@@ -245,27 +243,43 @@ class ConfigList extends PureComponent {
     });
   }
 
-  setPreviewUrl = (record) => {
-    this.setState({
-      previewUrl: record.thumbUrl.thumbUrl,
-      previewModalVisible: true,
-    });
+  renderSimpleForm() {
+    const {
+      form: { getFieldDecorator },
+    } = this.props;
+    return (
+      <Form onSubmit={this.handleSearch} layout="inline">
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={8} sm={24}>
+            <FormItem label="名称">
+              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <span className={styles.submitButtons}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                重置
+              </Button>
+            </span>
+          </Col>
+        </Row>
+      </Form>
+    );
   }
 
-  closePreviewModal = () => {
-    this.setState({
-      previewModalVisible: false,
-    });
+  renderForm() {
+    return this.renderSimpleForm();
   }
 
   render() {
     const {
-      config: { data },
+      generatorstar: { data },
       loading,
-      groupKey,
     } = this.props;
-    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields,
-        previewUrl, previewModalVisible } = this.state;
+    const { selectedRows, modalVisible, isUpdate, formValues, hiddenFields} = this.state;
 
     const showColumn = componentHiddenFields(this.columns, hiddenFields)
 
@@ -276,9 +290,10 @@ class ConfigList extends PureComponent {
     };
 
     return (
-      <div>
+      <PageHeaderWrapper title="模版之星">
         <Card bordered={false}>
           <div className={styles.tableList}>
+            <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, 'store')}>
                 <FormattedMessage id="app.form.create" defaultMessage="Create" />
@@ -299,31 +314,17 @@ class ConfigList extends PureComponent {
             />
           </div>
         </Card>
-        <ConfigForm
+        <GeneratorStarForm
           {...parentMethods}
           modalVisible={modalVisible}
           isUpdate={isUpdate}
           formValues={formValues}
           hiddenFields={hiddenFields}
           data={data}
-          groupKey={groupKey}
         />
-        {
-            previewModalVisible && (<Modal
-              title="图片预览"
-              visible={previewModalVisible}
-              onOk={this.closePreviewModal}
-              onCancel={this.closePreviewModal}
-              afterClose={() => this.closePreviewModal}
-              footer={null}
-            >
-              <img src={previewUrl} width={'100%'}/>
-            </Modal>
-            )
-        }
-      </div>
+      </PageHeaderWrapper>
     );
   }
 }
 
-export default ConfigList;
+export default GeneratorStarList;

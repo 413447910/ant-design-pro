@@ -239,4 +239,5 @@ export default {
 	'menu.cms.CmsProductCategory': 'CmsProductCategory',
 	'menu.cms.CmsProduct': 'CmsProduct',
 	'menu.cms.CmsScrapy': 'CmsScrapy',
+	'menu.beidou.GeneratorStar': 'GeneratorStar',
 };

@@ -10,7 +10,6 @@ import {
   Button,
   Modal,
   Switch,
-  Icon,
   Divider,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
@@ -77,6 +76,16 @@ class CmsScrapyList extends PureComponent {
       render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
+      title: '生成代码',
+      render: (text, record) => (
+        record.isEnable === false ? (
+          <Fragment>
+            <a onClick={() => this.freshData(record, 'generate')}>生成代码</a>
+          </Fragment>
+        ) : '已生成'
+      ),
+    },
+    {
       title: '操作',
       render: (text, record) => (
         <Fragment>
@@ -85,7 +94,7 @@ class CmsScrapyList extends PureComponent {
           <a onClick={() => this.freshData(record, 'sync')}>同步数据</a>
           <Divider type="vertical" />
           <a onClick={() => this.freshData(record, 'fresh')}>刷新数据</a>
-          <Divider type="vertical" />
+          <Divider type="horizontal" />
           <a onClick={() => this.freshData(record, 'arrange')}>整理数据</a>
           <Divider type="vertical" />
           <a onClick={() => this.freshData(record, 'clear')}>清除数据</a>

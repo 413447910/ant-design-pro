@@ -93,9 +93,14 @@ export default [
         name: 'beidou',
         routes: [
           {
-            path: '/beidou/generator',
+            path: '/beidou/generator/index',
             name: 'Generator',
             component: './Generator/GeneratorList',
+          },
+          {
+            path: '/beidou/generator/star',
+            name: 'GeneratorStar',
+            component: './Generator/GeneratorStarList',
           },
           {
             path: '/beidou/example-basic',
